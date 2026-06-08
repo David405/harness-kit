@@ -1,0 +1,28 @@
+{
+  "project": "<PROJECT NAME>",
+  "updated": "<YYYY-MM-DD>",
+  "legend": {
+    "status": ["PASS", "FAIL"],
+    "note": "PASS only after the verify step actually passes. FAIL = not done, broken, or unverified.",
+    "priority": "lower number = higher priority; agent picks the highest-priority FAIL",
+    "id_convention": "AREA-NNN, e.g. STORE-001, BE-003, MKT-001"
+  },
+  "features": [
+    {
+      "id": "<AREA-001>",
+      "name": "<short, specific feature name>",
+      "priority": 1,
+      "verify": "<concrete, runnable check — e.g. 'pnpm test foo.spec.ts && invalid transitions rejected'>",
+      "status": "FAIL",
+      "notes": "<optional: blockers, links to contract, gotchas>"
+    },
+    {
+      "id": "<AREA-002>",
+      "name": "<...>",
+      "priority": 2,
+      "verify": "<...>",
+      "status": "PASS",
+      "notes": ""
+    }
+  ]
+}

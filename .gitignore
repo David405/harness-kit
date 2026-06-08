@@ -1,0 +1,19 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Local agent / tool scratch
+.cursor/
+*.local
+.env
+.env.*
+
+# Project instances (this repo ships TEMPLATES, not filled-in copies)
+# Uncomment if you keep a live filled AGENTS.md / FEATURES.json elsewhere
+# /AGENTS.md
+# /FEATURES.json
