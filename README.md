@@ -1,5 +1,7 @@
 # Harness Kit
 
+> *Better harness beats better model.*
+
 A reusable, **tool-agnostic** and **project-agnostic** framework for AI-assisted engineering.
 Drop it into any repo — new or existing — and it works the same way regardless of which
 models or coding tools you use.
