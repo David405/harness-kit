@@ -23,6 +23,7 @@ models or coding tools you use.
 | `templates/SPRINT_CONTRACT.md` | The plan-before-code artifact (includes the grounded impact map). |
 | `templates/EXECUTOR_HANDOFF.md` | The unambiguous instruction you hand to the implementing tool. |
 | `templates/REVIEW_CHECKLIST.md` | The reviewer's evaluation artifact. |
+| `templates/SECURITY_CHECKLIST.md` | Reviewer's hardening pass for money/auth/data/input changes. |
 
 ---
 

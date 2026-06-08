@@ -31,6 +31,7 @@
 - [ ] <e.g. no secrets / internal IDs / voucher codes leaked to public responses>
 - [ ] <e.g. state-machine transitions still valid>
 - [ ] Error handling: propagated or logged, nothing silently swallowed
+- [ ] **Security gate:** if this feature touches money, auth, user data, or external input, the SECURITY_CHECKLIST.md pass was completed and APPROVED
 
 ## Quality
 

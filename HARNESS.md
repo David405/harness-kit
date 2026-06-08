@@ -132,7 +132,7 @@ Periodically check the harness is balanced. Classify every control:
 |  | **Computational** (deterministic, ms) | **Inferential** (uses a model, sec) |
 |---|---|---|
 | **Feedforward** (before — guides) | type system, linters, arch rules, rule files | spec docs, sprint contracts, impact maps |
-| **Feedback** (after — sensors) | test suites, coverage, CI | model code-reviewer, behavior validator, E2E |
+| **Feedback** (after — sensors) | test suites, coverage, CI | model code-reviewer, behavior validator, E2E, security checklist |
 
 **Neither feedforward nor feedback alone works.** If a project is all rules and no tests
 confirming the agent followed them, the harness is broken. Aim to populate all four cells.

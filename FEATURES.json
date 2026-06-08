@@ -1,0 +1,28 @@
+{
+  "project": "Harness Kit",
+  "updated": "2026-06-08",
+  "legend": {
+    "status": ["PASS", "FAIL"],
+    "note": "PASS only after the verify step actually passes. FAIL = not done, broken, or unverified.",
+    "priority": "lower number = higher priority; agent picks the highest-priority FAIL",
+    "id_convention": "AREA-NNN, e.g. SEC-001"
+  },
+  "features": [
+    {
+      "id": "SEC-001",
+      "name": "Security & production-hardening review pass (checklist + threat-model step)",
+      "priority": 1,
+      "verify": "templates/SECURITY_CHECKLIST.md exists; SPRINT_CONTRACT has Threat model section; REVIEW_CHECKLIST has security gate; README lists 6 templates; root FEATURES.json valid",
+      "status": "FAIL",
+      "notes": "Mark PASS after review checklist passes."
+    },
+    {
+      "id": "SEC-002",
+      "name": "Harness-workflow safety (prompt-injection defense, human-gated side effects, least-privilege executor)",
+      "priority": 2,
+      "verify": "<defined in SEC-002 contract>",
+      "status": "FAIL",
+      "notes": "Next contract. Touches HARNESS.md roles + session loop."
+    }
+  ]
+}

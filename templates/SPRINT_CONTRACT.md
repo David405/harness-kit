@@ -50,6 +50,16 @@ and where it should go instead (follow-up sprint / different repo).>
 - <What could go wrong and how it's handled>
 - <Anything that would silently break an invariant>
 
+## Threat model
+
+<SKIP for low-stakes changes. REQUIRED if this feature touches money,
+authentication, user data, or external input.>
+- **Assets at risk:** <what could be lost/exposed/corrupted>
+- **Entry points / attack surface:** <new endpoints, inputs, permissions, deps>
+- **Threats considered:** <e.g. injection, authz bypass, replay, data leakage>
+- **Mitigations in this sprint:** <what handles each threat above>
+- **Security review:** Reviewer MUST run templates/SECURITY_CHECKLIST.md.
+
 ## Blocking questions (gates)
 
 <Anything that must be answered before implementation. If none, write "None.">
