@@ -25,12 +25,28 @@
       "notes": "Reviewer verified packet sufficiency from the packet alone; ephemeral packet deleted after PASS."
     },
     {
+      "id": "SEC-001d",
+      "name": "Default-branch field in agent context",
+      "priority": 1,
+      "verify": "templates/AGENTS.md has a generic Default branch placeholder under How we work here; no real branch name is hardcoded; root FEATURES.json valid",
+      "status": "FAIL",
+      "notes": "Docs-only context field for project default branch."
+    },
+    {
+      "id": "SEC-001e",
+      "name": "Self-enforcing Review Packet criteria keying",
+      "priority": 2,
+      "verify": "templates/REVIEW_PACKET.md has the two-step fill instruction; warns not to substitute handoff verify-steps; per-criterion table columns unchanged; root FEATURES.json valid",
+      "status": "FAIL",
+      "notes": "Apply before emitting packets so evidence rows are keyed to contract criteria."
+    },
+    {
       "id": "SEC-002",
       "name": "Harness-workflow safety (prompt-injection defense, human-gated side effects, least-privilege executor)",
-      "priority": 2,
-      "verify": "<defined in SEC-002 contract>",
+      "priority": 3,
+      "verify": "HARNESS.md has Workflow safety after the control audit with observed-content, human-gated side effects, and least-privilege principles; REVIEW_CHECKLIST Tier 2 has Workflow safety checkboxes; root FEATURES.json valid",
       "status": "FAIL",
-      "notes": "Next contract. Touches HARNESS.md roles + session loop."
+      "notes": "Process docs only; no enforcement code or tooling."
     }
   ]
 }

@@ -30,14 +30,14 @@
 
 ## Per-criterion evidence
 
-> One row per **contract success criterion**, verbatim from the approved contract —
-> INCLUDING qualitative and reviewer-judged criteria. State HOW each is met, with a
-> pointer (file + section/line) the Reviewer can drill into.
+> FILL THIS TABLE IN TWO STEPS. (1) First, copy each success criterion from the approved
+> contract VERBATIM into the Criterion column — one row per criterion, in contract order,
+> before filling anything else. (2) Then complete "How met" and "Pointer" for each row.
 >
-> No criterion may be omitted or merged into another, even one the Reviewer can only
-> confirm by using this packet (e.g. "the packet is sufficient to review without the
-> repo"). Mechanical/verify-string checks do NOT belong here — they live in
-> "Deterministic check results" below.
+> Do NOT summarize, reword, merge, or omit criteria. Do NOT substitute the handoff's
+> verify-steps for the contract's success criteria — they are different lists; use the
+> contract's. Qualitative and reviewer-judged criteria get their own rows like any other.
+> Mechanical/verify-string checks live in "Deterministic check results", not here.
 
 | # | Criterion | How met | Pointer |
 |---|-----------|---------|---------|

@@ -43,6 +43,7 @@ src/
 
 ## How we work here
 
+- **Default branch:** <e.g. main / master>
 - Tests: <unit = pure only? integration = test containers?>
 - Commits: <convention, e.g. conventional commits>
 - Branching: <convention>
