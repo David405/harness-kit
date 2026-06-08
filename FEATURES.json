@@ -13,16 +13,16 @@
       "name": "Security & production-hardening review pass (checklist + threat-model step)",
       "priority": 1,
       "verify": "templates/SECURITY_CHECKLIST.md exists; SPRINT_CONTRACT has Threat model section; REVIEW_CHECKLIST has security gate; README lists 6 templates; root FEATURES.json valid",
-      "status": "FAIL",
-      "notes": "Mark PASS after review checklist passes."
+      "status": "PASS",
+      "notes": "Reviewer approved SEC-001 with SEC-001b as one docs-only unit; stacking rule waived for docs-only changes."
     },
     {
       "id": "SEC-001b",
       "name": "Review Packet protocol (ephemeral executor→reviewer context handoff)",
       "priority": 1,
       "verify": "templates/REVIEW_PACKET.md exists; REVIEW_CHECKLIST split into Tier1/Tier2; EXECUTOR_HANDOFF emits packet; HARNESS.md has 'Review the packet' subsection; .gitignore has .harness/; README lists 7 templates; root FEATURES.json valid",
-      "status": "FAIL",
-      "notes": "Ephemeral packet at .harness/review/<id>.md, gitignored, deleted on merge+PASS."
+      "status": "PASS",
+      "notes": "Reviewer verified packet sufficiency from the packet alone; ephemeral packet deleted after PASS."
     },
     {
       "id": "SEC-002",
