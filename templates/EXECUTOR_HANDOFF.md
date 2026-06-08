@@ -28,8 +28,10 @@ CONSTRAINTS:
   - No new dependencies unless the contract says so.
   - git status must show only the expected file(s).
 
-REPORT BACK:
-  - The diff (or before/after of changed files)
-  - Result of the verify step
-  - Anything you had to assume or deviate from
+EMIT REVIEW PACKET (templates/REVIEW_PACKET.md):
+  - Write to .harness/review/<feature-id>.md (gitignored) — OR output inline for paste
+    if no connector is available.
+  - Include VERBATIM deterministic-check outputs (verify, parse, build/test/lint,
+    git status, dep audit).
+  - Do NOT commit the packet. It is temporary and is deleted on merge + PASS.
 ```
