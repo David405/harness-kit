@@ -13,6 +13,9 @@ Thumbs.db
 .env
 .env.*
 
+# Ephemeral review packets — never committed
+.harness/
+
 # Project instances (this repo ships TEMPLATES, not filled-in copies)
 # Uncomment if you keep a live filled AGENTS.md / FEATURES.json elsewhere
 # /AGENTS.md

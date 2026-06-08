@@ -119,6 +119,22 @@ Implements the single feature against the approved contract. Prompt discipline:
 Evaluate the diff against the contract's success criteria. Use the Review Checklist template.
 Check the invariants, look for hallucinated paths, dropped requirements, scope creep. Flag, don't fix.
 
+#### Review the packet, not the repo
+
+The Reviewer reviews the Executor's Review Packet (templates/REVIEW_PACKET.md), not the raw
+repository. Responsibilities:
+- **Executor** owns packet completeness — a well-formed packet lets the Reviewer finish
+  Tier 2 without opening the repo.
+- **Human** forwards the packet; does not assemble or curate context.
+- **Reviewer** pulls raw files only to resolve a specific doubt.
+
+Delivery: file-based primary — packet written to `.harness/review/<feature-id>.md`
+(gitignored), read via a connector. Paste fallback — Executor outputs the packet, human
+pastes it; nothing touches the filesystem.
+
+Lifecycle: the packet is EPHEMERAL. Deleted once the feature is APPROVED, merged, and
+FEATURES.json marks it PASS — deletion owned by whoever merges. Never committed.
+
 ### 6. HUMAN MERGES → update `FEATURES.json` → REPEAT
 
 Mark the feature PASS only after it actually verifies. Commit. Loop to the next FAIL.

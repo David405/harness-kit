@@ -17,6 +17,14 @@
       "notes": "Mark PASS after review checklist passes."
     },
     {
+      "id": "SEC-001b",
+      "name": "Review Packet protocol (ephemeral executor→reviewer context handoff)",
+      "priority": 1,
+      "verify": "templates/REVIEW_PACKET.md exists; REVIEW_CHECKLIST split into Tier1/Tier2; EXECUTOR_HANDOFF emits packet; HARNESS.md has 'Review the packet' subsection; .gitignore has .harness/; README lists 7 templates; root FEATURES.json valid",
+      "status": "FAIL",
+      "notes": "Ephemeral packet at .harness/review/<id>.md, gitignored, deleted on merge+PASS."
+    },
+    {
       "id": "SEC-002",
       "name": "Harness-workflow safety (prompt-injection defense, human-gated side effects, least-privilege executor)",
       "priority": 2,
