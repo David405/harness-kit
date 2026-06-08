@@ -30,8 +30,14 @@
 
 ## Per-criterion evidence
 
-> One row per success criterion in the contract. State HOW each is met, with a pointer
-> (file + section/line) the Reviewer can drill into.
+> One row per **contract success criterion**, verbatim from the approved contract —
+> INCLUDING qualitative and reviewer-judged criteria. State HOW each is met, with a
+> pointer (file + section/line) the Reviewer can drill into.
+>
+> No criterion may be omitted or merged into another, even one the Reviewer can only
+> confirm by using this packet (e.g. "the packet is sufficient to review without the
+> repo"). Mechanical/verify-string checks do NOT belong here — they live in
+> "Deterministic check results" below.
 
 | # | Criterion | How met | Pointer |
 |---|-----------|---------|---------|
