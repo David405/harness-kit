@@ -55,6 +55,22 @@ models or coding tools you use.
 - **Existing project:** `ADOPTION.md` → "Brownfield". Generate `AGENTS.md` from the real
   codebase first, then back-fill `FEATURES.json` from what already exists.
 
+## Install
+
+Clone the kit and run the installer against your target repo. Review the script first —
+it only writes files into the target and never commits or pushes.
+
+```sh
+git clone --depth 1 --branch <pinned-version-tag> https://github.com/<owner>/harness-kit /tmp/harness-kit
+/tmp/harness-kit/install.sh /path/to/your-repo
+```
+
+Then follow the printed next steps (generate AGENTS.md, seed FEATURES.json).
+
+A one-line `curl … | sh` form exists for trusted environments, but piping a remote script
+to a shell executes code you haven't read — prefer clone-then-run, especially for repos
+that handle money, auth, or user data.
+
 ---
 
 *This kit is a living standard. It will get simpler as models get better. That's the point.*
