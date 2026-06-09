@@ -63,6 +63,14 @@
       "verify": "install.sh exists, is executable, POSIX sh, copies kit files, scaffolds AGENTS.md and FEATURES.json only when absent, updates target .gitignore idempotently, runs twice against a throwaway git repo without duplicate lines or overwrites, README has Install section, root FEATURES.json valid",
       "status": "FAIL",
       "notes": "Installer performs no git stage/commit/push and no network calls."
+    },
+    {
+      "id": "KIT-BROWNFIELD-001",
+      "name": "Brownfield adoption detects repo's existing default branch (don't assume main)",
+      "priority": 5,
+      "verify": "ADOPTION.md A1 instructs detecting the default branch via git and writing it to the AGENTS.md Default-branch field; ADOPTION.md states the adopt-don't-impose principle; root FEATURES.json valid",
+      "status": "FAIL",
+      "notes": "Surfaced during a field test where the generator defaulted to 'main' when the convention is to use the repo's existing default. Principle generalizes to all repo conventions, not just branch name."
     }
   ]
 }
