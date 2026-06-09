@@ -73,6 +73,19 @@ A one-line `curl … | sh` form exists for trusted environments, but piping a re
 to a shell executes code you haven't read — prefer clone-then-run, especially for repos
 that handle money, auth, or user data.
 
+## Update
+
+Use `update.sh` only in a repo where the kit is already installed.
+
+```sh
+/tmp/harness-kit/update.sh /path/to/your-repo
+```
+
+Unlike install, update refuses to bootstrap a fresh repo. It refreshes kit-owned files only
+(`HARNESS.md`, `ADOPTION.md`, `LOOP.md`, and `.harness/templates/*`), preserves generated
+project files such as `AGENTS.md` and `FEATURES.json`, bumps `.harness/VERSION`, and reports
+likely drift for manual migration. It never commits or pushes.
+
 ---
 
 *This kit is a living standard. It will get simpler as models get better. That's the point.*
