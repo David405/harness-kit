@@ -2,8 +2,8 @@
   "project": "<PROJECT NAME>",
   "updated": "<YYYY-MM-DD>",
   "legend": {
-    "status": ["PASS", "FAIL"],
-    "note": "PASS only after the verify step actually passes. FAIL = not done, broken, or unverified.",
+    "status": ["FAIL", "PENDING_REVIEW", "PASS"],
+    "note": "FAIL = not done, broken, or rejected. PENDING_REVIEW = built and packet emitted, awaiting reviewer verdict. PASS = reviewed, approved, merged, and verified. The executor may set PENDING_REVIEW but NEVER PASS — PASS is set by the human/reviewer after approval. The maker does not grade its own work.",
     "priority": "lower number = higher priority; agent picks the highest-priority FAIL",
     "id_convention": "AREA-NNN, e.g. STORE-001, BE-003, MKT-001"
   },

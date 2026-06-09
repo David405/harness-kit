@@ -114,10 +114,18 @@ Implements the single feature against the approved contract. Prompt discipline:
 - Compress error logs to the meaningful lines.
 - Fresh session after ~10–15 turns; long contexts degrade and cost grows quadratically.
 
+When the Executor finishes the implementation and emits the Review Packet, the Executor may
+manually set that feature to `PENDING_REVIEW` in `FEATURES.json`. The Executor never sets
+`PASS`; the maker does not grade its own work.
+
 ### 5. REVIEW (Reviewer — different instance)
 
 Evaluate the diff against the contract's success criteria. Use the Review Checklist template.
 Check the invariants, look for hallucinated paths, dropped requirements, scope creep. Flag, don't fix.
+
+State transition owners:
+- `APPROVE` → the human/reviewer sets the feature to `PASS` on merge.
+- `CHANGES REQUESTED` → the feature stays `FAIL` or returns to `FAIL`.
 
 #### Review the packet, not the repo
 
@@ -138,6 +146,10 @@ FEATURES.json marks it PASS — deletion owned by whoever merges. Never committe
 ### 6. HUMAN MERGES → update `FEATURES.json` → REPEAT
 
 Mark the feature PASS only after it actually verifies. Commit. Loop to the next FAIL.
+
+Manual post-merge actions, owned by whoever merges:
+- Flip the merged feature(s) to `PASS` in `FEATURES.json`.
+- Delete the ephemeral review packet (`.harness/review/<id>.md`).
 
 ---
 
