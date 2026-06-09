@@ -2,8 +2,8 @@
   "project": "Harness Kit",
   "updated": "2026-06-08",
   "legend": {
-    "status": ["PASS", "FAIL"],
-    "note": "PASS only after the verify step actually passes. FAIL = not done, broken, or unverified.",
+    "status": ["FAIL", "PENDING_REVIEW", "PASS"],
+    "note": "FAIL = not done, broken, or rejected. PENDING_REVIEW = built and packet emitted, awaiting reviewer verdict. PASS = reviewed, approved, merged, and verified. The executor may set PENDING_REVIEW but NEVER PASS — PASS is set by the human/reviewer after approval. The maker does not grade its own work.",
     "priority": "lower number = higher priority; agent picks the highest-priority FAIL",
     "id_convention": "AREA-NNN, e.g. SEC-001"
   },
@@ -29,32 +29,32 @@
       "name": "Default-branch field in agent context",
       "priority": 1,
       "verify": "templates/AGENTS.md has a generic Default branch placeholder under How we work here; no real branch name is hardcoded; root FEATURES.json valid",
-      "status": "FAIL",
-      "notes": "Docs-only context field for project default branch."
+      "status": "PASS",
+      "notes": "Merged; reviewer APPROVED."
     },
     {
       "id": "SEC-001e",
       "name": "Self-enforcing Review Packet criteria keying",
       "priority": 2,
       "verify": "templates/REVIEW_PACKET.md has the two-step fill instruction; warns not to substitute handoff verify-steps; per-criterion table columns unchanged; root FEATURES.json valid",
-      "status": "FAIL",
-      "notes": "Apply before emitting packets so evidence rows are keyed to contract criteria."
+      "status": "PASS",
+      "notes": "Merged in SEC-BUNDLE-001; reviewer APPROVED."
     },
     {
       "id": "SEC-002",
       "name": "Harness-workflow safety (prompt-injection defense, human-gated side effects, least-privilege executor)",
       "priority": 3,
       "verify": "HARNESS.md has Workflow safety after the control audit with observed-content, human-gated side effects, and least-privilege principles; REVIEW_CHECKLIST Tier 2 has Workflow safety checkboxes; root FEATURES.json valid",
-      "status": "FAIL",
-      "notes": "Process docs only; no enforcement code or tooling."
+      "status": "PASS",
+      "notes": "Merged in SEC-BUNDLE-001; reviewer APPROVED (read cold)."
     },
     {
       "id": "SEC-001f",
       "name": "Machine-readable criteria block for contract, handoff, and packet",
       "priority": 4,
       "verify": "SPRINT_CONTRACT has a canonical criteria fenced block; EXECUTOR_HANDOFF carries a criteria block and tells the Executor to paste it verbatim into the packet; REVIEW_PACKET says to paste the handoff criteria block; table columns unchanged; root FEATURES.json valid",
-      "status": "FAIL",
-      "notes": "Docs-only data contract for computational criteria keying; no enforcement tooling."
+      "status": "PASS",
+      "notes": "Merged; reviewer APPROVED — first verbatim-criteria packet."
     },
     {
       "id": "KIT-INSTALL-001",
@@ -69,16 +69,24 @@
       "name": "Brownfield adoption detects repo's existing default branch (don't assume main)",
       "priority": 5,
       "verify": "ADOPTION.md A1 instructs detecting the default branch via git and writing it to the AGENTS.md Default-branch field; ADOPTION.md states the adopt-don't-impose principle; root FEATURES.json valid",
-      "status": "FAIL",
-      "notes": "Surfaced during a field test where the generator defaulted to 'main' when the convention is to use the repo's existing default. Principle generalizes to all repo conventions, not just branch name."
+      "status": "PASS",
+      "notes": "Merged; reviewer APPROVED."
     },
     {
       "id": "KIT-LOOP-001",
       "name": "Loop-readiness seam (LOOP.md + loop state template)",
       "priority": 5,
       "verify": "LOOP.md has loop-above-harness framing, primitive mapping, automation-precondition rule, worktree parallelism, trusted-verifier caveat, and loop-ready-not-loop-on statement; templates/STATE.md has loop/triage state sections; README lists both files; root FEATURES.json valid",
-      "status": "FAIL",
-      "notes": "Docs and template only; no scheduler, connector, worktree automation, CI wiring, or loop activation."
+      "status": "PASS",
+      "notes": "Merged; reviewer APPROVED after reading the precondition rule in full."
+    },
+    {
+      "id": "KIT-STATE-001",
+      "name": "Three-state feature status model with manual transition owners",
+      "priority": 5,
+      "verify": "templates/FEATURES.json defines FAIL, PENDING_REVIEW, PASS; HARNESS.md documents manual transition owners and post-merge actions; REVIEW_CHECKLIST documents verdict transitions; root FEATURES.json reconciles merged features and remains valid",
+      "status": "PENDING_REVIEW",
+      "notes": "Executor emitted packet; awaiting independent reviewer verdict. No status-changing automation."
     }
   ]
 }

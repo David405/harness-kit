@@ -57,6 +57,9 @@
 - **Non-blocking notes:** <optional>
 - **FEATURES.json:** mark `<AREA-NNN>` PASS only if APPROVE and verify passed.
 
+An APPROVE advances the feature `PENDING_REVIEW` → `PASS`, set by the human on merge. A
+CHANGES REQUESTED verdict keeps or returns the feature to `FAIL`.
+
 ---
 
 > If the only reviewer available is the tool that wrote the code, this checklist is invalid.
