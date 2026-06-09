@@ -17,9 +17,11 @@ models or coding tools you use.
 | File | Purpose |
 |------|---------|
 | `HARNESS.md` | The process. Read once. The 5 principles, 3 roles, and the session loop. |
+| `LOOP.md` | The loop floor above the harness: cadence, state, and automation-readiness seams. |
 | `ADOPTION.md` | How to bootstrap the kit — separate paths for **existing** vs **new** projects. |
 | `templates/AGENTS.md` | Canonical project context. The open-standard file every tool reads. |
 | `templates/FEATURES.json` | Progress tracker + test spec in one. The cross-session memory. |
+| `templates/STATE.md` | Loop/triage working state, distinct from feature status and review packets. |
 | `templates/SPRINT_CONTRACT.md` | The plan-before-code artifact (includes the grounded impact map). |
 | `templates/EXECUTOR_HANDOFF.md` | The unambiguous instruction you hand to the implementing tool. |
 | `templates/REVIEW_CHECKLIST.md` | The reviewer's evaluation artifact. |
