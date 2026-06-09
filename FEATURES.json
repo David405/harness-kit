@@ -71,6 +71,14 @@
       "verify": "ADOPTION.md A1 instructs detecting the default branch via git and writing it to the AGENTS.md Default-branch field; ADOPTION.md states the adopt-don't-impose principle; root FEATURES.json valid",
       "status": "FAIL",
       "notes": "Surfaced during a field test where the generator defaulted to 'main' when the convention is to use the repo's existing default. Principle generalizes to all repo conventions, not just branch name."
+    },
+    {
+      "id": "KIT-LOOP-001",
+      "name": "Loop-readiness seam (LOOP.md + loop state template)",
+      "priority": 5,
+      "verify": "LOOP.md has loop-above-harness framing, primitive mapping, automation-precondition rule, worktree parallelism, trusted-verifier caveat, and loop-ready-not-loop-on statement; templates/STATE.md has loop/triage state sections; README lists both files; root FEATURES.json valid",
+      "status": "FAIL",
+      "notes": "Docs and template only; no scheduler, connector, worktree automation, CI wiring, or loop activation."
     }
   ]
 }
