@@ -87,6 +87,14 @@
       "verify": "templates/FEATURES.json defines FAIL, PENDING_REVIEW, PASS; HARNESS.md documents manual transition owners and post-merge actions; REVIEW_CHECKLIST documents verdict transitions; root FEATURES.json reconciles merged features and remains valid",
       "status": "PENDING_REVIEW",
       "notes": "Executor emitted packet; awaiting independent reviewer verdict. No status-changing automation."
+    },
+    {
+      "id": "KIT-UPDATE-001",
+      "name": "Dedicated kit update script with version bump and drift report",
+      "priority": 5,
+      "verify": "update.sh exists, is executable, POSIX sh, refuses non-git or non-installed targets, refreshes only kit-owned files, preserves AGENTS.md and FEATURES.json, writes .harness/VERSION, reports FEATURES.json legend drift without migrating, README documents Update, root FEATURES.json valid",
+      "status": "PENDING_REVIEW",
+      "notes": "Executor emitted packet; awaiting independent reviewer verdict. Update performs no git stage/commit/push, no network calls, and no auto-migration."
     }
   ]
 }
