@@ -2,6 +2,8 @@
 
 set -eu
 
+KIT_VERSION="0.1.0"
+
 target_arg=${1:-.}
 
 if ! target=$(cd "$target_arg" 2>/dev/null && pwd -P); then
@@ -26,13 +28,14 @@ if [ ! -f "$kit_dir/HARNESS.md" ] || [ ! -d "$kit_dir/templates" ]; then
   exit 1
 fi
 
-copied="HARNESS.md ADOPTION.md templates/*"
+copied="HARNESS.md ADOPTION.md LOOP.md templates/*"
 agents_status="already present; left untouched"
 features_status="already present; left untouched"
 gitignore_changes=""
 
 cp "$kit_dir/HARNESS.md" "$target/HARNESS.md"
 cp "$kit_dir/ADOPTION.md" "$target/ADOPTION.md"
+cp "$kit_dir/LOOP.md" "$target/LOOP.md"
 
 mkdir -p "$target/.harness/templates"
 cp "$kit_dir"/templates/* "$target/.harness/templates/"
@@ -79,6 +82,9 @@ if [ -z "$gitignore_changes" ]; then
   gitignore_changes="already up to date"
 fi
 
+install_date=$(date '+%Y-%m-%d')
+printf 'version=%s\ninstalled=%s\n' "$KIT_VERSION" "$install_date" > "$target/.harness/VERSION"
+
 cat <<EOF
 Harness Kit install summary
 Target: $target
@@ -86,6 +92,7 @@ Copied: $copied
 AGENTS.md: $agents_status
 FEATURES.json: $features_status
 .gitignore: $gitignore_changes
+VERSION: wrote .harness/VERSION with version $KIT_VERSION and date $install_date
 
 Manual next steps:
 1) Generate AGENTS.md from the real codebase (see ADOPTION.md, Brownfield A1)
