@@ -10,6 +10,11 @@ current `AGENTS.md`, a seeded `FEATURES.json`, and the session loop running.
 The hard part of an existing repo is that the context already exists in the code but not in a
 form the agent can read at boot. You generate it.
 
+> **Brownfield adopts, it does not impose.** The harness records the repo's EXISTING
+> conventions — default branch name, commit style, test layout, directory structure — into
+> AGENTS.md. It never standardizes them to the kit's own preferences. When the repo and the
+> kit disagree on a convention, the repo wins; the kit's defaults are for greenfield only.
+
 ### A1. Generate `AGENTS.md` from the real codebase
 
 Point a capable model (acting as Architect) at the actual repo — via a coding tool with file
@@ -23,6 +28,13 @@ Use ONLY real, verified facts from the code:
 - real top-level structure (depth 2)
 - conventions you can SEE in the code, not ones you'd recommend
 - the actual dependency/layering flow if one exists
+- Detect the repo's existing default branch and write it verbatim into the AGENTS.md
+  "Default branch" field — do NOT assume 'main' or 'master':
+  ```sh
+  git symbolic-ref --short refs/remotes/origin/HEAD   # e.g. origin/main -> main
+  # fallback if origin/HEAD is unset:
+  git remote show origin | sed -n 's/.*HEAD branch: //p'
+  ```
 Flag anything you're inferring vs. confirming. Do not invent conventions.
 ```
 
