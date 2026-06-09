@@ -30,14 +30,10 @@
 
 ## Per-criterion evidence
 
-> FILL THIS TABLE IN TWO STEPS. (1) First, copy each success criterion from the approved
-> contract VERBATIM into the Criterion column — one row per criterion, in contract order,
-> before filling anything else. (2) Then complete "How met" and "Pointer" for each row.
->
-> Do NOT summarize, reword, merge, or omit criteria. Do NOT substitute the handoff's
-> verify-steps for the contract's success criteria — they are different lists; use the
-> contract's. Qualitative and reviewer-judged criteria get their own rows like any other.
-> Mechanical/verify-string checks live in "Deterministic check results", not here.
+> Fill the Criterion column by PASTING the criteria: block from the handoff — one block line
+> per table row, text copied VERBATIM. Do not retype, resolve from prose, paraphrase, merge,
+> or omit, and never substitute handoff step text for a criterion. Then fill "How met" and
+> "Pointer" for each row. Mechanical/verify-string checks go in "Deterministic check results".
 
 | # | Criterion | How met | Pointer |
 |---|-----------|---------|---------|

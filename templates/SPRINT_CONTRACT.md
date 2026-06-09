@@ -45,6 +45,17 @@ and where it should go instead (follow-up sprint / different repo).>
 2. <...>
 3. Diff confined to the target repo; `git status` shows only expected files.
 
+## Criteria block (canonical — copied verbatim downstream)
+
+> The architect lists every success criterion here as machine-readable data. The prose
+> section above is for humans; THIS block is the source of truth the handoff and packet copy
+> verbatim. One line per criterion.
+
+```criteria
+- [<id>] <verbatim criterion text>
+- [<id>] <verbatim criterion text>
+```
+
 ## Edge cases / failure modes
 
 - <What could go wrong and how it's handled>

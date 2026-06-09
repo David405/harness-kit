@@ -3,10 +3,15 @@
 > Paste into the implementing tool. Derived from an APPROVED sprint contract.
 > The Executor implements exactly this — no scope decisions, no architecture choices.
 
-```
+````
 TASK: <one-sentence description of the single feature>
 
 REPO / SCOPE: <package>. Do NOT touch any other package or unrelated files.
+
+## Criteria (carried verbatim from the contract — paste into the packet)
+```criteria
+- [<id>] <verbatim criterion text>
+```
 
 STEP 1 — LOCATE (verify, do not assume):
   Find <the target>. Check in order:
@@ -31,7 +36,9 @@ CONSTRAINTS:
 EMIT REVIEW PACKET (templates/REVIEW_PACKET.md):
   - Write to .harness/review/<feature-id>.md (gitignored) — OR output inline for paste
     if no connector is available.
+  - Paste each line of the criteria: block above into the packet's Criterion column VERBATIM,
+    one line per row. Do NOT retype, resolve, paraphrase, or substitute handoff step text.
   - Include VERBATIM deterministic-check outputs (verify, parse, build/test/lint,
     git status, dep audit).
   - Do NOT commit the packet. It is temporary and is deleted on merge + PASS.
-```
+````

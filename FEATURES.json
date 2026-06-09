@@ -47,6 +47,14 @@
       "verify": "HARNESS.md has Workflow safety after the control audit with observed-content, human-gated side effects, and least-privilege principles; REVIEW_CHECKLIST Tier 2 has Workflow safety checkboxes; root FEATURES.json valid",
       "status": "FAIL",
       "notes": "Process docs only; no enforcement code or tooling."
+    },
+    {
+      "id": "SEC-001f",
+      "name": "Machine-readable criteria block for contract, handoff, and packet",
+      "priority": 4,
+      "verify": "SPRINT_CONTRACT has a canonical criteria fenced block; EXECUTOR_HANDOFF carries a criteria block and tells the Executor to paste it verbatim into the packet; REVIEW_PACKET says to paste the handoff criteria block; table columns unchanged; root FEATURES.json valid",
+      "status": "FAIL",
+      "notes": "Docs-only data contract for computational criteria keying; no enforcement tooling."
     }
   ]
 }
