@@ -1,7 +1,7 @@
 # SETUP.md — Setup Flow
 
 > Runnable checklist for installing the harness into a project. For the WHY behind each
-> step, see ADOPTION.md. This file is the do-this-in-this-order quickstart.
+> step, see README.md "Adoption concepts". This file is the do-this-in-this-order quickstart.
 
 ## The shared skeleton
 

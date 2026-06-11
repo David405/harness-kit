@@ -18,8 +18,7 @@ models or coding tools you use.
 |------|---------|
 | `HARNESS.md` | The process. Read once. The 5 principles, 3 roles, and the session loop. |
 | `LOOP.md` | The loop floor above the harness: cadence, state, and automation-readiness seams. |
-| `SETUP.md` | Runnable setup checklist; ADOPTION.md remains the conceptual reference. |
-| `ADOPTION.md` | How to bootstrap the kit — separate paths for **existing** vs **new** projects. |
+| `SETUP.md` | Runnable setup checklist; see Adoption concepts below for the why behind the steps. |
 | `templates/AGENTS.md` | Canonical project context. The open-standard file every tool reads. |
 | `templates/FEATURES.json` | Progress tracker + test spec in one. The cross-session memory. |
 | `templates/STATE.md` | Loop/triage working state, distinct from feature status and review packets. |
@@ -53,10 +52,33 @@ models or coding tools you use.
 
 ## Quick start
 
-- **New project:** `ADOPTION.md` → "Greenfield". Copy the templates, fill `AGENTS.md`, seed
-  `FEATURES.json`, run the loop.
-- **Existing project:** `ADOPTION.md` → "Brownfield". Generate `AGENTS.md` from the real
+- **New project:** follow `SETUP.md` → "Greenfield". Fill `AGENTS.md`, seed `FEATURES.json`,
+  run the loop.
+- **Existing project:** follow `SETUP.md` → "Brownfield". Generate `AGENTS.md` from the real
   codebase first, then back-fill `FEATURES.json` from what already exists.
+
+## Adoption concepts
+
+`SETUP.md` is the runnable checklist. This section carries the why behind those steps.
+
+- **Context comes from reality.** In brownfield repos, generate `AGENTS.md` from the actual
+  codebase: manifests and lockfiles for stack facts, top-level structure, visible conventions,
+  real dependency flow, and the repo's detected default branch. Flag inference; do not invent
+  conventions.
+- **Brownfield adopts, it does not impose.** The harness records the repo's existing
+  conventions — default branch name, commit style, test layout, directory structure — into
+  `AGENTS.md`. When the repo and kit disagree, the repo wins; kit defaults are for greenfield.
+- **Humans verify the context.** A generated `AGENTS.md` becomes the shared memory every agent
+  reads. Wrong facts there poison later sessions, so review it against the repo before trusting
+  it.
+- **Harvest existing AI docs before deleting them.** Informal files such as `.cursorrules` or
+  old agent instructions often encode hard-won intent. Migrate those rules into `AGENTS.md`,
+  confirm the harvest, then remove the old files so there is one source of truth.
+- **Back-fill status from evidence.** Existing features that demonstrably work become `PASS`;
+  known gaps or next work become `FAIL`. Each entry needs a concrete verify step.
+- **For multi-repo workspaces, keep a map.** Use a root `AGENTS.md` for the workspace map
+  and per-repo `AGENTS.md` files for local conventions. Keep one root `FEATURES.json` with
+  area-prefixed IDs, and keep each session focused on one repo or concern.
 
 ## Install
 
@@ -83,7 +105,7 @@ Use `update.sh` only in a repo where the kit is already installed.
 ```
 
 Unlike install, update refuses to bootstrap a fresh repo. It refreshes kit-owned files only
-(`HARNESS.md`, `ADOPTION.md`, `LOOP.md`, and `.harness/templates/*`), preserves generated
+(`HARNESS.md`, `SETUP.md`, `LOOP.md`, and `.harness/templates/*`), preserves generated
 project files such as `AGENTS.md` and `FEATURES.json`, bumps `.harness/VERSION`, and reports
 likely drift for manual migration. It never commits or pushes.
 

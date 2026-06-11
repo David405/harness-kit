@@ -28,13 +28,13 @@ if [ ! -f "$kit_dir/HARNESS.md" ] || [ ! -d "$kit_dir/templates" ]; then
   exit 1
 fi
 
-copied="HARNESS.md ADOPTION.md LOOP.md templates/*"
+copied="HARNESS.md SETUP.md LOOP.md templates/*"
 agents_status="already present; left untouched"
 features_status="already present; left untouched"
 gitignore_changes=""
 
 cp "$kit_dir/HARNESS.md" "$target/HARNESS.md"
-cp "$kit_dir/ADOPTION.md" "$target/ADOPTION.md"
+cp "$kit_dir/SETUP.md" "$target/SETUP.md"
 cp "$kit_dir/LOOP.md" "$target/LOOP.md"
 
 mkdir -p "$target/.harness/templates"
@@ -95,7 +95,7 @@ FEATURES.json: $features_status
 VERSION: wrote .harness/VERSION with version $KIT_VERSION and date $install_date
 
 Manual next steps:
-1) Generate AGENTS.md from the real codebase (see ADOPTION.md, Brownfield A1)
-2) Seed FEATURES.json from existing features (Brownfield A2)
+1) Follow SETUP.md for your setup path.
+2) Use README.md "Adoption concepts" when generating AGENTS.md from the real codebase.
 3) Review, then commit yourself — this script does not stage/commit/push.
 EOF
