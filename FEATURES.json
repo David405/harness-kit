@@ -95,6 +95,14 @@
       "verify": "update.sh exists, is executable, POSIX sh, refuses non-git or non-installed targets, refreshes only kit-owned files, preserves AGENTS.md and FEATURES.json, writes .harness/VERSION, reports FEATURES.json legend drift without migrating, README documents Update, root FEATURES.json valid",
       "status": "PENDING_REVIEW",
       "notes": "Executor emitted packet; awaiting independent reviewer verdict. Update performs no git stage/commit/push, no network calls, and no auto-migration."
+    },
+    {
+      "id": "KIT-SETUP-001",
+      "name": "Runnable setup flow for greenfield, brownfield, and existing AI docs",
+      "priority": 5,
+      "verify": "SETUP.md exists as a checklist with Greenfield, Brownfield, and Brownfield-with-existing-AI-docs paths; each step has an actor and done condition; README lists SETUP.md; root FEATURES.json valid",
+      "status": "PENDING_REVIEW",
+      "notes": "Executor emitted packet; awaiting independent reviewer verdict. ADOPTION.md remains unchanged as the conceptual reference."
     }
   ]
 }
