@@ -18,6 +18,7 @@ models or coding tools you use.
 |------|---------|
 | `HARNESS.md` | The process. Read once. The 5 principles, 3 roles, and the session loop. |
 | `LOOP.md` | The loop floor above the harness: cadence, state, and automation-readiness seams. |
+| `SETUP.md` | Runnable setup checklist; ADOPTION.md remains the conceptual reference. |
 | `ADOPTION.md` | How to bootstrap the kit — separate paths for **existing** vs **new** projects. |
 | `templates/AGENTS.md` | Canonical project context. The open-standard file every tool reads. |
 | `templates/FEATURES.json` | Progress tracker + test spec in one. The cross-session memory. |
