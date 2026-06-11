@@ -43,7 +43,7 @@ if [ -f "$version_file" ]; then
 fi
 
 cp "$kit_dir/HARNESS.md" "$target/HARNESS.md"
-cp "$kit_dir/ADOPTION.md" "$target/ADOPTION.md"
+cp "$kit_dir/SETUP.md" "$target/SETUP.md"
 cp "$kit_dir/LOOP.md" "$target/LOOP.md"
 cp "$kit_dir"/templates/* "$target/.harness/templates/"
 
@@ -67,7 +67,7 @@ else
     template_count=$(printf '%s\n' "$template_status" | awk -F, '{ print NF }')
     live_count=$(printf '%s\n' "$live_status" | awk -F, '{ print NF }')
     if [ "$template_status" != "$live_status" ]; then
-      drift_report="FEATURES.json drift: template legend status = [$template_status] ($template_count states); live FEATURES.json status = [$live_status] ($live_count states) — manual migration needed, see ADOPTION.md."
+      drift_report="FEATURES.json drift: template legend status = [$template_status] ($template_count states); live FEATURES.json status = [$live_status] ($live_count states) — manual migration needed, see README.md Adoption concepts."
     fi
   fi
 fi
@@ -75,13 +75,13 @@ fi
 cat <<EOF
 Harness Kit update summary
 Target: $target
-Refreshed: HARNESS.md ADOPTION.md LOOP.md .harness/templates/*
+Refreshed: HARNESS.md SETUP.md LOOP.md .harness/templates/*
 Preserved: AGENTS.md FEATURES.json .harness/review/* project content
 VERSION: Updated: $old_version -> $KIT_VERSION on $update_date
 Drift: $drift_report
 
 Manual next steps:
 1) Review refreshed kit docs/templates.
-2) Apply any reported manual migrations; see ADOPTION.md.
+2) Apply any reported manual migrations; see SETUP.md and README.md Adoption concepts.
 3) Review, then commit yourself — this script does not stage/commit/push.
 EOF
