@@ -2,7 +2,7 @@
 
 > Canonical context for any AI agent working in this repo. Read at the start of every session.
 > Open standard: read natively by most coding agents. Keep accurate; keep under ~400 lines.
-> (If your tool prefers a different filename — CLAUDE.md, .cursor/rules — symlink or mirror this.)
+> (If your tool prefers a different filename — CLAUDE.md, `.cursor/rules` — symlink or mirror this.)
 
 ---
 
@@ -43,11 +43,18 @@ src/
 
 ## How we work here
 
+- **Harness process:** read `HARNESS.md` every session. Contract before code. Strict TDD
+  (RED → GREEN → REFACTOR). Templates in `skills/.harness/templates/` (gitignored).
+- **Sprint contracts:** `skills/.harness/contracts/<feature-id>.md` — human-approved before
+  any test or production code.
 - **Default branch:** <e.g. main / master>
-- Tests: <unit = pure only? integration = test containers?>
-- Commits: <convention, e.g. conventional commits>
-- Branching: <convention>
-- <Anything a new engineer would need on day one>
+- **Feature branches:** one branch per sprint/contract; never implement on default branch
+- **Branch naming:** <e.g. `feat/<id>-short-desc>` — agent proposes in contract; **human confirms before checkout**
+- **Test command:** <e.g. `pnpm test` — must pass before merge>
+- **Lint / typecheck:** <e.g. `pnpm lint && pnpm typecheck`>
+- **Commits:** <convention, e.g. conventional commits>
+- **Branching:** feature branch per contract; human confirms branch name before agent checks out
+- **Verify fields:** every `FEATURES.json` entry's `verify` is a runnable test command
 
 ## Current focus
 

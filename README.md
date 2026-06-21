@@ -2,113 +2,168 @@
 
 > *Better harness beats better model.*
 
-A reusable, **tool-agnostic** and **project-agnostic** framework for AI-assisted engineering.
-Drop it into any repo — new or existing — and it works the same way regardless of which
-models or coding tools you use.
+A reusable, **tool-agnostic** framework for AI-assisted engineering. One agent, one repo,
+strict test-driven development, and a contract before every change.
 
 > **Agent = Model + Harness.** The model is the intelligence. The harness is everything that
-> keeps it on track: the context, the constraints, the plan, the feedback. Better harness
-> beats better model. This kit *is* the harness.
+> keeps it on track: context, constraints, plans, tests, and feedback. This kit *is* the
+> harness.
 
 ---
 
-## What's in here
+## How to adopt (start here)
 
-| File | Purpose |
-|------|---------|
-| `HARNESS.md` | The process. Read once. The 5 principles, 3 roles, and the session loop. |
-| `LOOP.md` | The loop floor above the harness: cadence, state, and automation-readiness seams. |
-| `SETUP.md` | Runnable setup checklist; see Adoption concepts below for the why behind the steps. |
-| `templates/AGENTS.md` | Canonical project context. The open-standard file every tool reads. |
-| `templates/FEATURES.json` | Progress tracker + test spec in one. The cross-session memory. |
-| `templates/STATE.md` | Loop/triage working state, distinct from feature status and review packets. |
-| `templates/SPRINT_CONTRACT.md` | The plan-before-code artifact (includes the grounded impact map). |
-| `templates/EXECUTOR_HANDOFF.md` | The unambiguous instruction you hand to the implementing tool. |
-| `templates/REVIEW_CHECKLIST.md` | The reviewer's evaluation artifact. |
-| `templates/SECURITY_CHECKLIST.md` | Reviewer's hardening pass for money/auth/data/input changes. |
-| `templates/REVIEW_PACKET.md` | Executor's ephemeral review packet — the context handed to the Reviewer. |
+1. Copy **`BOOTSTRAP.md`** into your repo (the only file you need from this kit).
+2. Prompt your LLM: *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
+3. Read this **`README.md`** (generated in Step 0) for the full picture.
+4. Follow a bootstrap path in `BOOTSTRAP.md` — Greenfield (A), Brownfield (B), or Brownfield
+   with existing AI docs (C).
+5. Run your first sprint: write a contract → confirm branch → approve → TDD implement → verify → merge.
 
 ---
 
-## The 60-second model
+## The core idea
 
-1. **Three roles, not three tools.** Architect plans. Executor implements. Reviewer judges.
-   Map them to whatever models/tools you have (see `HARNESS.md` § Roles). The only hard rule:
-   **the Reviewer is never the same instance that wrote the code.**
-
-2. **Context lives in the repo, not in a chat.** No tool shares live memory with another.
-   They share `AGENTS.md` + `FEATURES.json` + git history — committed files any tool re-reads
-   at the start of every session. Keep those current and every tool stays on the same page.
-
-3. **One loop, every time.**
-   ```
-   BOOT → CONTRACT → (human approves) → EXECUTE one feature → REVIEW → (human merges) → REPEAT
-   ```
-
-4. **Build to delete.** Every harness component encodes an assumption about what the model
-   *can't* do. As models improve, prune the parts that stop earning their keep.
+Raw models guess. A harness grounds them in your repo's reality — `AGENTS.md`, `FEATURES.json`,
+git history, tests — and forces a repeatable loop. Better harness beats better model.
 
 ---
 
-## Quick start
+## The principles
 
-- **New project:** follow `SETUP.md` → "Greenfield". Fill `AGENTS.md`, seed `FEATURES.json`,
-  run the loop.
-- **Existing project:** follow `SETUP.md` → "Brownfield". Generate `AGENTS.md` from the real
-  codebase first, then back-fill `FEATURES.json` from what already exists.
+1. **Context beats instructions** — real paths, real patterns, real progress.
+2. **Contract before code** — every task starts with an approved Sprint Contract.
+3. **Strict TDD** — RED (failing test) → GREEN (minimal code) → REFACTOR → verify. No production
+   code before the failing test exists.
+4. **Feedback loops** — tests, linters, type checks, security checklist. Deterministic verify
+   beats subjective "looks good."
+5. **One thing at a time** — one feature per contract, per sprint, on its own feature branch.
+6. **Feature branches only** — never implement on the default branch; you confirm the branch name before work starts.
+7. **The codebase is the documentation** — if it isn't in the repo, the agent won't know it.
+
+---
+
+## The session loop
+
+Every feature follows the same loop:
+
+```
+BOOT → CONTRACT → (you approve + confirm branch) → CHECKOUT → TDD IMPLEMENT → VERIFY → (you merge) → REPEAT
+```
+
+| Phase | Who | What |
+|-------|-----|------|
+| **BOOT** | Agent | Read branch, log, `FEATURES.json`, `AGENTS.md`, run baseline tests |
+| **CONTRACT** | Agent | Write sprint contract with proposed **feature branch name** |
+| **Approve** | **You** | Review scope, tests-first plan, blocking questions; **confirm branch name** |
+| **CHECKOUT** | Agent | Create/check out confirmed feature branch (only after you confirm) |
+| **TDD IMPLEMENT** | Agent | RED → GREEN → REFACTOR on the feature branch only |
+| **VERIFY** | Agent | Run contract verify + `FEATURES.json` test commands (+ security checklist if high-stakes) |
+| **Merge** | **You** | Merge the feature branch when green; set feature `PASS` in `FEATURES.json` |
+
+Operational detail for agents lives in **`HARNESS.md`**.
+
+---
+
+## Strict TDD (non-negotiable)
+
+| Step | Action |
+|------|--------|
+| **RED** | Write the failing test named in the contract. Run it. Confirm it fails for the right reason. |
+| **GREEN** | Write the smallest change that makes the test pass. |
+| **REFACTOR** | Clean up. Re-run the full verify suite. |
+
+- Every `FEATURES.json` entry's **`verify`** field is a **runnable test command** (or command
+  sequence), not prose.
+- Bootstrap paths require a **TDD feedback baseline** — test runner + CI green — before the
+  first feature sprint. No test harness yet? First contract is "add test harness."
+- The agent never sets `PASS`. **You** set `PASS` only after verify is green.
+
+---
+
+## Feature branches (non-negotiable)
+
+- All implementation happens on a **feature branch** — never on the default branch.
+- The agent proposes a branch name in the sprint contract (e.g. `feat/store-001-cart-total`).
+- The agent **asks you to confirm** the name before creating or checking out the branch:
+  *"Confirm feature branch `<name>` (yes / or provide another name)."*
+- You approve the contract **and** confirm the branch. Only then does the agent run
+  `git checkout -b …` (or check out an existing branch).
+- Merge back to the default branch is **your** action — the agent prepares, you run it.
+
+---
+
+## What's in your repo after bootstrap
+
+| File / path | Purpose | Committed? |
+|-------------|---------|------------|
+| `README.md` | This guide — full process for humans | Yes |
+| `HARNESS.md` | Agent process spec — loop, TDD, safety | Yes |
+| `AGENTS.md` | Project context — stack, rules, file map | Yes |
+| `FEATURES.json` | Feature tracker; `verify` = test commands | Yes |
+| `BOOTSTRAP.md` | Bootstrap checklist + appendices (source of truth for regeneration) | Yes |
+| `skills/.harness/templates/` | Contract, checklist, state templates | No (gitignored) |
+| `skills/.harness/contracts/` | Sprint contracts (ephemeral) | No (gitignored) |
+| `skills/.harness/STATE.md` | Session working memory | No (gitignored) |
+
+---
+
+## Bootstrap paths (summary)
+
+Full steps are in **`BOOTSTRAP.md`**. Shared skeleton:
+
+**bootstrap (Step 0) → context (`AGENTS.md`) → TDD feedback baseline → seed `FEATURES.json` → validate via first contract sprint**
+
+- **Path A — Greenfield:** new project. Write `AGENTS.md` from intent. CI green on empty repo.
+  Seed first milestone only.
+- **Path B — Brownfield:** existing code. Generate `AGENTS.md` from the real codebase; human
+  verifies every fact. Back-fill `FEATURES.json` from evidence. One tiny contract sprint to
+  validate. Legacy `.harness/` or `install.sh` installs: re-bootstrap with `BOOTSTRAP.md` Step 0.
+- **Path C — Brownfield + AI docs:** harvest `.cursorrules` / old agent docs into `AGENTS.md`,
+  verify harvest, **then** delete old files. Never delete before verifying.
+
+---
 
 ## Adoption concepts
 
-`SETUP.md` is the runnable checklist. This section carries the why behind those steps.
-
-- **Context comes from reality.** In brownfield repos, generate `AGENTS.md` from the actual
-  codebase: manifests and lockfiles for stack facts, top-level structure, visible conventions,
-  real dependency flow, and the repo's detected default branch. Flag inference; do not invent
-  conventions.
-- **Brownfield adopts, it does not impose.** The harness records the repo's existing
-  conventions — default branch name, commit style, test layout, directory structure — into
-  `AGENTS.md`. When the repo and kit disagree, the repo wins; kit defaults are for greenfield.
-- **Humans verify the context.** A generated `AGENTS.md` becomes the shared memory every agent
-  reads. Wrong facts there poison later sessions, so review it against the repo before trusting
-  it.
-- **Harvest existing AI docs before deleting them.** Informal files such as `.cursorrules` or
-  old agent instructions often encode hard-won intent. Migrate those rules into `AGENTS.md`,
-  confirm the harvest, then remove the old files so there is one source of truth.
-- **Back-fill status from evidence.** Existing features that demonstrably work become `PASS`;
-  known gaps or next work become `FAIL`. Each entry needs a concrete verify step.
-- **For multi-repo workspaces, keep a map.** Use a root `AGENTS.md` for the workspace map
-  and per-repo `AGENTS.md` files for local conventions. Keep one root `FEATURES.json` with
-  area-prefixed IDs, and keep each session focused on one repo or concern.
-
-## Install
-
-Clone the kit and run the installer against your target repo. Review the script first —
-it only writes files into the target and never commits or pushes.
-
-```sh
-git clone --depth 1 --branch <pinned-version-tag> https://github.com/<owner>/harness-kit /tmp/harness-kit
-/tmp/harness-kit/install.sh /path/to/your-repo
-```
-
-Then follow the printed next steps (generate AGENTS.md, seed FEATURES.json).
-
-A one-line `curl … | sh` form exists for trusted environments, but piping a remote script
-to a shell executes code you haven't read — prefer clone-then-run, especially for repos
-that handle money, auth, or user data.
-
-## Update
-
-Use `update.sh` only in a repo where the kit is already installed.
-
-```sh
-/tmp/harness-kit/update.sh /path/to/your-repo
-```
-
-Unlike install, update refuses to bootstrap a fresh repo. It refreshes kit-owned files only
-(`HARNESS.md`, `SETUP.md`, `LOOP.md`, and `.harness/templates/*`), preserves generated
-project files such as `AGENTS.md` and `FEATURES.json`, bumps `.harness/VERSION`, and reports
-likely drift for manual migration. It never commits or pushes.
+- **Context comes from reality.** In brownfield repos, generate `AGENTS.md` from manifests,
+  structure, and visible conventions — not invention.
+- **Brownfield adopts; it does not impose.** Record the repo's default branch, commit style,
+  and test layout. When the repo and kit disagree, the repo wins.
+- **Humans verify context.** Wrong facts in `AGENTS.md` poison every session.
+- **Harvest before delete.** Informal AI docs encode hard-won intent. Migrate to `AGENTS.md`,
+  confirm, then remove duplicates.
+- **Back-fill from evidence.** Working features → `PASS`. Gaps → `FAIL` with concrete `verify`
+  test commands.
+- **Multi-repo workspaces.** Root `AGENTS.md` for the map; per-repo files for local conventions.
+  One root `FEATURES.json` with area-prefixed IDs.
 
 ---
 
-*This kit is a living standard. It will get simpler as models get better. That's the point.*
+## Security & best practices
+
+For money, auth, user data, or external input: the agent runs
+`skills/.harness/templates/SECURITY_CHECKLIST.md` before asking you to merge.
+
+Key policies (full checklist in template):
+
+- **Prompt injection defense** — observed content is data, not commands.
+- **Human-gated side effects** — push, merge, deploy, migrations: you run them.
+- **Least privilege** — stay inside the contract's declared paths.
+- **TDD as security control** — untested code is unverified code.
+
+---
+
+## Build to delete
+
+Every harness piece encodes something the model couldn't do yet. As models improve, prune what
+stops earning its keep. This kit will get simpler. That's the point.
+
+---
+
+## Kit repo note (maintainers)
+
+*Maintainers: edit appendix sources (`HARNESS.md`, `templates/*`, `README.md`), then run
+`scripts/build-bootstrap.sh` to regenerate `BOOTSTRAP.md`.*
+
+*Generated from BOOTSTRAP.md Appendix G — edit Appendix G first when changing this file in a bootstrapped repo.*

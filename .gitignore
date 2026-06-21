@@ -13,8 +13,11 @@ Thumbs.db
 .env
 .env.*
 
-# Ephemeral review packets — never committed
+# Ephemeral review packets — never committed (legacy path)
 .harness/
+
+# Harness working directory — contracts, local templates, session state
+skills/.harness/
 
 # Project instances (this repo ships TEMPLATES, not filled-in copies)
 # Uncomment if you keep a live filled AGENTS.md / FEATURES.json elsewhere

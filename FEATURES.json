@@ -1,13 +1,30 @@
 {
   "project": "Harness Kit",
-  "updated": "2026-06-08",
+  "updated": "2026-06-21",
   "legend": {
-    "status": ["FAIL", "PENDING_REVIEW", "PASS"],
-    "note": "FAIL = not done, broken, or rejected. PENDING_REVIEW = built and packet emitted, awaiting reviewer verdict. PASS = reviewed, approved, merged, and verified. The executor may set PENDING_REVIEW but NEVER PASS — PASS is set by the human/reviewer after approval. The maker does not grade its own work.",
+    "status": ["FAIL", "PASS"],
+    "note": "FAIL = not done, broken, or rejected. PASS = human verified after implement — verify commands green. The agent never sets PASS.",
     "priority": "lower number = higher priority; agent picks the highest-priority FAIL",
-    "id_convention": "AREA-NNN, e.g. SEC-001"
+    "id_convention": "AREA-NNN, e.g. SEC-001, KIT-001",
+    "verify": "runnable test command or command sequence — not prose"
   },
   "features": [
+    {
+      "id": "KIT-PROCESS-RECOVERY-001",
+      "name": "Recover process compliance for uncommitted harness kit work on master",
+      "priority": 1,
+      "verify": "git branch --show-current | grep -qv master && test -f BOOTSTRAP.md && grep -q 'Human confirmed' templates/SPRINT_CONTRACT.md",
+      "status": "FAIL",
+      "notes": "Approved 2026-06-21; branch feat/kit-single-llm-001 confirmed; verify PASS — human sets PASS on merge."
+    },
+    {
+      "id": "KIT-SINGLE-LLM-001",
+      "name": "Single-LLM harness: BOOTSTRAP.md, README user guide, strict TDD, delete legacy",
+      "priority": 1,
+      "verify": "test -f BOOTSTRAP.md && test -f HARNESS.md && ! test -f SETUP.md && ! test -f install.sh && ! test -f update.sh && ! test -f LOOP.md && ! test -f templates/EXECUTOR_HANDOFF.md && python3 -m json.tool FEATURES.json >/dev/null && grep -q 'Tests first' templates/SPRINT_CONTRACT.md && grep -q 'RED' HARNESS.md && grep -q 'skills/.harness/' .gitignore",
+      "status": "FAIL",
+      "notes": "Approved 2026-06-21; on feat/kit-single-llm-001; verify PASS — human sets PASS on merge."
+    },
     {
       "id": "SEC-001",
       "name": "Security & production-hardening review pass (checklist + threat-model step)",
@@ -61,8 +78,8 @@
       "name": "One-command kit installer",
       "priority": 5,
       "verify": "install.sh exists, is executable, POSIX sh, copies HARNESS.md, SETUP.md, LOOP.md, and templates, scaffolds AGENTS.md and FEATURES.json only when absent, writes .harness/VERSION, updates target .gitignore idempotently, runs twice against a throwaway git repo without duplicate lines or overwrites, README has Install section, root FEATURES.json valid",
-      "status": "PENDING_REVIEW",
-      "notes": "Executor emitted packet; awaiting independent reviewer verdict. Installer performs no git stage/commit/push and no network calls."
+      "status": "FAIL",
+      "notes": "Superseded by KIT-SINGLE-LLM-001 (BOOTSTRAP.md bootstrap). install.sh deleted."
     },
     {
       "id": "KIT-BROWNFIELD-001",
@@ -85,32 +102,32 @@
       "name": "Three-state feature status model with manual transition owners",
       "priority": 5,
       "verify": "templates/FEATURES.json defines FAIL, PENDING_REVIEW, PASS; HARNESS.md documents manual transition owners and post-merge actions; REVIEW_CHECKLIST documents verdict transitions; root FEATURES.json reconciles merged features and remains valid",
-      "status": "PENDING_REVIEW",
-      "notes": "Executor emitted packet; awaiting independent reviewer verdict. No status-changing automation."
+      "status": "FAIL",
+      "notes": "Superseded by KIT-SINGLE-LLM-001 two-state model (FAIL/PASS only)."
     },
     {
       "id": "KIT-UPDATE-001",
       "name": "Dedicated kit update script with version bump and drift report",
       "priority": 5,
       "verify": "update.sh exists, is executable, POSIX sh, refuses non-git or non-installed targets, refreshes only kit-owned files, preserves AGENTS.md and FEATURES.json, writes .harness/VERSION, reports FEATURES.json legend drift without migrating, README documents Update, root FEATURES.json valid",
-      "status": "PENDING_REVIEW",
-      "notes": "Executor emitted packet; awaiting independent reviewer verdict. Update performs no git stage/commit/push, no network calls, and no auto-migration."
+      "status": "FAIL",
+      "notes": "Superseded by KIT-SINGLE-LLM-001 (BOOTSTRAP.md + maintainer mirrors). update.sh deleted."
     },
     {
       "id": "KIT-SETUP-001",
       "name": "Runnable setup flow for greenfield, brownfield, and existing AI docs",
       "priority": 5,
       "verify": "SETUP.md exists as a checklist with Greenfield, Brownfield, and Brownfield-with-existing-AI-docs paths; each step has an actor and done condition; README lists SETUP.md; root FEATURES.json valid",
-      "status": "PENDING_REVIEW",
-      "notes": "Executor emitted packet; awaiting independent reviewer verdict. README carries the conceptual reference."
+      "status": "FAIL",
+      "notes": "Superseded by KIT-SINGLE-LLM-001 (BOOTSTRAP.md bootstrap paths A/B/C)."
     },
     {
       "id": "KIT-DEPRECATE-ADOPTION-001",
       "name": "Fold adoption concepts into README and delete the legacy adoption doc",
       "priority": 5,
       "verify": "README has a concise Adoption concepts section; the legacy adoption doc is deleted; live references redirect to SETUP.md or README Adoption concepts; post-deletion grep shows only allowed historical audit strings; root FEATURES.json valid",
-      "status": "PENDING_REVIEW",
-      "notes": "Executor emitted packet; awaiting independent reviewer verdict. SETUP.md owns runnable steps; README owns adoption concepts."
+      "status": "FAIL",
+      "notes": "Superseded by KIT-SINGLE-LLM-001; adoption concepts in README; BOOTSTRAP.md replaces SETUP.md."
     }
   ]
 }
