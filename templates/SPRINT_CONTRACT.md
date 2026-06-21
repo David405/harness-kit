@@ -1,6 +1,6 @@
 # SPRINT CONTRACT — <FEATURE / CHANGE>
 
-> Produced by the **Architect**. Approved by the **human** before any code is written.
+> Written by the **agent**. Approved by the **human** before any test or production code.
 > One feature / a handful of files per contract. If it's bigger, split it.
 
 ---
@@ -11,8 +11,7 @@
 
 ## Scope — will NOT do (this sprint)
 
-<Explicit out-of-scope items. Name the tempting adjacent work you're deliberately skipping,
-and where it should go instead (follow-up sprint / different repo).>
+<Explicit out-of-scope items and where deferred work should go instead.>
 
 ## Target
 
@@ -21,10 +20,34 @@ and where it should go instead (follow-up sprint / different repo).>
 
 ---
 
+## Branch (feature branch — mandatory)
+
+> Implementation on the default branch is forbidden. The human must confirm the branch name
+> before the agent creates or checks out the branch.
+
+- **Default branch:** <e.g. main — detected via `git symbolic-ref` or AGENTS.md>
+- **Proposed feature branch:** `<e.g. feat/area-001-short-description>`
+- **Human confirmed:** <pending — agent asks before checkout / yes + date / alternate name supplied>
+
+---
+
+## Tests first (TDD — mandatory)
+
+> No production code until these tests exist and fail for the right reason.
+
+- **Test files to create or extend:**
+  - `<path/to/test.spec.ts>` — <what it asserts>
+- **Expected RED output:** <command to run + what failure looks like>
+- **Verify commands (GREEN):**
+  - `<e.g. pnpm test path/to/test.spec.ts>`
+  - `<e.g. pnpm test && pnpm lint>`
+
+---
+
 ## Impact map
 
-> Mark each path **[GROUNDED]** (verified to exist in the repo) or **[EDUCATED]** (inferred —
-> Executor MUST verify before implementing). Never present educated guesses as grounded.
+> Mark each path **[GROUNDED]** (verified in repo) or **[EDUCATED]** (must re-verify before
+> implementing). Never present educated guesses as grounded.
 
 - **Files to change:**
   - `<path>` — <what changes> — [GROUNDED|EDUCATED]
@@ -39,22 +62,12 @@ and where it should go instead (follow-up sprint / different repo).>
 
 ## Success criteria
 
-<Numbered, each independently checkable. These become the Reviewer's checklist.>
+<Numbered, each independently checkable. Include "all verify commands green.">
 
 1. <...>
 2. <...>
-3. Diff confined to the target repo; `git status` shows only expected files.
-
-## Criteria block (canonical — copied verbatim downstream)
-
-> The architect lists every success criterion here as machine-readable data. The prose
-> section above is for humans; THIS block is the source of truth the handoff and packet copy
-> verbatim. One line per criterion.
-
-```criteria
-- [<id>] <verbatim criterion text>
-- [<id>] <verbatim criterion text>
-```
+3. Diff confined to declared paths; `git status` shows only expected files.
+4. All work on confirmed feature branch `<name>` — not on default branch.
 
 ## Edge cases / failure modes
 
@@ -69,7 +82,7 @@ authentication, user data, or external input.>
 - **Entry points / attack surface:** <new endpoints, inputs, permissions, deps>
 - **Threats considered:** <e.g. injection, authz bypass, replay, data leakage>
 - **Mitigations in this sprint:** <what handles each threat above>
-- **Security review:** Reviewer MUST run templates/SECURITY_CHECKLIST.md.
+- **Security review:** run `skills/.harness/templates/SECURITY_CHECKLIST.md` before merge.
 
 ## Blocking questions (gates)
 
@@ -80,5 +93,11 @@ authentication, user data, or external input.>
 ## FEATURES.json entry
 
 ```json
-{ "id": "<AREA-NNN>", "name": "<...>", "priority": <n>, "verify": "<...>", "status": "FAIL" }
+{
+  "id": "<AREA-NNN>",
+  "name": "<...>",
+  "priority": <n>,
+  "verify": "<runnable test command>",
+  "status": "FAIL"
+}
 ```

@@ -2,25 +2,26 @@
   "project": "<PROJECT NAME>",
   "updated": "<YYYY-MM-DD>",
   "legend": {
-    "status": ["FAIL", "PENDING_REVIEW", "PASS"],
-    "note": "FAIL = not done, broken, or rejected. PENDING_REVIEW = built and packet emitted, awaiting reviewer verdict. PASS = reviewed, approved, merged, and verified. The executor may set PENDING_REVIEW but NEVER PASS — PASS is set by the human/reviewer after approval. The maker does not grade its own work.",
+    "status": ["FAIL", "PASS"],
+    "note": "FAIL = not done, broken, or rejected. PASS = human verified after implement — verify commands green. The agent never sets PASS.",
     "priority": "lower number = higher priority; agent picks the highest-priority FAIL",
-    "id_convention": "AREA-NNN, e.g. STORE-001, BE-003, MKT-001"
+    "id_convention": "AREA-NNN, e.g. STORE-001, BE-003",
+    "verify": "runnable test command or command sequence — not prose"
   },
   "features": [
     {
       "id": "<AREA-001>",
       "name": "<short, specific feature name>",
       "priority": 1,
-      "verify": "<concrete, runnable check — e.g. 'pnpm test foo.spec.ts && invalid transitions rejected'>",
+      "verify": "pnpm test src/foo.spec.ts",
       "status": "FAIL",
-      "notes": "<optional: blockers, links to contract, gotchas>"
+      "notes": "<optional: blockers, link to contract>"
     },
     {
       "id": "<AREA-002>",
       "name": "<...>",
       "priority": 2,
-      "verify": "<...>",
+      "verify": "pnpm test && pnpm lint",
       "status": "PASS",
       "notes": ""
     }

@@ -1,11 +1,22 @@
-# LOOP STATE — <PROJECT>
+# HARNESS STATE — <PROJECT>
 
-> Working memory for an automated/triage loop. Distinct from FEATURES.json (feature status)
-> and from ephemeral review packets. The agent forgets between runs; this file does not.
+> Working memory between agent sessions. Distinct from `FEATURES.json` (feature status).
+> Lives at `skills/.harness/STATE.md` (gitignored). The agent forgets; this file does not.
 
 ## Last run
 
-- <timestamp> — <what the run did / cadence>
+- <timestamp> — <what the session did>
+
+## Current contract
+
+- **Feature ID:** <AREA-NNN or "none">
+- **Path:** `skills/.harness/contracts/<feature-id>.md`
+- **Status:** <draft / awaiting human approval / approved / implementing / verify>
+
+## Current branch
+
+- **Feature branch:** <name or "none — awaiting human confirmation">
+- **Confirmed by human:** <yes + date / pending>
 
 ## Triaged findings
 
@@ -21,4 +32,4 @@
 
 ## Human-attention inbox
 
-- <items the loop could not handle and escalated to a person>
+- <items the agent could not resolve and escalated to a person>
