@@ -14,16 +14,32 @@
       "name": "Recover process compliance for uncommitted harness kit work on master",
       "priority": 1,
       "verify": "git branch --show-current | grep -qv master && test -f BOOTSTRAP.md && grep -q 'Human confirmed' templates/SPRINT_CONTRACT.md",
-      "status": "FAIL",
-      "notes": "Approved 2026-06-21; branch feat/kit-single-llm-001 confirmed; verify PASS — human sets PASS on merge."
+      "status": "PASS",
+      "notes": "Approved 2026-06-21; branch feat/kit-single-llm-001 confirmed; verify green 2026-06-21."
     },
     {
       "id": "KIT-SINGLE-LLM-001",
       "name": "Single-LLM harness: BOOTSTRAP.md, README user guide, strict TDD, delete legacy",
       "priority": 1,
-      "verify": "test -f BOOTSTRAP.md && test -f HARNESS.md && ! test -f SETUP.md && ! test -f install.sh && ! test -f update.sh && ! test -f LOOP.md && ! test -f templates/EXECUTOR_HANDOFF.md && python3 -m json.tool FEATURES.json >/dev/null && grep -q 'Tests first' templates/SPRINT_CONTRACT.md && grep -q 'RED' HARNESS.md && grep -q 'skills/.harness/' .gitignore",
+      "verify": "test -f BOOTSTRAP.md && ! test -f HARNESS.md && ! test -f SETUP.md && ! test -f install.sh && ! test -f update.sh && ! test -f LOOP.md && ! test -f templates/EXECUTOR_HANDOFF.md && python3 -m json.tool FEATURES.json >/dev/null && grep -q 'Tests first' templates/SPRINT_CONTRACT.md && grep -q 'RED' templates/AGENT_PROCESS.md && grep -q 'skills/.harness/' .gitignore",
+      "status": "PASS",
+      "notes": "Approved 2026-06-21; verify updated KIT-V12-CLEANUP-001 — HARNESS.md removed, Agent process in templates/AGENT_PROCESS.md."
+    },
+    {
+      "id": "KIT-V12-001",
+      "name": "Harness v1.2: AGENTS.md entrypoint, slim README, brownfield README recovery, legacy cleanup",
+      "priority": 1,
+      "verify": "grep -q 'Kit version 1.2.0' BOOTSTRAP.md && grep -q 'version=1.2.0' BOOTSTRAP.md && grep -q 'Brownfield README safety' BOOTSTRAP.md && grep -q '## Agent process' templates/AGENTS.md && ! grep -q 'read \\`HARNESS.md\\`' templates/AGENTS.md && test -f templates/AGENT_PROCESS.md && test -f templates/README_POINTER.md && grep -q 'slim pointer' BOOTSTRAP.md && ! grep -q 'Appendix A — HARNESS.md' scripts/build-bootstrap.sh && python3 -m json.tool FEATURES.json >/dev/null && ./scripts/build-bootstrap.sh >/dev/null && grep -q 'Kit version 1.2.0' BOOTSTRAP.md",
       "status": "FAIL",
-      "notes": "Approved 2026-06-21; on feat/kit-single-llm-001; verify PASS — human sets PASS on merge."
+      "notes": "Approved 2026-06-21; branch feat/kit-v12-001 confirmed; verify green — human sets PASS on merge."
+    },
+    {
+      "id": "KIT-V12-CLEANUP-001",
+      "name": "Delete HARNESS.md, slim README, reconcile KIT-SINGLE-LLM-001 verify",
+      "priority": 1,
+      "verify": "! test -f HARNESS.md && grep -q 'Agents →' README.md && ! grep -q 'Operational detail for agents lives in' README.md && grep -q \"grep -q 'RED' templates/AGENT_PROCESS.md\" FEATURES.json && python3 -m json.tool FEATURES.json >/dev/null",
+      "status": "FAIL",
+      "notes": "Approved 2026-06-21; branch feat/kit-v12-001 confirmed; verify green — human sets PASS on merge."
     },
     {
       "id": "SEC-001",
