@@ -1,11 +1,12 @@
-# Harness Kit
+# <PROJECT NAME>
 
-A reusable, **tool-agnostic** framework for AI-assisted engineering — contract-first, strict TDD, single agent entrypoint.
+<One-line description of what this project does.>
 
 | Doc | Audience | Purpose |
 |-----|----------|---------|
 | **`AGENTS.md`** | Agents | Single entrypoint — context, rules, and **Agent process** |
 | **`FEATURES.json`** | Both | Feature progress; every `verify` = runnable command |
 | **`BOOTSTRAP.md`** | Maintainers | Bootstrap checklist + appendix source for regeneration |
+| **`<PROJECT_SETUP>.md`** | Humans | Optional — local dev, env, deploy (name is project-specific) |
 
-**Humans →** read `BOOTSTRAP.md` to adopt the kit into a repo. **Agents →** `AGENTS.md` only (in bootstrapped repos).
+**Humans →** setup doc (if present). **Agents →** `AGENTS.md` only.
