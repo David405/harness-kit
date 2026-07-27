@@ -39,6 +39,7 @@ append() {
 | `AGENTS.md` | Agents | Single entrypoint — context + **`## Agent process`** |
 | `FEATURES.json` | Both | Progress; every `verify` = runnable command |
 | `BOOTSTRAP.md` | Maintainers | Bootstrap + appendix source for regeneration |
+| `skills/.harness/templates/REVIEW.md` | Reviewers | Production-readiness PR review rubric |
 | `skills/.harness/` | Agents | Gitignored working tree — templates, contracts, STATE, VERSION |
 
 Agents read **`AGENTS.md` only** each session (plus `FEATURES.json`, `skills/.harness/STATE.md`, active sprint contract).
@@ -76,7 +77,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 | # | Output | Source | Preserve if exists? |
 |---|--------|--------|---------------------|
-| 1 | `skills/.harness/templates/*` | Appendices B–F | N/A (gitignored) |
+| 1 | `skills/.harness/templates/*` | Appendices B–G | N/A (gitignored) |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
 | 4 | `skills/.harness/VERSION` | — | `version=1.2.0` + `bootstrapped=<YYYY-MM-DD>` |
@@ -188,7 +189,8 @@ HEADER
   append "Appendix D — SPRINT_CONTRACT.md template" templates/SPRINT_CONTRACT.md
   append "Appendix E — SECURITY_CHECKLIST.md template" templates/SECURITY_CHECKLIST.md
   append "Appendix F — STATE.md template" templates/STATE.md
-  append "Appendix G — README.md template (slim pointer)" templates/README_POINTER.md
+  append "Appendix G — REVIEW.md template" templates/REVIEW.md
+  append "Appendix H — README.md template (slim pointer)" templates/README_POINTER.md
 
   cat <<'FOOTER'
 

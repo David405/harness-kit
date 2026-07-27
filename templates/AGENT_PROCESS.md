@@ -115,10 +115,11 @@ field. For high-stakes changes (money, auth, user data, external input), run
 
 If verify fails: stay `FAIL`, fix or revise the contract.
 
-#### 7. HUMAN MERGES → update `FEATURES.json` → REPEAT
+#### 7. HUMAN REVIEWS + MERGES → update `FEATURES.json` → REPEAT
 
-Human sets the feature to `PASS` only after verify is green in their environment. Commit.
-Pick the next highest-priority `FAIL`.
+Human or reviewer runs `skills/.harness/templates/REVIEW.md` against production-bound PRs.
+Human sets the feature to `PASS` only after verify is green in their environment and the PR
+review has no blocking findings. Commit. Pick the next highest-priority `FAIL`.
 
 ### Security & best practices
 
