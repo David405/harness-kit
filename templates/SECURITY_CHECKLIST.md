@@ -61,6 +61,21 @@
 - [ ] Contract verify commands pass against a prod-like configuration
 - [ ] Contract discipline: scope matched approved sprint contract
 
+## Solidity build & audit (required for `solidity-build` / `solidity-audit`; else N/A)
+
+Mark each **Pass / N/A**. Skip this whole section for non-Solidity work.
+
+- [ ] **Reentrancy / untrusted external calls** — state effects ordered safely; callbacks considered
+- [ ] **Access control** — `onlyOwner` / roles / modifiers correct; no missing auth on value moves
+- [ ] **Upgrade / proxy / pause** — storage layout, initializer, pause paths reviewed if present
+- [ ] **Value flow** — accounting, fees, refunds, rounding; no stuck or skimable funds under normal ops
+- [ ] **Signatures / permits / EIP-712** — domain, nonce, deadline, malleability, replay across chains
+- [ ] **Oracle / external price / cross-chain message trust** — manipulation and freshness considered
+- [ ] **DoS** — unbounded loops, gas griefing, blocking settle/fill paths
+- [ ] **Token quirks** — fee-on-transfer, rebasing, weird ERC-20 return values if relevant
+- [ ] **Testing** — forge (or declared) tests / fuzz / invariant / fork as scoped; audits: High/Critical PoCs
+- [ ] **Findings hygiene (audit)** — IDs assigned; severity matches rubric; out-of-scope held
+
 ## Verdict
 
 - **Status:** READY FOR MERGE / FIX REQUIRED
