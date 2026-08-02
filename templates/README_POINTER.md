@@ -4,9 +4,12 @@
 
 | Doc | Audience | Purpose |
 |-----|----------|---------|
-| **`AGENTS.md`** | Agents | Single entrypoint — context, rules, and **Agent process** |
-| **`FEATURES.json`** | Both | Feature progress; every `verify` = runnable command |
+| **`AGENTS.md`** | Agents | Single entrypoint — context, rules, and **Agent process** (v1.3 multi-language spine) |
+| **`FEATURES.json`** | Both | Progress: `FAIL` → `PENDING_REVIEW` → `PASS`; every `verify` = runnable command |
 | **`BOOTSTRAP.md`** | Maintainers | Bootstrap checklist + appendix source for regeneration |
 | **`<PROJECT_SETUP>.md`** | Humans | Optional — local dev, env, deploy (name is project-specific) |
+
+**Work-type profiles:** `service` · `http-api` · `solidity-build` · `solidity-audit` · `ops-docs`  
+**Audit:** `skills/.harness/templates/AUDIT_CONTRACT.md` + `AUDIT_FINDING.md`
 
 **Humans →** setup doc (if present). **Agents →** `AGENTS.md` only.

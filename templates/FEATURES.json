@@ -2,26 +2,26 @@
   "project": "<PROJECT NAME>",
   "updated": "<YYYY-MM-DD>",
   "legend": {
-    "status": ["FAIL", "PASS"],
-    "note": "FAIL = not done, broken, or rejected. PASS = human verified after implement — verify commands green. The agent never sets PASS.",
+    "status": ["FAIL", "PENDING_REVIEW", "PASS"],
+    "note": "FAIL = not done, broken, or rejected. PENDING_REVIEW = built; VERIFY green; awaiting human/reviewer. PASS = human/reviewer only after review. The agent may set PENDING_REVIEW; the agent never sets PASS.",
     "priority": "lower number = higher priority; agent picks the highest-priority FAIL",
-    "id_convention": "AREA-NNN, e.g. STORE-001, BE-003",
-    "verify": "runnable test command or command sequence — not prose"
+    "id_convention": "AREA-NNN, e.g. STORE-001, BE-003, AUDIT-001",
+    "verify": "runnable test command or command sequence — not prose; use commands from AGENTS.md for this repo's stack"
   },
   "features": [
     {
       "id": "<AREA-001>",
       "name": "<short, specific feature name>",
       "priority": 1,
-      "verify": "pnpm test src/foo.spec.ts",
+      "verify": "<repo test command from AGENTS.md>",
       "status": "FAIL",
-      "notes": "<optional: blockers, link to contract>"
+      "notes": "<optional: blockers, link to contract, work-type profile>"
     },
     {
       "id": "<AREA-002>",
       "name": "<...>",
       "priority": 2,
-      "verify": "pnpm test && pnpm lint",
+      "verify": "<repo lint/test command>",
       "status": "PASS",
       "notes": ""
     }

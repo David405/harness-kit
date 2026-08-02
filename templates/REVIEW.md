@@ -1,11 +1,55 @@
 # Harness PR Review
 
-> Run this review before merging a pull request into production.
-> The goal is not to find trivial style issues. The goal is to decide whether this change should ship.
+> Run this review before merging a pull request into production, and when grading
+> work at `PENDING_REVIEW`. The goal is not to find trivial style issues. The goal
+> is to decide whether this change should ship.
+>
+> Dual purpose: (1) production merge gate for the PR diff; (2) **contract compliance**
+> against the approved sprint or audit contract.
 
 You are a Senior Staff Engineer reviewing this pull request as if you own the entire system after it merges.
 
 Focus on correctness over style. Challenge assumptions. Review the change like the engineer who will be paged if it fails.
+
+---
+
+## 0. Sprint contract compliance (mandatory when a contract exists)
+
+Before deep code review, locate and read the relevant contract:
+
+1. **Identify contract** — from PR description, branch name, commit messages, or `FEATURES.json`
+   (`PENDING_REVIEW` entry). Default path: `skills/.harness/contracts/<ID>.md` (or `.harness/contracts/`
+   if `AGENTS.md` says so). Use `AUDIT_CONTRACT` for `solidity-audit`.
+2. **Work-type profile** — note which profile was declared; apply only the gates that apply.
+3. **Scope WILL** — list each promised item; mark **Met / Partial / Missing** with evidence from the diff.
+4. **Scope will NOT** — confirm no out-of-scope work shipped; flag scope creep as a finding.
+5. **File impact map** — compare contract table to actual changed files. Unexpected files or missing
+   promised changes → finding.
+6. **Success criteria** — walk each falsifiable criterion; mark **Pass / Fail / Untested**. Quote the
+   observable (command output, status + body, revert, log field, finding ID, etc.).
+7. **Quality gates** — trust-boundary, partial/optional, http-api schema/envelope, solidity-build,
+   solidity-audit PoCs. Mark each **Pass / Fail / N/A**.
+8. **VERIFY commands** — run or confirm the contract's verify block passed; note any skipped or failing commands.
+
+If no contract exists (hotfix, drive-by), state that explicitly and review on production-readiness only.
+Retroactive contract may be required before PASS.
+
+Contract drift (Partial/Missing scope, Failed criteria, scope creep) → **Request changes** unless
+explicitly re-contracted and approved.
+
+### Profile-aware emphasis (after §0)
+
+| Profile | Emphasize |
+|---------|-----------|
+| `service` | Correctness, reliability, ops readiness |
+| `http-api` | Backwards compat, validation, error envelope regression |
+| `solidity-build` | Authz, upgrade/pause, economic / value-flow safety |
+| `solidity-audit` | Severity calibration, false-positive risk, missing bug classes, PoC quality |
+| `ops-docs` | No silent behaviour change; observability fields stable |
+
+Architecture packs (e.g. hexagonal) are graded only when `AGENTS.md` / the contract opts in.
+
+---
 
 ## 1. Understand the intent
 
@@ -34,7 +78,8 @@ Do not merely explain the code. Prove whether it is correct.
 
 ## 3. Architectural review
 
-Evaluate whether the implementation fits the existing architecture.
+Evaluate whether the implementation fits the **repo's declared** architecture (see `AGENTS.md`).
+Do not require hexagonal or any other pack unless the repo opted in.
 
 Look for:
 
@@ -44,13 +89,13 @@ Look for:
 - leaky abstractions
 - unnecessary complexity
 - missing boundaries
-- dependency inversion problems
+- dependency direction problems
 
 Suggest architectural improvements where appropriate.
 
 ## 4. Reliability
 
-Consider production behavior under real traffic.
+Consider production behavior under real traffic (or real chain conditions for contracts).
 
 Check for:
 
@@ -71,11 +116,12 @@ Evaluate:
 - unnecessary allocations
 - database queries
 - N+1 problems
-- repeated RPC calls
+- repeated RPC / eth_call patterns
 - locking
 - serialization costs
 - batching opportunities
 - caching opportunities
+- gas / storage growth (Solidity)
 
 Mention expected complexity where relevant.
 
@@ -97,7 +143,7 @@ If APIs changed, review:
 
 - backwards compatibility
 - validation
-- error handling
+- error handling / envelope shape
 - versioning
 - response consistency
 - naming
@@ -115,6 +161,7 @@ Look for:
 - unsafe parsing
 - replay attacks
 - privilege escalation
+- (Solidity) reentrancy, oracle manipulation, upgrade flaws, signature pitfalls
 
 ## 9. Testing
 
@@ -123,10 +170,11 @@ Evaluate whether tests prove correctness.
 Identify:
 
 - missing unit tests
-- missing integration tests
+- missing integration / fork / fuzz / invariant tests
 - missing regression tests
 - flaky tests
 - insufficient edge-case coverage
+- (audit) missing or weak PoCs for High/Critical
 
 ## 10. Operational readiness
 
@@ -193,7 +241,7 @@ For every issue include:
 Highlight good engineering decisions, including:
 
 - clean abstractions
-- good tests
+- good tests / PoCs
 - thoughtful architecture
 - performance improvements
 - elegant simplifications
@@ -202,6 +250,10 @@ Highlight good engineering decisions, including:
 
 ```md
 # PR Review
+
+## Contract compliance (§0)
+
+<Met / Partial / Missing summary; VERIFY result; profile.>
 
 ## Intent
 

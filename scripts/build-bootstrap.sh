@@ -15,17 +15,28 @@ append() {
   cat <<'HEADER'
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **Kit version 1.2.0** — generic, tool-agnostic AI-assisted engineering process.
-> Copy this file into **any** repo. Prompt your LLM:
+> **Kit version 1.3.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v1.2 changelog
+## v1.3 changelog
+
+- **`PENDING_REVIEW` status** — three-state FEATURES legend; executor sets `PENDING_REVIEW`; human sets `PASS`.
+- **Work-type profiles** — `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs`.
+- **Language-neutral VERIFY** — runners come from consumer `AGENTS.md` (bun/cargo/go/forge/…).
+- **Contract quality gates** — falsifiable AC; trust-boundary / HTTP / Solidity gates with **N/A** paths.
+- **REVIEW §0** — sprint/audit contract compliance before production rubric.
+- **Solidity audit templates** — `AUDIT_CONTRACT.md`, `AUDIT_FINDING.md`; security checklist Solidity section.
+- **Optional skill packs** — must not replace FEATURES/contracts/VERIFY; hexagonal/TDD routers are opt-in.
+- **Depth matrix** — trivial / medium / large / audit; optional Research without a second approved `plan.md`.
+
+## v1.2 changelog (retained)
 
 - **`HARNESS.md` merged into `AGENTS.md`** — `## Agent process` is the single agent entrypoint; never generate `HARNESS.md`.
 - **`README.md` slimmed to pointer** (~15 lines) — humans read optional `<PROJECT_SETUP>.md` for app setup.
 - **Step 0 legacy cleanup** — delete kit cruft (`ADOPTION.md`, `LOOP.md`, `SETUP.md`, root `.harness/`, etc.).
 - **Brownfield README recovery** — preserve real project README content in a setup doc before overwriting.
-- **`skills/.harness/`** replaces root `.harness/` — templates, contracts, STATE, VERSION (gitignored).
+- **`skills/.harness/`** replaces root `.harness/` — templates, contracts, STATE, VERSION (gitignored). Existing repos may keep `.harness/contracts/` if `AGENTS.md` says so.
 - **Path C harvest + consolidation** — merge duplicate MDs into `AGENTS.md`; drop stale facts; delete only after human verify.
 
 ---
@@ -34,28 +45,30 @@ append() {
 
 | File | Audience | Role |
 |------|----------|------|
-| `README.md` | Humans | **Short pointer** (~15 lines) — what to read, not the process essay |
+| `README.md` | Humans | **Short pointer** — what to read, not the process essay |
 | `<PROJECT_SETUP>.md` | Humans | Optional app setup (local dev, deploy, env) — project-specific name |
 | `AGENTS.md` | Agents | Single entrypoint — context + **`## Agent process`** |
-| `FEATURES.json` | Both | Progress; every `verify` = runnable command |
+| `FEATURES.json` | Both | Progress: FAIL → PENDING_REVIEW → PASS; every `verify` = runnable command |
 | `BOOTSTRAP.md` | Maintainers | Bootstrap + appendix source for regeneration |
-| `skills/.harness/templates/REVIEW.md` | Reviewers | Production-readiness PR review rubric |
+| `skills/.harness/templates/REVIEW.md` | Reviewers | §0 contract compliance + production rubric |
+| `skills/.harness/templates/AUDIT_CONTRACT.md` | Auditors | Solidity audit slice contract |
 | `skills/.harness/` | Agents | Gitignored working tree — templates, contracts, STATE, VERSION |
 
-Agents read **`AGENTS.md` only** each session (plus `FEATURES.json`, `skills/.harness/STATE.md`, active sprint contract).
+Agents read **`AGENTS.md` only** each session (plus `FEATURES.json`, `skills/.harness/STATE.md`, active sprint or audit contract).
 
 ---
 
 ## How this works
 
-One agent, one repo. **Contract before code.** **Strict TDD** (RED → GREEN → REFACTOR). Working
-files under `skills/.harness/` are gitignored; committed context lives in `AGENTS.md`,
-`FEATURES.json`, and this file. Every task starts with a human-approved Sprint Contract — no test
-or production code before approval.
+One agent, one repo. **Contract before code.** **TDD when behaviour changes** (RED → GREEN → REFACTOR)
+using **this repo's** test runner. Solidity audits use PoC-first VERIFY for High/Critical findings.
+Working files under `skills/.harness/` are gitignored; committed context lives in `AGENTS.md`,
+`FEATURES.json`, and this file. Every non-trivial task starts with a human-approved Sprint or Audit
+Contract — no test or production code before approval.
 
-**Never generate or keep:** `HARNESS.md`, `ADOPTION.md`, `LOOP.md`, `SETUP.md`, root `.harness/`,
-duplicate context MDs that repeat `AGENTS.md` / `FEATURES.json`, or committed tool pointer files
-(optional: gitignore `CLAUDE.md` instead).
+**Never generate or keep:** `HARNESS.md`, `ADOPTION.md`, `LOOP.md`, `SETUP.md`, root committed
+`.harness/` mirrors of kit templates, duplicate context MDs that repeat `AGENTS.md` / `FEATURES.json`,
+or committed tool pointer files (optional: gitignore `CLAUDE.md` instead).
 
 ---
 
@@ -77,10 +90,10 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 | # | Output | Source | Preserve if exists? |
 |---|--------|--------|---------------------|
-| 1 | `skills/.harness/templates/*` | Appendices B–G | N/A (gitignored) |
+| 1 | `skills/.harness/templates/*` | Appendices B–J | N/A (gitignored) |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=1.2.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=1.3.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -91,18 +104,19 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 - `HARNESS.md` (superseded by `AGENTS.md` § Agent process)
 - `ADOPTION.md`, `LOOP.md`, `SETUP.md` (distribution cruft)
-- Root `.harness/` (migrate useful content to `skills/.harness/`, then delete)
+- Root `.harness/` **kit template mirrors** (migrate useful content to `skills/.harness/`, then delete). Do not delete a live `.harness/contracts/` tree if `AGENTS.md` still points there — migrate or document.
 - `install.sh`, `update.sh` (v1.0 installers)
 - Duplicate context MDs: integration matrices, stale planning docs, workspace briefs, audit docs
   against deleted rule files — **only after** content is merged into `AGENTS.md` and human-verified
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `1.2.0`
+- `skills/.harness/` tree exists with VERSION `1.3.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
-- `AGENTS.md` contains `## Agent process`
+- `AGENTS.md` contains `## Agent process` and work-type profiles
+- Templates include `AUDIT_CONTRACT.md` and `REVIEW.md` §0
 - Humans have a clear setup doc if this is an application repo
 - `README.md` is a pointer, not a duplicate of `AGENTS.md`
 
@@ -114,20 +128,19 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 Every bootstrap path follows:
 
-**Step 0 → context (`AGENTS.md`) → TDD feedback baseline → seed `FEATURES.json` → validate via first contract sprint**
+**Step 0 → context (`AGENTS.md`) → feedback baseline (stack test commands) → seed `FEATURES.json` → validate via first contract sprint**
 
 ---
 
 ## Bootstrap path A — Greenfield (new project)
 
 1. **[agent]** Complete Step 0. — *done when: harness tree present; no `HARNESS.md`.*
-2. **[agent+human]** Write `AGENTS.md` from intent — stack, dependency flow, invariants. Only
-   decisions actually made. Include full **Agent process** from Appendix B. — *done when: human reviewed.*
-3. **[human]** **TDD feedback baseline** BEFORE any feature: lint, format, typecheck, test runner,
-   CI green on empty repo. — *done when: test command runs and CI is green.*
+2. **[agent+human]** Write `AGENTS.md` from intent — stack, dependency flow, invariants, primary verify commands. Only decisions actually made. Include full **Agent process** from Appendix A/B. — *done when: human reviewed.*
+3. **[human]** **Feedback baseline** BEFORE any feature: lint, format, typecheck, test runner,
+   CI green on empty repo (use this stack's tools). — *done when: test command runs and CI is green.*
 4. **[agent]** Seed `FEATURES.json` with **first milestone only** (few features, `FAIL`,
    prioritized). Each `verify` = runnable test command. — *done when: valid JSON.*
-5. **[agent+human]** First contract sprint on smallest feature — contract → approve → TDD → verify.
+5. **[agent+human]** First contract sprint on smallest feature — contract → approve → TDD → verify → PENDING_REVIEW → PASS.
    — *done when: one feature merged and human set `PASS`.*
 
 ## Bootstrap path B — Brownfield (existing code, no AI docs)
@@ -138,7 +151,7 @@ Every bootstrap path follows:
    conventions; do not impose kit defaults. — *done when: recorded in `AGENTS.md` "How we work here".*
 3. **[agent+human]** Generate `AGENTS.md` from the **real** codebase; human verifies every fact.
    Merge API/integration notes inline — no separate integration doc. — *done when: facts confirmed.*
-4. **[human]** **TDD feedback baseline:** confirm test/lint/build commands run; record in
+4. **[human]** **Feedback baseline:** confirm test/lint/build commands run; record in
    `AGENTS.md` "How we work here". — *done when: commands verified.*
 5. **[agent+human]** Seed `FEATURES.json`: working → `PASS`, gaps → `FAIL` with test verify
    commands. — *done when: valid JSON.*
@@ -146,7 +159,8 @@ Every bootstrap path follows:
    — *done when: sprint completes cleanly.*
 
 > **Legacy v1.0 installs:** repos with root `.harness/` or `install.sh` should re-run Step 0,
-> migrate context into `skills/.harness/`, delete root `.harness/`, remove obsolete `.gitignore` entries.
+> migrate context into `skills/.harness/` (or document `.harness/contracts/`), delete obsolete
+> installers, remove obsolete `.gitignore` entries carefully.
 
 ## Bootstrap path C — Brownfield WITH existing informal AI docs
 
@@ -162,7 +176,7 @@ Every bootstrap path follows:
    — *done when: human signs off.*
 6. **[human]** **Then delete** verified duplicates and legacy kit files (Step 0 row 9).
    **Never delete before verify.** — *done when: `AGENTS.md` is sole agent context.*
-7. **[human+agent]** TDD feedback baseline + seed `FEATURES.json` (Path B steps 4–5).
+7. **[human+agent]** Feedback baseline + seed `FEATURES.json` (Path B steps 4–5).
    — *done when: valid JSON, commands verified.*
 8. **[agent+human]** First contract sprint on highest-priority `FAIL`.
    — *done when: sprint completes cleanly.*
@@ -178,7 +192,7 @@ When the workspace contains multiple git repos:
 - **One session = one repo / one concern** — do not mix contracts across repos.
 - **No per-repo `HARNESS.md`, `SETUP.md`, or duplicate integration docs** — integration notes live
   inline in each repo's `AGENTS.md` or the root map.
-- **Full contract-first TDD** on the primary application repo; thin frontends may use the
+- **Full contract-first process** on the primary application / contracts repo; thin frontends may use the
   **condensed Agent process** variant (see Appendix B).
 
 HEADER
@@ -191,6 +205,8 @@ HEADER
   append "Appendix F — STATE.md template" templates/STATE.md
   append "Appendix G — REVIEW.md template" templates/REVIEW.md
   append "Appendix H — README.md template (slim pointer)" templates/README_POINTER.md
+  append "Appendix I — AUDIT_CONTRACT.md template" templates/AUDIT_CONTRACT.md
+  append "Appendix J — AUDIT_FINDING.md template" templates/AUDIT_FINDING.md
 
   cat <<'FOOTER'
 

@@ -9,9 +9,10 @@
 
 ## Current contract
 
-- **Feature ID:** <AREA-NNN or "none">
+- **Feature ID:** <AREA-NNN or AUDIT-NNN or "none">
 - **Path:** `skills/.harness/contracts/<feature-id>.md`
-- **Status:** <draft / awaiting human approval / approved / implementing / verify>
+- **Profile:** <service | http-api | solidity-build | solidity-audit | ops-docs | none>
+- **Status:** <draft / awaiting human approval / approved / implementing / verify / PENDING_REVIEW>
 
 ## Current branch
 

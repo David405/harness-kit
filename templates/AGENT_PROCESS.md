@@ -2,11 +2,14 @@
 
 > **Agent process (merged into AGENTS.md)** — never generate a separate `HARNESS.md`.
 > Agents read **`AGENTS.md` only** each session (plus `FEATURES.json`, `skills/.harness/STATE.md`,
-> and the active sprint contract).
+> and the active sprint or audit contract).
+>
+> **Universal spine:** the same loop works for TypeScript, Rust, Go, Solidity build, and Solidity
+> auditing. Stack runners and architecture patterns live in this repo's `AGENTS.md`, not in the kit.
 
 **Condensed variant:** for repos without a full contract tree (e.g. thin frontend in a multi-repo
-workspace), see Appendix B — use BOOT → scope → implement → verify → human PASS only when the
-root workspace `AGENTS.md` explicitly allows it. Primary app repos always use the full loop below.
+workspace), use BOOT → scope → implement → verify → human PASS only when the root workspace
+`AGENTS.md` explicitly allows it. Primary app / contracts / audit repos always use the full loop.
 
 ### The core idea
 
@@ -20,18 +23,22 @@ correct code.
 1. **Context beats instructions.** Show the model the *real* state of the world — actual file
    paths, existing patterns, current progress — not abstract instructions.
 
-2. **Contract before code.** Every task starts with a Sprint Contract at
-   `skills/.harness/contracts/<feature-id>.md`. The human approves it before any test or
-   production code is written. No exceptions.
+2. **Contract before code.** Every non-trivial task starts with a Sprint Contract at
+   `skills/.harness/contracts/<feature-id>.md` (or `AUDIT_CONTRACT` for solidity-audit).
+   Repos that already use `.harness/contracts/` may keep that path if `AGENTS.md` says so.
+   The human approves before any test or production code. No exceptions.
 
-3. **Strict test-driven development.** RED → write/run a failing test → GREEN → minimal code to
-   pass → REFACTOR → re-run verify. No production code for a feature before its failing test
-   exists. Each `FEATURES.json` `verify` field is a runnable test command.
+3. **Strict test-driven development when behaviour changes.** RED → write/run a failing test →
+   GREEN → minimal code → REFACTOR → re-run verify. No production code for a behaviour change
+   before its failing test exists. Each `FEATURES.json` `verify` field is a **runnable command
+   from this repo** (e.g. `bun test`, `cargo test`, `go test`, `forge test`) — not a kit-imposed
+   runner. Solidity audits use PoC-first VERIFY instead of product TDD when writing findings.
 
 4. **Feedback loops are non-negotiable.** Tests, linters, type checks, and the security
    checklist are deterministic sensors. Layer them; never ship on vibes alone.
 
-5. **One thing at a time.** One feature → feature branch → contract → TDD implement → verify → commit → repeat.
+5. **One thing at a time.** One feature (or audit slice) → feature branch → contract → execute →
+   verify → review → repeat.
 
 6. **Feature branches only.** Never implement on the default branch. Propose a branch name in the
    contract; the human confirms before the agent creates or checks out the branch.
@@ -39,10 +46,48 @@ correct code.
 7. **The codebase IS the documentation.** If a convention isn't in the repo, the agent won't
    know it. Keep `AGENTS.md` and `FEATURES.json` current.
 
+### Work-type profiles (pick one per contract)
+
+| Profile | Use when |
+|---------|----------|
+| `service` | App/domain logic in TS, Go, Rust, or similar |
+| `http-api` | HTTP request/response surfaces |
+| `solidity-build` | Smart contract implementation / fix |
+| `solidity-audit` | Contract security review (findings + PoCs) |
+| `ops-docs` | Observability, deploy docs, process-only changes |
+
+Profile drives which quality gates are in force vs **N/A**. HTTP/OpenAPI gates apply only to
+`http-api`. Solidity sections apply to `solidity-build` / `solidity-audit`. Architecture skills
+(e.g. hexagonal) apply only when this repo's `AGENTS.md` declares them — they are optional packs,
+not kit law.
+
+### Depth matrix
+
+| Depth | Research | Contract | Fresh agent between phases |
+|-------|----------|----------|----------------------------|
+| Trivial (typo, one-liner) | Skip | Condensed or hotfix + retro contract | No |
+| Medium (clear AC, known pattern) | Skip | Full sprint contract | Review optional |
+| Large (new domain, unclear design) | Optional distill of ticket/ERD → open questions | Full + Decisions + grill gaps | Yes Plan→Exec→Review |
+| Audit | Scope/assets/priors research | `AUDIT_CONTRACT` | Yes Exec→Review |
+
+Optional Research does **not** create a second approved artifact. Locked decisions live in the
+sprint or audit contract. Do not dual-run a parallel `plan.md` unless `AGENTS.md` requires it
+and points FEATURES at the same ID.
+
+### FEATURES.json status owners
+
+| Status | Meaning | Who sets |
+|--------|---------|----------|
+| `FAIL` | Not done, broken, or changes requested | Human or agent when starting / rejecting |
+| `PENDING_REVIEW` | Built; contract VERIFY green; awaiting review | **Executor** after VERIFY |
+| `PASS` | Accepted after review / merge | **Human or independent reviewer only** |
+
+The agent never sets `PASS`.
+
 ### The session loop
 
 ```
-BOOT → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECKOUT → TDD IMPLEMENT → VERIFY → [HUMAN MERGES] → REPEAT
+BOOT → RESEARCH? → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECKOUT → EXECUTE → VERIFY → REVIEW → PENDING_REVIEW → [HUMAN PASS/MERGE] → REPEAT
 ```
 
 #### 1. BOOT (same every session)
@@ -51,27 +96,34 @@ BOOT → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECKOUT → TDD IM
    must move to a feature branch after contract approval)
 2. Read `git log` (last ~10 commits), `FEATURES.json`, and `skills/.harness/STATE.md`
 3. Identify highest-priority feature with status `FAIL`
-4. Confirm build / dev server runs; run existing test suite (baseline green)
+4. Confirm build / declared test commands from `AGENTS.md` run (baseline green when practical)
 5. Re-read `AGENTS.md` (including this **Agent process** section)
 
 Wire steps 1–5 into a pinned prompt or rule so no session starts blind.
 
-#### 2. CONTRACT
+#### 2. RESEARCH? (optional)
+
+For large or audit work: distill ticket/ERD/scope into open questions and recommendations.
+Do not lock product decisions here. Do not write production code.
+
+#### 3. CONTRACT
 
 Before any test or production code: produce a **Sprint Contract** using
-`skills/.harness/templates/SPRINT_CONTRACT.md`. Save to
-`skills/.harness/contracts/<feature-id>.md`.
+`skills/.harness/templates/SPRINT_CONTRACT.md` (or **Audit Contract** using
+`AUDIT_CONTRACT.md` for `solidity-audit`). Save under the contracts path declared in
+`AGENTS.md` (default `skills/.harness/contracts/<feature-id>.md`).
 
-The contract states scope (in and out), **Branch** (proposed feature branch name),
-**Tests first** (failing tests to write), grounded impact map, success criteria, and edge
-cases. Iterate until correct. Target one feature / a handful of files per contract.
+The contract states: **work-type profile**, scope (in and out), **Branch**, Decisions,
+Tests first / PoC-first, grounded impact map, falsifiable success criteria, quality gates
+(N/A where not applicable), and blocking questions. Iterate until correct. Target one feature
+/ a handful of files (or one audit slice) per contract.
 
 > **Grounded vs educated:** mark paths `[GROUNDED]` only if verified in the repo. `[EDUCATED]`
 > guesses must be re-verified before implementing.
 
 Update `skills/.harness/STATE.md` → **Current contract** with the feature ID and path.
 
-#### 3. HUMAN APPROVES (+ confirms branch)
+#### 4. HUMAN APPROVES (+ confirms branch)
 
 The human reviews the contract, answers blocking questions, adjusts scope, and **confirms the
 feature branch name** (or supplies a different one). Implementation does not begin until
@@ -80,7 +132,7 @@ approved **and** the branch name is confirmed.
 **Ask explicitly:** *"Confirm feature branch `<proposed-name>` (yes / or provide another name)."*
 Do not create or check out a branch until the human replies.
 
-#### 4. CHECKOUT (feature branch)
+#### 5. CHECKOUT (feature branch)
 
 After branch confirmation:
 
@@ -92,40 +144,40 @@ After branch confirmation:
 Never implement on the default branch. If already on the wrong branch, stop and confirm with
 the human before switching.
 
-#### 5. TDD IMPLEMENT
+#### 6. EXECUTE
 
-Follow the contract's **Tests first** section strictly:
+Follow the contract:
 
-1. **RED** — write the failing test(s); run verify; confirm failure is for the right reason
-2. **GREEN** — minimal production code to pass the test(s)
-3. **REFACTOR** — clean up; re-run full verify; no scope creep beyond the contract
+1. **Behaviour changes:** RED → GREEN → REFACTOR using this repo's test runner from `AGENTS.md`
+2. **Solidity audit findings:** hypothesis → reproducible PoC command → finding write-up
+3. No scope creep beyond the contract. Stop and ask if a new design decision appears.
 
 Prompt discipline:
 - One task per prompt. No chaining unrelated work.
 - Reference `path:Lstart-Lend`, not whole files.
-- Fresh session after ~10–15 turns on large changes.
+- Prefer a fresh session after long Plan or Execute phases when context degrades.
 
-The agent never sets a feature to `PASS`. Only the human sets `PASS` after verify is green.
-
-#### 6. VERIFY
+#### 7. VERIFY
 
 Run every command in the contract's verify section and the feature's `FEATURES.json` `verify`
-field. For high-stakes changes (money, auth, user data, external input), run
-`skills/.harness/templates/SECURITY_CHECKLIST.md` against the diff before asking to merge.
+field. For high-stakes changes (money, auth, user data, external input, Solidity value flow),
+run `skills/.harness/templates/SECURITY_CHECKLIST.md` against the diff before asking to merge.
 
 If verify fails: stay `FAIL`, fix or revise the contract.
 
-#### 7. HUMAN REVIEWS + MERGES → update `FEATURES.json` → REPEAT
+#### 8. REVIEW → PENDING_REVIEW → HUMAN PASS
 
-Human or reviewer runs `skills/.harness/templates/REVIEW.md` against production-bound PRs.
-Human sets the feature to `PASS` only after verify is green in their environment and the PR
-review has no blocking findings. Commit. Pick the next highest-priority `FAIL`.
+Human or independent reviewer runs `skills/.harness/templates/REVIEW.md` (starts with **§0
+contract compliance**). Executor sets the feature to `PENDING_REVIEW` when VERIFY is green.
+Human sets `PASS` only after review has no blocking findings. Commit/merge as the human asks.
+Pick the next highest-priority `FAIL`.
 
 ### Security & best practices
 
 Mandatory self-check before merge for any feature touching money, authentication, user data,
-or external input: run `skills/.harness/templates/SECURITY_CHECKLIST.md`. Skip only for
-provably low-stakes doc-only changes.
+external input, or Solidity funds/authz/upgrades: run
+`skills/.harness/templates/SECURITY_CHECKLIST.md`. Skip only for provably low-stakes doc-only
+changes.
 
 Policy highlights (full checklist in template):
 
@@ -140,16 +192,25 @@ Policy highlights (full checklist in template):
 - **Least privilege.** Operate only within paths the contract declares. Scope expansion
   requires a new contract.
 
-- **TDD is a security control.** Untested code is unverified code. The RED step is not optional.
+- **TDD / PoC is a security control.** Untested behaviour and unreproducible Critical/High
+  audit claims are unverified.
+
+### Skill packs (optional)
+
+Optional companion skills (e.g. a shared agent-harness submodule, or `.agents/local-skills/`)
+may supply stack craft: Research/Plan grilling, TDD routers, hexagonal layouts, Foundry
+recipes, ponytail simplicity. They **must not** replace `FEATURES.json`, sprint/audit
+contracts, VERIFY, or human PASS. If a pack assumes Vitest, Express, or a fixed folder layout,
+it applies only when this repo opts in via `AGENTS.md`.
 
 ### The control audit (2×2)
 
 |  | **Computational** (deterministic) | **Inferential** (model-assisted) |
 |---|---|---|
-| **Feedforward** (before) | type system, linters, arch rules | sprint contracts, impact maps |
-| **Feedback** (after) | **test suites**, coverage, CI | security checklist walkthrough |
+| **Feedforward** (before) | type system, linters, arch rules | sprint/audit contracts, impact maps |
+| **Feedback** (after) | **test suites / forge / static tools**, CI | security checklist, PR review §0 |
 
-Populate all four cells. Tests are the primary feedback loop in this harness.
+Populate all four cells. Declared verify commands are the primary feedback loop.
 
 ### Build to delete
 
@@ -160,5 +221,5 @@ measure. No change → delete.
 ### Cost reality
 
 A full harness costs more per run than a one-shot — more contracts, more tests, more tokens.
-That buys working software. High-stakes paths justify the full harness; throwaway prototypes
-don't. Choose per task.
+That buys working software. High-stakes paths and audits justify the full harness; throwaway
+prototypes don't. Choose depth per the matrix above.
