@@ -15,11 +15,23 @@ append() {
   cat <<'HEADER'
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **Kit version 1.3.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 1.4.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v1.3 changelog
+## v1.4 changelog
+
+- **Code-quality gate** — `CODE_QUALITY.md`: deterministic, lint-first checklist run at VERIFY for
+  `service` / `http-api` / `solidity-build`. A `violation` blocks `PENDING_REVIEW`; `warn` and
+  pre-existing debt never block. **N/A** for `ops-docs` and `solidity-audit`.
+- **No thresholds in the kit** — the gate defers to the lint/static-analysis command declared in the
+  consumer's `AGENTS.md`; model judgement is the documented fallback, not the default.
+- **Single owner per rule** — credentials stay with `SECURITY_CHECKLIST.md`; the quality gate routes
+  them there instead of double-reporting. `REVIEW.md` §11 no longer restates complexity rules.
+- **Gate vs craft** — packs may supply thresholds and fix recipes and may tighten the gate; they may
+  never replace it, waive a violation, or set `PASS`.
+
+## v1.3 changelog (retained)
 
 - **`PENDING_REVIEW` status** — three-state FEATURES legend; executor sets `PENDING_REVIEW`; human sets `PASS`.
 - **Work-type profiles** — `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs`.
@@ -90,10 +102,10 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 | # | Output | Source | Preserve if exists? |
 |---|--------|--------|---------------------|
-| 1 | `skills/.harness/templates/*` | Appendices B–J | N/A (gitignored) |
+| 1 | `skills/.harness/templates/*` | Appendices B–K | N/A (gitignored) |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=1.3.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=1.4.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -111,12 +123,12 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `1.3.0`
+- `skills/.harness/` tree exists with VERSION `1.4.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
 - `AGENTS.md` contains `## Agent process` and work-type profiles
-- Templates include `AUDIT_CONTRACT.md` and `REVIEW.md` §0
+- Templates include `AUDIT_CONTRACT.md`, `CODE_QUALITY.md`, and `REVIEW.md` §0
 - Humans have a clear setup doc if this is an application repo
 - `README.md` is a pointer, not a duplicate of `AGENTS.md`
 
@@ -207,6 +219,7 @@ HEADER
   append "Appendix H — README.md template (slim pointer)" templates/README_POINTER.md
   append "Appendix I — AUDIT_CONTRACT.md template" templates/AUDIT_CONTRACT.md
   append "Appendix J — AUDIT_FINDING.md template" templates/AUDIT_FINDING.md
+  append "Appendix K — CODE_QUALITY.md template" templates/CODE_QUALITY.md
 
   cat <<'FOOTER'
 

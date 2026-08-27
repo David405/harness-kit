@@ -64,6 +64,8 @@ src/           # <or crates/, contracts/, …>
 - **Templates:** `skills/.harness/templates/` (gitignored working copies)
 - **Verify fields:** every `FEATURES.json` entry's `verify` is a runnable command from this file
 - **Status:** `FAIL` → `PENDING_REVIEW` (executor after VERIFY) → `PASS` (human/reviewer only)
+- **Code-quality gate:** `skills/.harness/templates/CODE_QUALITY.md` — run at VERIFY for `service` /
+  `http-api` / `solidity-build`; defers to the lint command declared above; violations block `PENDING_REVIEW`
 
 ## Agent process
 

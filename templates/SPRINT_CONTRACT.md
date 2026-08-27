@@ -110,6 +110,9 @@ Each criterion must be **falsifiable** (command output, status+body, revert, log
 - [ ] **http-api only:** request **and** response schema/docs updated; error envelope regression in VERIFY — or **N/A**
 - [ ] **solidity-build only:** invariant / access-control / value-flow risks named; declared forge (or equivalent) tests in VERIFY — or **N/A**
 - [ ] **solidity-audit only:** `AUDIT_CONTRACT` sections completed; High/Critical have PoC commands — or **N/A**
+- [ ] **`service` / `http-api` / `solidity-build` only:** code-quality gate run
+      (`skills/.harness/templates/CODE_QUALITY.md`); declared lint command recorded; violations = 0
+      or carrying documented exceptions — or **N/A**
 
 ## Edge cases / failure modes
 
