@@ -1,10 +1,23 @@
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **Kit version 1.4.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 1.5.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v1.4 changelog
+## v1.5 changelog
+
+- **`code-audit` profile** — periodic whole-subsystem code-quality audit. Produces findings, changes no
+  code; fixes become ordinary sprint contracts. The counterpart to the per-sprint `CODE_QUALITY.md` gate.
+- **Behaviour preservation made deterministic** — `CODE_AUDIT_CONTRACT.md` carries the frozen-contract
+  list and equivalence checklist, and **characterization tests** replace product TDD for refactor work:
+  written to pass against the code as it stands, then required to pass unchanged after.
+- **`CODE_AUDIT_FINDING.md`** — extends the audit finding shape with category, confidence, regression
+  risk, recommended change, behavioural safety, and required characterization tests.
+- **Findings are human-accepted** — the audit proposes a `FEATURES.json` seed; a human accepts findings
+  into the ledger, consistent with `PASS` being human-only.
+- **Severity vocabulary unchanged** — reuses Critical/High/Medium/Low/Informational; no third scale.
+
+## v1.4 changelog (retained)
 
 - **Code-quality gate** — `CODE_QUALITY.md`: deterministic, lint-first checklist run at VERIFY for
   `service` / `http-api` / `solidity-build`. A `violation` blocks `PENDING_REVIEW`; `warn` and
@@ -87,10 +100,10 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 | # | Output | Source | Preserve if exists? |
 |---|--------|--------|---------------------|
-| 1 | `skills/.harness/templates/*` | Appendices B–K | N/A (gitignored) |
+| 1 | `skills/.harness/templates/*` | Appendices B–M | N/A (gitignored) |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=1.4.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=1.5.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -108,12 +121,12 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `1.4.0`
+- `skills/.harness/` tree exists with VERSION `1.5.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
 - `AGENTS.md` contains `## Agent process` and work-type profiles
-- Templates include `AUDIT_CONTRACT.md`, `CODE_QUALITY.md`, and `REVIEW.md` §0
+- Templates include `AUDIT_CONTRACT.md`, `CODE_QUALITY.md`, `CODE_AUDIT_CONTRACT.md`, and `REVIEW.md` §0
 - Humans have a clear setup doc if this is an application repo
 - `README.md` is a pointer, not a duplicate of `AGENTS.md`
 
@@ -254,6 +267,7 @@ correct code.
 | `solidity-build` | Smart contract implementation / fix |
 | `solidity-audit` | Contract security review (findings + PoCs) |
 | `ops-docs` | Observability, deploy docs, process-only changes |
+| `code-audit` | **Periodic** whole-subsystem code-quality audit — produces findings, changes no code |
 
 Profile drives which quality gates are in force vs **N/A**. HTTP/OpenAPI gates apply only to
 `http-api`. Solidity sections apply to `solidity-build` / `solidity-audit`. Architecture skills
@@ -268,6 +282,13 @@ not kit law.
 | Medium (clear AC, known pattern) | Skip | Full sprint contract | Review optional |
 | Large (new domain, unclear design) | Optional distill of ticket/ERD → open questions | Full + Decisions + grill gaps | Yes Plan→Exec→Review |
 | Audit | Scope/assets/priors research | `AUDIT_CONTRACT` | Yes Exec→Review |
+| Code audit | Declared scope + ref + prior findings | `CODE_AUDIT_CONTRACT` | Yes Audit→Review |
+
+**`code-audit` is periodic, never per-sprint.** It is the counterpart to the `CODE_QUALITY.md` gate:
+the gate asks "can this diff ship?" on every contract; the audit asks "where should we invest
+refactoring effort?" on a cadence the repo sets (milestone, quarter, pre-hardening, before a large
+refactor). Findings are proposed as `FEATURES.json` seeds and **accepted by a human**, then become
+ordinary sprint contracts.
 
 Optional Research does **not** create a second approved artifact. Locked decisions live in the
 sprint or audit contract. Do not dual-run a parallel `plan.md` unless `AGENTS.md` requires it
@@ -348,6 +369,10 @@ the human before switching.
 Follow the contract:
 
 1. **Behaviour changes:** RED → GREEN → REFACTOR using this repo's test runner from `AGENTS.md`
+1. **Behaviour-preserving refactors:** characterization tests replace product TDD. Write tests that
+   capture current behaviour and pass **against the code as it stands**, refactor, then require the
+   same tests to pass unchanged. Never weaken or rewrite a test to make a refactor pass — a failure
+   after refactoring is evidence the refactor is wrong.
 2. **Solidity audit findings:** hypothesis → reproducible PoC command → finding write-up
 3. No scope creep beyond the contract. Stop and ask if a new design decision appears.
 
@@ -367,8 +392,8 @@ For `service`, `http-api`, and `solidity-build` work, also run
 lint/static-analysis command declared in `AGENTS.md` is run and its result recorded — model
 judgement is the documented fallback, not the default. A `violation` (hard limit breached with no
 documented exception) blocks `PENDING_REVIEW`; `warn` and pre-existing debt never block. The gate
-is **N/A** for `ops-docs`, and for `solidity-audit`, which judges the target's code as findings
-rather than its own diff. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
+is **N/A** for `ops-docs` and `code-audit`, and for `solidity-audit` — the last two judge a target's
+code as findings rather than their own diff. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
 raise them there and do not double-report.
 
 If verify fails: stay `FAIL`, fix or revise the contract.
@@ -405,9 +430,9 @@ Policy highlights (full checklist in template):
 
 ### Skill packs (optional)
 
-Optional companion skills (e.g. a shared agent-harness submodule, or `.agents/local-skills/`)
-may supply stack craft: Research/Plan grilling, TDD routers, hexagonal layouts, Foundry
-recipes, ponytail simplicity. They **must not** replace `FEATURES.json`, sprint/audit
+Optional companion skills (e.g. a shared skills submodule, or `.agents/local-skills/`)
+may supply stack craft: Research/Plan grilling, TDD routers, architecture layouts, toolchain
+recipes, simplicity passes. They **must not** replace `FEATURES.json`, sprint/audit
 contracts, VERIFY, or human PASS. If a pack assumes Vitest, Express, or a fixed folder layout,
 it applies only when this repo opts in via `AGENTS.md`.
 
@@ -503,7 +528,9 @@ src/           # <or crates/, contracts/, …>
 - **Commits:** <convention, e.g. conventional commits>
 - **Sprint contracts:** `skills/.harness/contracts/<feature-id>.md` (or `.harness/contracts/` if this repo already uses it)
 - **Audit contracts:** `skills/.harness/templates/AUDIT_CONTRACT.md` → contracts path
-- **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs`
+- **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit`
+- **Code audit (periodic):** `skills/.harness/templates/CODE_AUDIT_CONTRACT.md` — whole-subsystem quality
+  audit; produces findings only; behaviour preservation is its absolute constraint
 - **Templates:** `skills/.harness/templates/` (gitignored working copies)
 - **Verify fields:** every `FEATURES.json` entry's `verify` is a runnable command from this file
 - **Status:** `FAIL` → `PENDING_REVIEW` (executor after VERIFY) → `PASS` (human/reviewer only)
@@ -615,7 +642,7 @@ Run `REVIEW.md` (§0 contract compliance first). Executor sets `PENDING_REVIEW`.
 
 ### Skill packs (optional)
 
-Companion skills (shared agent-harness, local skills) may add Research/grill/TDD routers/Foundry
+Companion skills (a shared skills submodule, local skills) may add Research/grill/TDD routers/toolchain
 recipes. They must not replace FEATURES, contracts, VERIFY, or human PASS.
 
 ### Build to delete / cost reality
@@ -692,6 +719,7 @@ Pick **one**:
 - [ ] `solidity-build` — smart contract implementation or fix
 - [ ] `solidity-audit` — use audit contract / sections
 - [ ] `ops-docs` — observability, docs, process-only
+- [ ] `code-audit` — periodic whole-subsystem quality audit (use `CODE_AUDIT_CONTRACT.md`)
 
 **Languages / toolchain:** <e.g. TypeScript+Bun, Rust+Cargo, Go 1.22, Solidity+Foundry — cite AGENTS.md>
 
@@ -787,6 +815,8 @@ Each criterion must be **falsifiable** (command output, status+body, revert, log
 - [ ] **http-api only:** request **and** response schema/docs updated; error envelope regression in VERIFY — or **N/A**
 - [ ] **solidity-build only:** invariant / access-control / value-flow risks named; declared forge (or equivalent) tests in VERIFY — or **N/A**
 - [ ] **solidity-audit only:** `AUDIT_CONTRACT` sections completed; High/Critical have PoC commands — or **N/A**
+- [ ] **behaviour-preserving refactor only:** characterization tests captured and passing **before**
+      the change; the same tests pass unchanged after; declared frozen contracts untouched — or **N/A**
 - [ ] **`service` / `http-api` / `solidity-build` only:** code-quality gate run
       (`skills/.harness/templates/CODE_QUALITY.md`); declared lint command recorded; violations = 0
       or carrying documented exceptions — or **N/A**
@@ -1006,6 +1036,7 @@ explicitly re-contracted and approved.
 | `solidity-build` | Authz, upgrade/pause, economic / value-flow safety |
 | `solidity-audit` | Severity calibration, false-positive risk, missing bug classes, PoC quality |
 | `ops-docs` | No silent behaviour change; observability fields stable |
+| `code-audit` | Evidence quality, false-positive rate, confidence and regression-risk calibration, behavioural safety of every recommendation |
 
 Code quality is graded by the gate, not by taste: confirm `CODE_QUALITY.md` was run for
 `service` / `http-api` / `solidity-build`, that the declared lint command is recorded rather than
@@ -1495,6 +1526,10 @@ explicitly approves that scope.
 >
 > This gate is **deterministic-first**: it defers to the linter this repo declares in `AGENTS.md`.
 > The kit does not ship thresholds. Depth of craft guidance lives in an optional skill pack.
+>
+> **Not the periodic audit.** This gate asks "can this diff ship?" on every contract.
+> `CODE_AUDIT_CONTRACT.md` asks "where should we invest refactoring effort?" on a cadence, over a
+> declared subsystem. Do not substitute one for the other.
 
 ## 0. Sensor
 
@@ -1588,6 +1623,320 @@ no documented exception — **blocks**) · `pre-existing` (untouched by this dif
 
 > The executor may set `PENDING_REVIEW` only when violations = 0.
 > As everywhere else in this kit, `PASS` remains human-only.
+
+---
+
+## Appendix L — CODE_AUDIT_CONTRACT.md template
+
+# CODE AUDIT CONTRACT — <AUDIT-NNN>: <short title>
+
+> Written by the **agent**. Approved by the **human** before the audit begins.
+> Work-type profile: **`code-audit`**. Periodic — never per sprint.
+> The audit **produces findings and changes no code**. Fixes are separate contracts.
+
+## Not the per-sprint gate
+
+`CODE_QUALITY.md` and this contract are different instruments. Do not substitute one for the other.
+
+| | `CODE_QUALITY.md` (gate) | This contract (audit) |
+|---|---|---|
+| Question | "Can this diff ship?" | "Where should we invest refactoring effort, and what is safe to touch?" |
+| Scope | The diff | A declared subsystem, at a declared ref |
+| Cadence | Every contract, at VERIFY | Milestone / quarter / pre-hardening / before a large refactor |
+| Output | Checklist + blocking verdict | Prioritised report + findings |
+| Grading | Deterministic — declared linter first | Judgement, validated against the repo |
+
+---
+
+## Absolute constraint — refactor implementation, not behaviour
+
+Every recommendation must preserve **externally observable behaviour exactly as it is today**.
+This outranks every other goal in this contract. Where code cleanliness and behavioural safety
+conflict, **behavioural safety wins**.
+
+An auditor must not recommend changing: business logic, workflows, calculations, API behaviour or
+contracts, request/response shapes, return values, error-handling semantics, exception types or
+propagation, persistence or database semantics, observable ordering, timing-dependent behaviour,
+concurrency semantics, authentication or authorization, validation rules, configuration or feature-flag
+behaviour, operationally-relied-upon logging, public interfaces, or dependency behaviour. Do not
+upgrade or replace dependencies for cleanliness. Do not add speculative functionality.
+
+If there is **any reasonable uncertainty** that a change could alter behaviour, do not present it as
+ready to apply. File it as **"Potential improvement — requires behavioural verification"** and record
+what must be proven first.
+
+### Frozen contracts (work around these, never modify them)
+
+Public APIs · exported functions, classes and types · CLI arguments · environment variables ·
+configuration keys · database schemas and values · serialized formats · events · message schemas ·
+queue payloads · HTTP routes and methods · request and response bodies · status codes · headers ·
+error formats · user-facing strings consumers or tests may depend on · file formats · framework
+lifecycle behaviour.
+
+### Behavioural equivalence checklist
+
+Validate before any finding is marked ready to apply. Any uncertain answer downgrades it to
+verification-required.
+
+- [ ] Same inputs accepted · same outputs produced · same errors produced
+- [ ] Side effects and their ordering unchanged
+- [ ] Execution ordering unchanged where observable
+- [ ] Database and network operations equivalent
+- [ ] State mutations, async behaviour and concurrency semantics equivalent
+- [ ] Null/undefined handling and edge cases preserved
+- [ ] Frozen contracts untouched
+- [ ] Logging/telemetry semantics preserved where operationally relied upon
+
+### How equivalence is proven
+
+Judgement is not proof. For any finding that will become a refactor, name the
+**characterization tests** that capture current behaviour. They must be written and **passing against
+the code as it stands today** — that is what shows they encode existing behaviour rather than intended
+behaviour — and must still pass unchanged afterwards. This replaces product TDD for refactor work, the
+same way audits use PoC-first VERIFY.
+
+Never weaken, skip or rewrite an existing test to make a refactor pass. A test failing after a refactor
+is evidence the refactor is wrong.
+
+---
+
+## Scope (required — an undeclared scope produces a report nobody can act on)
+
+- **Ref audited:** `<commit SHA or tag>` — findings are meaningless without it
+- **Paths / modules in scope:** `<explicit list>`
+- **Languages / stack:** `<from AGENTS.md>`
+- **Out of scope:** `<paths>` — always excluding generated code, vendored code, migrations, fixtures/snapshots
+- **Whole repo?** Allowed, but state it deliberately. On a large codebase it produces a report too big to act on; prefer one subsystem per audit.
+
+## Prior context
+
+- Previous audits / findings still open: `<refs or "none">`
+- Known accepted risks not to re-report: `<list or "none">`
+
+---
+
+## Review taxonomy
+
+Work through each category. Record "no material findings" rather than omitting a category.
+
+- [ ] **1. Coding best practices** — separation of concerns, abstraction consistency, responsibility boundaries, encapsulation, coupling, language/framework idioms, resource lifecycle, scope breadth
+- [ ] **2. Duplication** — exact and near duplication, repeated conditionals, validation, transformations, mapping, error handling, boilerplate. Separate **harmful** duplication from **acceptable** duplication that represents genuinely different concepts
+- [ ] **3. Optimisation** — algorithmic complexity, repeated computation, redundant loops/parsing/serialization, collection use, allocations, duplicate queries, N+1, avoidable I/O, work inside loops, safe early exits
+- [ ] **4. Code smells** — long functions, god classes, feature envy, shotgun surgery, divergent change, primitive obsession, data clumps, parameter lists, boolean flags, deep nesting, complex conditionals, temporal coupling, hidden dependencies, shared mutable state, dead code, inappropriate intimacy, lazy classes, middle-man, speculative generality, leaky abstractions, stringly-typed behaviour, magic values, ambiguous null handling
+- [ ] **5. Comments** — restating code, explaining obvious syntax, stale or easily-staled, compensating for poor naming, "what" instead of "why", verbose noise, history better held in version control, commented-out code, dead TODOs. **Preserve** comments carrying non-obvious business constraints, external-system limits, compatibility or security reasons, counterintuitive rationale, performance trade-offs, and known-issue workarounds
+- [ ] **6. Readability** — naming across all kinds, function size and responsibility, nesting, control flow, grouping, abstraction level, local reasoning, implicit assumptions, cleverness, dense expressions, complex ternaries, ambiguous abbreviations
+- [ ] **7. Maintainability** — coupling and cohesion, scattered logic, fragile abstractions, multiple sources of truth, repeated domain rules, module boundaries, isolated side effects, testability, blast radius, scattered configuration, dependency direction, circular dependencies, layering violations
+- [ ] **8. Function quality** — single responsibility, accurate naming, mixed abstraction levels, unnecessary mutation, hidden side effects, parameter count, error handling tangled with logic. Do **not** blindly recommend smaller functions; a function should be as small as it can be while staying cohesive
+- [ ] **9. Conditional logic** — duplicate or contradictory conditions, repeated guards, unclear booleans, negative complexity, long chains, guard-clause opportunities. Conditionals are a common regression source — never simplify unless equivalence is obvious
+- [ ] **10. Error handling** — swallowed errors, empty catches, overly broad catches, duplicated handling, log-and-rethrow producing duplicate logs, resource cleanup, handling tangled with unrelated logic
+- [ ] **11. Data flow and state** — unnecessary mutation, duplicate representations of the same state, stored derived data, synchronization, hidden or global state, shared mutable objects, unclear ownership
+- [ ] **12. Tests and regression risk** — untested behaviour, high-risk code needing characterization first, existing tests that already prove equivalence, boundary conditions and side effects needing verification
+- [ ] **13. Dead / redundant code** — be conservative. Before proposing deletion, consider reflection, dynamic imports, dependency injection, framework conventions, template references, external consumers, public APIs, CLI invocation, configuration references, serialization, plugins, runtime registration. If usage cannot be conclusively determined, **say so**
+- [ ] **14. Over-engineering** — excessive abstraction or interfaces, wrappers, single-implementation factories, deep inheritance, premature extensibility, local problems solved with generic frameworks, indirection without value
+- [ ] **15. Under-engineering** — repeated domain rules, giant procedural blocks, absent module boundaries, mixed responsibilities, hard-coded assumptions spread across files
+
+---
+
+## Rubrics
+
+**Severity** — Critical · High · Medium · Low · Informational. Same scale as `AUDIT_FINDING.md`.
+Do not use Critical casually.
+
+**Confidence** — High (equivalence and benefit clear) · Medium (likely safe, context needs checking) ·
+Low (needs investigation). **Low-confidence findings must never be presented as ready to apply.**
+
+**Regression risk** — Very Low · Low · Medium · High, with a stated reason.
+
+**Prioritise by impact × confidence ÷ regression risk.** Prefer strong benefit at low regression risk.
+
+**Optimisation findings** additionally state: proven/obvious · likely · speculative-requires-profiling.
+Never present a speculative performance assumption as fact.
+
+---
+
+## Discipline
+
+**Evidence.** Every finding cites file path, module, function, and the actual pattern observed. Never
+invent paths, line numbers, dependencies, call sites, or behaviour. If something cannot be verified,
+say so explicitly.
+
+**Validate before reporting.** Inspect call sites, imports, consumers, implementations, tests,
+interfaces, configuration, serialization, framework registration and routes. A locally attractive
+refactor may be unsafe repository-wide.
+
+**Materiality.** A finding must make the code materially harder to understand, create meaningful
+duplication, make change riskier, increase defect likelihood, add unnecessary complexity, cause obvious
+inefficiency, violate a meaningful convention, obscure behaviour, or create maintenance burden. Code
+that is unconventional but clear, safe and locally appropriate is **not** a finding. Do not flood the
+report with nits.
+
+**Minimal diff.** Recommend the smallest change achieving a meaningful improvement. No cascading
+refactors — a rename should not become rename → interface → move → factory → restructure.
+
+---
+
+## Report
+
+1. **Executive summary** — overall quality, strengths, main maintainability concerns, major duplication patterns, most valuable low-risk improvements, general regression risk of refactoring this codebase. Do not exaggerate.
+2. **Prioritised findings** — one `CODE_AUDIT_FINDING.md` each
+3. **Duplication report** — table: locations · duplicated concept · impact · suggested refactor · regression risk
+4. **Comment quality** — keep · redundant · replace with clearer code · stale/misleading · commented-out
+5. **Readability hotspots** — highest cognitive load, and why
+6. **Maintainability hotspots** — coupling, responsibilities, repeated domain knowledge, blast radius, fragile abstractions
+7. **Optimisation** — safe/obvious, separated from profiling-required
+8. **Safe refactors** — Very Low / Low regression risk: location · change · benefit · risk · required verification
+9. **Refactors NOT to attempt yet** — tempting but too uncertain, and what must be understood or tested first. **This section is required**, not optional
+10. **Suggested sequence** — characterization coverage first, then naming/readability, then unquestionably redundant code, then obvious duplication, then low-risk control flow, then structural work. Each stage leaves the codebase working. No big-bang refactors
+11. **Verification checklist** — tailored to this repo's actual commands from `AGENTS.md`
+
+### Possible existing functional bugs — NOT PART OF THIS AUDIT
+
+Report suspected functional bugs here with evidence. **Do not fix them.** Each becomes its own contract.
+
+---
+
+## Findings → tracked work
+
+The audit **proposes** the seed block below. A **human accepts** findings into `FEATURES.json` —
+consistent with `PASS` being human-only, and it stops a long report flooding the tracker.
+Each accepted finding becomes one sprint contract; behaviour-preserving ones carry the
+characterization-test quality gate.
+
+```json
+{
+  "id": "<AREA-NNN>",
+  "name": "<finding title>",
+  "priority": "<n>",
+  "verify": "<characterization + declared test command from AGENTS.md>",
+  "status": "FAIL",
+  "notes": "From <AUDIT-NNN>-F<nn>; severity <s>; regression risk <r>"
+}
+```
+
+## Success criteria (this audit)
+
+1. Every taxonomy category worked, including those recorded as "no material findings"
+2. Every finding carries severity, confidence, regression risk, and cited evidence
+3. Every ready-to-apply finding passes the equivalence checklist; uncertain ones are marked verification-required
+4. Findings are prioritised by the stated formula
+5. Section 9 (refactors not to attempt) is populated
+6. Seed block proposed; no `FEATURES.json` entry created without human acceptance
+7. No code changed by this audit — `git status` clean apart from audit documents
+
+## VERIFY
+
+```bash
+# audit produced documents only
+git status --porcelain | grep -v '<audit doc path>' | grep -q . && echo "CODE CHANGED — FAIL" || echo "docs only — ok"
+
+# the audited ref is recorded
+grep -q '<commit-or-tag>' <this contract>
+```
+
+## Human approval gate
+
+- **Scope approved:** <pending / yes + date>
+- **Findings accepted into FEATURES.json:** <list, human-signed>
+
+---
+
+## Appendix M — CODE_AUDIT_FINDING.md template
+
+# CODE AUDIT FINDING — <AUDIT-ID>-F<nn>: <short title>
+
+> One finding per file or clearly separated section. Link from the parent `CODE_AUDIT_CONTRACT`.
+> A finding recommends a **behaviour-preserving** change. If it cannot preserve behaviour,
+> it is not a finding — it belongs under *Possible existing functional bugs* in the parent contract.
+
+---
+
+## Meta
+
+| Field | Value |
+|-------|--------|
+| **ID** | `<AUDIT-ID>-F<nn>` |
+| **Severity** | Critical / High / Medium / Low / Informational |
+| **Category** | Best practices / Duplication / Optimisation / Code smell / Comments / Readability / Maintainability / Function quality / Conditionals / Error handling / Data flow / Tests / Dead code / Over-engineering / Under-engineering |
+| **Confidence** | High / Medium / Low |
+| **Regression risk** | Very Low / Low / Medium / High |
+| **Status** | Draft / Confirmed / Disputed / Accepted into FEATURES / Fixed / Accepted risk |
+| **Parent audit** | `<AUDIT-NNN>` |
+| **Commit / tag** | `<ref reviewed>` |
+
+> **Low confidence must never be presented as ready to apply.** Mark it
+> *"Potential improvement — requires behavioural verification"* and complete
+> *Behavioural safety* below.
+
+---
+
+## Location
+
+- **File:** `<path>`
+- **Module / class / function:** `<Name.fn>`
+- **Lines (approx):** `<start-end>` if stable
+
+---
+
+## Problem
+
+<Precisely what is wrong. No filler. No restating the code.>
+
+## Why it matters
+
+<The real engineering impact: what it costs to understand, change, or extend. If there is no
+material cost, this is not a finding — delete it.>
+
+## Evidence
+
+<The actual pattern observed, with a short excerpt or accurate description. Never invent paths,
+line numbers, call sites, or behaviour. If something could not be verified, say so here.>
+
+**Validated against:** <call sites / imports / consumers / tests / interfaces / config /
+serialization / framework registration checked before filing>
+
+---
+
+## Recommended change
+
+<The smallest change that achieves a meaningful improvement. No cascading refactors.>
+
+### Before / after
+
+<Only when it meaningfully clarifies the recommendation. Omit otherwise.>
+
+---
+
+## Behavioural safety
+
+<Why this preserves externally observable behaviour, and what must be verified first.>
+
+- [ ] Same inputs accepted · same outputs · same errors
+- [ ] Side effects and ordering unchanged
+- [ ] Frozen contracts untouched (APIs, schemas, formats, routes, status codes, headers, env, config keys)
+- [ ] Null/undefined handling and edge cases preserved
+- [ ] Async / concurrency semantics unchanged
+- [ ] Operationally-relied-upon logging unchanged
+
+**Uncertainties:** <anything that must be proven before this is applied, or "none">
+
+## Characterization tests required
+
+<The tests that capture current behaviour for this code. They must be written and passing
+**against the code as it stands today** before any refactor, and pass unchanged afterwards.>
+
+- `<test path or description>` — <the behaviour it pins>
+
+**Existing tests already covering this:** <refs, or "none — must be written first">
+
+---
+
+## Disposition
+
+| Field | Value |
+|-------|--------|
+| **Proposed FEATURES id** | `<AREA-NNN>` |
+| **Accepted by** | `<human — the agent never accepts its own finding>` |
+| **Sprint contract** | `<path once created>` |
 
 ---
 

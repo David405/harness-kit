@@ -47,6 +47,7 @@ explicitly re-contracted and approved.
 | `solidity-build` | Authz, upgrade/pause, economic / value-flow safety |
 | `solidity-audit` | Severity calibration, false-positive risk, missing bug classes, PoC quality |
 | `ops-docs` | No silent behaviour change; observability fields stable |
+| `code-audit` | Evidence quality, false-positive rate, confidence and regression-risk calibration, behavioural safety of every recommendation |
 
 Code quality is graded by the gate, not by taste: confirm `CODE_QUALITY.md` was run for
 `service` / `http-api` / `solidity-build`, that the declared lint command is recorded rather than
