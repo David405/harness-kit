@@ -60,7 +60,9 @@ src/           # <or crates/, contracts/, …>
 - **Commits:** <convention, e.g. conventional commits>
 - **Sprint contracts:** `skills/.harness/contracts/<feature-id>.md` (or `.harness/contracts/` if this repo already uses it)
 - **Audit contracts:** `skills/.harness/templates/AUDIT_CONTRACT.md` → contracts path
-- **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs`
+- **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit`
+- **Code audit (periodic):** `skills/.harness/templates/CODE_AUDIT_CONTRACT.md` — whole-subsystem quality
+  audit; produces findings only; behaviour preservation is its absolute constraint
 - **Templates:** `skills/.harness/templates/` (gitignored working copies)
 - **Verify fields:** every `FEATURES.json` entry's `verify` is a runnable command from this file
 - **Status:** `FAIL` → `PENDING_REVIEW` (executor after VERIFY) → `PASS` (human/reviewer only)
@@ -172,7 +174,7 @@ Run `REVIEW.md` (§0 contract compliance first). Executor sets `PENDING_REVIEW`.
 
 ### Skill packs (optional)
 
-Companion skills (shared agent-harness, local skills) may add Research/grill/TDD routers/Foundry
+Companion skills (a shared skills submodule, local skills) may add Research/grill/TDD routers/toolchain
 recipes. They must not replace FEATURES, contracts, VERIFY, or human PASS.
 
 ### Build to delete / cost reality

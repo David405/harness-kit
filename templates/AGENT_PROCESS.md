@@ -55,6 +55,7 @@ correct code.
 | `solidity-build` | Smart contract implementation / fix |
 | `solidity-audit` | Contract security review (findings + PoCs) |
 | `ops-docs` | Observability, deploy docs, process-only changes |
+| `code-audit` | **Periodic** whole-subsystem code-quality audit — produces findings, changes no code |
 
 Profile drives which quality gates are in force vs **N/A**. HTTP/OpenAPI gates apply only to
 `http-api`. Solidity sections apply to `solidity-build` / `solidity-audit`. Architecture skills
@@ -69,6 +70,13 @@ not kit law.
 | Medium (clear AC, known pattern) | Skip | Full sprint contract | Review optional |
 | Large (new domain, unclear design) | Optional distill of ticket/ERD → open questions | Full + Decisions + grill gaps | Yes Plan→Exec→Review |
 | Audit | Scope/assets/priors research | `AUDIT_CONTRACT` | Yes Exec→Review |
+| Code audit | Declared scope + ref + prior findings | `CODE_AUDIT_CONTRACT` | Yes Audit→Review |
+
+**`code-audit` is periodic, never per-sprint.** It is the counterpart to the `CODE_QUALITY.md` gate:
+the gate asks "can this diff ship?" on every contract; the audit asks "where should we invest
+refactoring effort?" on a cadence the repo sets (milestone, quarter, pre-hardening, before a large
+refactor). Findings are proposed as `FEATURES.json` seeds and **accepted by a human**, then become
+ordinary sprint contracts.
 
 Optional Research does **not** create a second approved artifact. Locked decisions live in the
 sprint or audit contract. Do not dual-run a parallel `plan.md` unless `AGENTS.md` requires it
@@ -149,6 +157,10 @@ the human before switching.
 Follow the contract:
 
 1. **Behaviour changes:** RED → GREEN → REFACTOR using this repo's test runner from `AGENTS.md`
+1. **Behaviour-preserving refactors:** characterization tests replace product TDD. Write tests that
+   capture current behaviour and pass **against the code as it stands**, refactor, then require the
+   same tests to pass unchanged. Never weaken or rewrite a test to make a refactor pass — a failure
+   after refactoring is evidence the refactor is wrong.
 2. **Solidity audit findings:** hypothesis → reproducible PoC command → finding write-up
 3. No scope creep beyond the contract. Stop and ask if a new design decision appears.
 
@@ -168,8 +180,8 @@ For `service`, `http-api`, and `solidity-build` work, also run
 lint/static-analysis command declared in `AGENTS.md` is run and its result recorded — model
 judgement is the documented fallback, not the default. A `violation` (hard limit breached with no
 documented exception) blocks `PENDING_REVIEW`; `warn` and pre-existing debt never block. The gate
-is **N/A** for `ops-docs`, and for `solidity-audit`, which judges the target's code as findings
-rather than its own diff. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
+is **N/A** for `ops-docs` and `code-audit`, and for `solidity-audit` — the last two judge a target's
+code as findings rather than their own diff. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
 raise them there and do not double-report.
 
 If verify fails: stay `FAIL`, fix or revise the contract.
@@ -206,9 +218,9 @@ Policy highlights (full checklist in template):
 
 ### Skill packs (optional)
 
-Optional companion skills (e.g. a shared agent-harness submodule, or `.agents/local-skills/`)
-may supply stack craft: Research/Plan grilling, TDD routers, hexagonal layouts, Foundry
-recipes, ponytail simplicity. They **must not** replace `FEATURES.json`, sprint/audit
+Optional companion skills (e.g. a shared skills submodule, or `.agents/local-skills/`)
+may supply stack craft: Research/Plan grilling, TDD routers, architecture layouts, toolchain
+recipes, simplicity passes. They **must not** replace `FEATURES.json`, sprint/audit
 contracts, VERIFY, or human PASS. If a pack assumes Vitest, Express, or a fixed folder layout,
 it applies only when this repo opts in via `AGENTS.md`.
 

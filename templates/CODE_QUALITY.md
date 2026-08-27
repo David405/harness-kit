@@ -6,6 +6,10 @@
 >
 > This gate is **deterministic-first**: it defers to the linter this repo declares in `AGENTS.md`.
 > The kit does not ship thresholds. Depth of craft guidance lives in an optional skill pack.
+>
+> **Not the periodic audit.** This gate asks "can this diff ship?" on every contract.
+> `CODE_AUDIT_CONTRACT.md` asks "where should we invest refactoring effort?" on a cadence, over a
+> declared subsystem. Do not substitute one for the other.
 
 ## 0. Sensor
 
