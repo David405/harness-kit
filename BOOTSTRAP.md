@@ -1,6 +1,9 @@
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **Kit version 1.5.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **DEPRECATED — kit 2.0.0 adopts via git submodule; see README.md. This file is retained for
+> repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
+>
+> **Kit version 2.0.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
@@ -60,8 +63,8 @@
 | `AGENTS.md` | Agents | Single entrypoint — context + **`## Agent process`** |
 | `FEATURES.json` | Both | Progress: FAIL → PENDING_REVIEW → PASS; every `verify` = runnable command |
 | `BOOTSTRAP.md` | Maintainers | Bootstrap + appendix source for regeneration |
-| `skills/.harness/templates/REVIEW.md` | Reviewers | §0 contract compliance + production rubric |
-| `skills/.harness/templates/AUDIT_CONTRACT.md` | Auditors | Solidity audit slice contract |
+| the `harness-review` skill | Reviewers | §0 contract compliance + production rubric |
+| the `solidity-audit` skill | Auditors | Solidity audit slice contract |
 | `skills/.harness/` | Agents | Gitignored working tree — templates, contracts, STATE, VERSION |
 
 Agents read **`AGENTS.md` only** each session (plus `FEATURES.json`, `skills/.harness/STATE.md`, active sprint or audit contract).
@@ -100,10 +103,10 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 | # | Output | Source | Preserve if exists? |
 |---|--------|--------|---------------------|
-| 1 | `skills/.harness/templates/*` | Appendices B–M | N/A (gitignored) |
+| 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–M | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=1.5.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.0.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -121,7 +124,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `1.5.0`
+- `skills/.harness/` tree exists with VERSION `2.0.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
@@ -329,7 +332,7 @@ Do not lock product decisions here. Do not write production code.
 #### 3. CONTRACT
 
 Before any test or production code: produce a **Sprint Contract** using
-`skills/.harness/templates/SPRINT_CONTRACT.md` (or **Audit Contract** using
+the `sprint-contract` skill (or **Audit Contract** using
 `AUDIT_CONTRACT.md` for `solidity-audit`). Save under the contracts path declared in
 `AGENTS.md` (default `skills/.harness/contracts/<feature-id>.md`).
 
@@ -385,10 +388,10 @@ Prompt discipline:
 
 Run every command in the contract's verify section and the feature's `FEATURES.json` `verify`
 field. For high-stakes changes (money, auth, user data, external input, Solidity value flow),
-run `skills/.harness/templates/SECURITY_CHECKLIST.md` against the diff before asking to merge.
+run the `security-checklist` skill against the diff before asking to merge.
 
 For `service`, `http-api`, and `solidity-build` work, also run
-`skills/.harness/templates/CODE_QUALITY.md` against the diff. It is **deterministic-first**: the
+the `code-quality-gate` skill against the diff. It is **deterministic-first**: the
 lint/static-analysis command declared in `AGENTS.md` is run and its result recorded — model
 judgement is the documented fallback, not the default. A `violation` (hard limit breached with no
 documented exception) blocks `PENDING_REVIEW`; `warn` and pre-existing debt never block. The gate
@@ -400,7 +403,7 @@ If verify fails: stay `FAIL`, fix or revise the contract.
 
 #### 8. REVIEW → PENDING_REVIEW → HUMAN PASS
 
-Human or independent reviewer runs `skills/.harness/templates/REVIEW.md` (starts with **§0
+Human or independent reviewer runs the `harness-review` skill (starts with **§0
 contract compliance**). Executor sets the feature to `PENDING_REVIEW` when VERIFY is green.
 Human sets `PASS` only after review has no blocking findings. Commit/merge as the human asks.
 Pick the next highest-priority `FAIL`.
@@ -409,7 +412,7 @@ Pick the next highest-priority `FAIL`.
 
 Mandatory self-check before merge for any feature touching money, authentication, user data,
 external input, or Solidity funds/authz/upgrades: run
-`skills/.harness/templates/SECURITY_CHECKLIST.md`. Skip only for provably low-stakes doc-only
+the `security-checklist` skill. Skip only for provably low-stakes doc-only
 changes.
 
 Policy highlights (full checklist in template):
@@ -527,14 +530,14 @@ src/           # <or crates/, contracts/, …>
 - **Lint / typecheck / clippy / fmt:** <as applicable>
 - **Commits:** <convention, e.g. conventional commits>
 - **Sprint contracts:** `skills/.harness/contracts/<feature-id>.md` (or `.harness/contracts/` if this repo already uses it)
-- **Audit contracts:** `skills/.harness/templates/AUDIT_CONTRACT.md` → contracts path
+- **Audit contracts:** the `solidity-audit` skill → contracts path
 - **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit`
-- **Code audit (periodic):** `skills/.harness/templates/CODE_AUDIT_CONTRACT.md` — whole-subsystem quality
+- **Code audit (periodic):** the `code-audit` skill — whole-subsystem quality
   audit; produces findings only; behaviour preservation is its absolute constraint
-- **Templates:** `skills/.harness/templates/` (gitignored working copies)
+- **Skills:** kit skills are symlinked into this repo (see `.agents/skills/`); forms live inside each skill
 - **Verify fields:** every `FEATURES.json` entry's `verify` is a runnable command from this file
 - **Status:** `FAIL` → `PENDING_REVIEW` (executor after VERIFY) → `PASS` (human/reviewer only)
-- **Code-quality gate:** `skills/.harness/templates/CODE_QUALITY.md` — run at VERIFY for `service` /
+- **Code-quality gate:** the `code-quality-gate` skill — run at VERIFY for `service` /
   `http-api` / `solidity-build`; defers to the lint command declared above; violations block `PENDING_REVIEW`
 
 ## Agent process
@@ -818,7 +821,7 @@ Each criterion must be **falsifiable** (command output, status+body, revert, log
 - [ ] **behaviour-preserving refactor only:** characterization tests captured and passing **before**
       the change; the same tests pass unchanged after; declared frozen contracts untouched — or **N/A**
 - [ ] **`service` / `http-api` / `solidity-build` only:** code-quality gate run
-      (`skills/.harness/templates/CODE_QUALITY.md`); declared lint command recorded; violations = 0
+      (the `code-quality-gate` skill); declared lint command recorded; violations = 0
       or carrying documented exceptions — or **N/A**
 
 ## Edge cases / failure modes
@@ -834,7 +837,7 @@ authentication, user data, external input, or Solidity funds/authz/upgrades.>
 - **Entry points / attack surface:** <new endpoints, inputs, permissions, deps, calls>
 - **Threats considered:** <e.g. injection, authz bypass, reentrancy, oracle manipulation>
 - **Mitigations in this sprint:** <what handles each threat above>
-- **Security review:** run `skills/.harness/templates/SECURITY_CHECKLIST.md` before merge.
+- **Security review:** run the `security-checklist` skill before merge.
 
 ## Blocking questions (gates)
 
@@ -1299,7 +1302,7 @@ Highlight good engineering decisions, including:
 | **`<PROJECT_SETUP>.md`** | Humans | Optional — local dev, env, deploy (name is project-specific) |
 
 **Work-type profiles:** `service` · `http-api` · `solidity-build` · `solidity-audit` · `ops-docs`  
-**Audit:** `skills/.harness/templates/AUDIT_CONTRACT.md` + `AUDIT_FINDING.md`
+**Audit:** the `solidity-audit` skill + `AUDIT_FINDING.md`
 
 **Humans →** setup doc (if present). **Agents →** `AGENTS.md` only.
 
@@ -1380,7 +1383,7 @@ Use the project rubric if `AGENTS.md` defines one; otherwise:
 - [ ] Invariant: `<command or N/A>`
 - [ ] Fork (if in scope): `<command or N/A>`
 - [ ] Static analysis (if used): `<e.g. slither . — or N/A>`
-- [ ] Manual checklist: `skills/.harness/templates/SECURITY_CHECKLIST.md` Solidity section
+- [ ] Manual checklist: the `security-checklist` skill Solidity section
 
 ---
 

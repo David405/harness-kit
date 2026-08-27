@@ -59,14 +59,14 @@ src/           # <or crates/, contracts/, …>
 - **Lint / typecheck / clippy / fmt:** <as applicable>
 - **Commits:** <convention, e.g. conventional commits>
 - **Sprint contracts:** `skills/.harness/contracts/<feature-id>.md` (or `.harness/contracts/` if this repo already uses it)
-- **Audit contracts:** `skills/.harness/templates/AUDIT_CONTRACT.md` → contracts path
+- **Audit contracts:** the `solidity-audit` skill → contracts path
 - **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit`
-- **Code audit (periodic):** `skills/.harness/templates/CODE_AUDIT_CONTRACT.md` — whole-subsystem quality
+- **Code audit (periodic):** the `code-audit` skill — whole-subsystem quality
   audit; produces findings only; behaviour preservation is its absolute constraint
-- **Templates:** `skills/.harness/templates/` (gitignored working copies)
+- **Skills:** kit skills are symlinked into this repo (see `.agents/skills/`); forms live inside each skill
 - **Verify fields:** every `FEATURES.json` entry's `verify` is a runnable command from this file
 - **Status:** `FAIL` → `PENDING_REVIEW` (executor after VERIFY) → `PASS` (human/reviewer only)
-- **Code-quality gate:** `skills/.harness/templates/CODE_QUALITY.md` — run at VERIFY for `service` /
+- **Code-quality gate:** the `code-quality-gate` skill — run at VERIFY for `service` /
   `http-api` / `solidity-build`; defers to the lint command declared above; violations block `PENDING_REVIEW`
 
 ## Agent process

@@ -114,7 +114,7 @@ Each criterion must be **falsifiable** (command output, status+body, revert, log
 - [ ] **behaviour-preserving refactor only:** characterization tests captured and passing **before**
       the change; the same tests pass unchanged after; declared frozen contracts untouched — or **N/A**
 - [ ] **`service` / `http-api` / `solidity-build` only:** code-quality gate run
-      (`skills/.harness/templates/CODE_QUALITY.md`); declared lint command recorded; violations = 0
+      (the `code-quality-gate` skill); declared lint command recorded; violations = 0
       or carrying documented exceptions — or **N/A**
 
 ## Edge cases / failure modes
@@ -130,7 +130,7 @@ authentication, user data, external input, or Solidity funds/authz/upgrades.>
 - **Entry points / attack surface:** <new endpoints, inputs, permissions, deps, calls>
 - **Threats considered:** <e.g. injection, authz bypass, reentrancy, oracle manipulation>
 - **Mitigations in this sprint:** <what handles each threat above>
-- **Security review:** run `skills/.harness/templates/SECURITY_CHECKLIST.md` before merge.
+- **Security review:** run the `security-checklist` skill before merge.
 
 ## Blocking questions (gates)
 
