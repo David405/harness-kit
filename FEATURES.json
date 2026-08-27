@@ -26,16 +26,16 @@
       "name": "code-audit profile: periodic whole-project quality audit with behaviour-preservation discipline",
       "priority": 1,
       "verify": "test -f templates/CODE_AUDIT_CONTRACT.md && test -f templates/CODE_AUDIT_FINDING.md && grep -q code-audit templates/AGENT_PROCESS.md && grep -qi characterization templates/SPRINT_CONTRACT.md && grep -q '1.5.0' BOOTSTRAP.md && ./scripts/build-bootstrap.sh >/dev/null && python3 -m json.tool FEATURES.json >/dev/null",
-      "status": "PENDING_REVIEW",
-      "notes": "Contract: skills/.harness/contracts/KIT-AUDIT-001.md; profile: ops-docs; EXECUTE+VERIFY green 2026-08-27 on feat/kit-audit-001-code-audit-profile; 1 declared deviation; awaiting human PASS"
+      "status": "PASS",
+      "notes": "Merged via PR #16 (3e22a12). PASS set by David 2026-08-27."
     },
     {
       "id": "KIT-QUALITY-001",
       "name": "Code-quality gate: deterministic lint-first checklist blocking PENDING_REVIEW on violations",
       "priority": 1,
       "verify": "test -f templates/CODE_QUALITY.md && grep -qi 'code.quality' templates/SPRINT_CONTRACT.md && grep -qi 'code.quality' templates/REVIEW.md && grep -q '1.4.0' BOOTSTRAP.md && ./scripts/build-bootstrap.sh >/dev/null && python3 -m json.tool FEATURES.json >/dev/null",
-      "status": "PENDING_REVIEW",
-      "notes": "Contract: skills/.harness/contracts/KIT-QUALITY-001.md; profile: ops-docs; EXECUTE+VERIFY green 2026-08-27 on feat/kit-quality-001-code-quality-gate; 2 deviations recorded in contract; awaiting human PASS"
+      "status": "PASS",
+      "notes": "Merged via PR #15 (a3af45f). PASS set by David 2026-08-27."
     },
     {
       "id": "KIT-V13-001",
