@@ -1,5 +1,5 @@
 #!/bin/sh
-# DEPRECATED as of kit 2.0.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
+# DEPRECATED as of kit 2.1.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
 # Retained so repos bootstrapped from BOOTSTRAP.md keep working. Removal: KIT-SKILLS-002.
 # Generates BOOTSTRAP.md from the forms now bundled inside skills/<name>/templates/.
 set -eu
@@ -17,10 +17,10 @@ append() {
   cat <<'HEADER'
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **DEPRECATED — kit 2.0.0 adopts via git submodule; see README.md. This file is retained for
+> **DEPRECATED — kit 2.1.0 adopts via git submodule; see README.md. This file is retained for
 > repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
 >
-> **Kit version 2.0.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 2.1.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
@@ -120,10 +120,10 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 | # | Output | Source | Preserve if exists? |
 |---|--------|--------|---------------------|
-| 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–M | N/A — canonical in the submodule |
+| 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–P | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=2.0.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.1.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -141,7 +141,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `2.0.0`
+- `skills/.harness/` tree exists with VERSION `2.1.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
@@ -240,6 +240,9 @@ HEADER
   append "Appendix K — CODE_QUALITY.md template" skills/code-quality-gate/templates/CODE_QUALITY.md
   append "Appendix L — CODE_AUDIT_CONTRACT.md template" skills/code-audit/templates/CODE_AUDIT_CONTRACT.md
   append "Appendix M — CODE_AUDIT_FINDING.md template" skills/code-audit/templates/CODE_AUDIT_FINDING.md
+  append "Appendix N — ERD_CONTRACT.md template" skills/erd-authoring/templates/ERD_CONTRACT.md
+  append "Appendix O — ERD.md template" skills/erd-authoring/templates/ERD.md
+  append "Appendix P — ARCHITECTURE.md template" skills/erd-authoring/templates/ARCHITECTURE.md
 
   cat <<'FOOTER'
 

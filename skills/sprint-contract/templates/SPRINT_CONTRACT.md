@@ -16,6 +16,7 @@ Pick **one**:
 - [ ] `solidity-audit` — use audit contract / sections
 - [ ] `ops-docs` — observability, docs, process-only
 - [ ] `code-audit` — periodic whole-subsystem quality audit (use `CODE_AUDIT_CONTRACT.md`)
+- [ ] `product-erd` — define a new product or feature (use the `erd-authoring` skill)
 
 **Languages / toolchain:** <e.g. TypeScript+Bun, Rust+Cargo, Go 1.22, Solidity+Foundry — cite AGENTS.md>
 
@@ -111,6 +112,8 @@ Each criterion must be **falsifiable** (command output, status+body, revert, log
 - [ ] **http-api only:** request **and** response schema/docs updated; error envelope regression in VERIFY — or **N/A**
 - [ ] **solidity-build only:** invariant / access-control / value-flow risks named; declared forge (or equivalent) tests in VERIFY — or **N/A**
 - [ ] **solidity-audit only:** `AUDIT_CONTRACT` sections completed; High/Critical have PoC commands — or **N/A**
+- [ ] **`product-erd` only:** non-goals explicit; every decision locked or owned with a needed-by;
+      slices ticket-ready with functional tests; `FEATURES.json` seed emitted — or **N/A**
 - [ ] **behaviour-preserving refactor only:** characterization tests captured and passing **before**
       the change; the same tests pass unchanged after; declared frozen contracts untouched — or **N/A**
 - [ ] **`service` / `http-api` / `solidity-build` only:** code-quality gate run

@@ -60,7 +60,9 @@ src/           # <or crates/, contracts/, …>
 - **Commits:** <convention, e.g. conventional commits>
 - **Sprint contracts:** `skills/.harness/contracts/<feature-id>.md` (or `.harness/contracts/` if this repo already uses it)
 - **Audit contracts:** the `solidity-audit` skill → contracts path
-- **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit`
+- **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit` | `product-erd`
+- **ERD stage (before contracts exist):** the `erd-authoring` skill — five human-gated stages producing
+  `erd.md` + `architecture.md` and a `FEATURES.json` seed
 - **Code audit (periodic):** the `code-audit` skill — whole-subsystem quality
   audit; produces findings only; behaviour preservation is its absolute constraint
 - **Skills:** kit skills are symlinked into this repo (see `.agents/skills/`); forms live inside each skill
