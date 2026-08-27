@@ -1,5 +1,7 @@
 #!/bin/sh
-# Generates BOOTSTRAP.md from maintainer mirrors. Run from kit repo root after editing mirrors.
+# DEPRECATED as of kit 2.0.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
+# Retained so repos bootstrapped from BOOTSTRAP.md keep working. Removal: KIT-SKILLS-002.
+# Generates BOOTSTRAP.md from the forms now bundled inside skills/<name>/templates/.
 set -eu
 root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$root"
@@ -15,7 +17,10 @@ append() {
   cat <<'HEADER'
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **Kit version 1.5.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **DEPRECATED — kit 2.0.0 adopts via git submodule; see README.md. This file is retained for
+> repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
+>
+> **Kit version 2.0.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
@@ -75,8 +80,8 @@ append() {
 | `AGENTS.md` | Agents | Single entrypoint — context + **`## Agent process`** |
 | `FEATURES.json` | Both | Progress: FAIL → PENDING_REVIEW → PASS; every `verify` = runnable command |
 | `BOOTSTRAP.md` | Maintainers | Bootstrap + appendix source for regeneration |
-| `skills/.harness/templates/REVIEW.md` | Reviewers | §0 contract compliance + production rubric |
-| `skills/.harness/templates/AUDIT_CONTRACT.md` | Auditors | Solidity audit slice contract |
+| the `harness-review` skill | Reviewers | §0 contract compliance + production rubric |
+| the `solidity-audit` skill | Auditors | Solidity audit slice contract |
 | `skills/.harness/` | Agents | Gitignored working tree — templates, contracts, STATE, VERSION |
 
 Agents read **`AGENTS.md` only** each session (plus `FEATURES.json`, `skills/.harness/STATE.md`, active sprint or audit contract).
@@ -115,10 +120,10 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 | # | Output | Source | Preserve if exists? |
 |---|--------|--------|---------------------|
-| 1 | `skills/.harness/templates/*` | Appendices B–M | N/A (gitignored) |
+| 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–M | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=1.5.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.0.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -136,7 +141,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `1.5.0`
+- `skills/.harness/` tree exists with VERSION `2.0.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
@@ -222,19 +227,19 @@ When the workspace contains multiple git repos:
 
 HEADER
 
-  append "Appendix A — Agent process (embedded in AGENTS.md)" templates/AGENT_PROCESS.md
-  append "Appendix B — AGENTS.md template" templates/AGENTS.md
-  append "Appendix C — FEATURES.json template" templates/FEATURES.json
-  append "Appendix D — SPRINT_CONTRACT.md template" templates/SPRINT_CONTRACT.md
-  append "Appendix E — SECURITY_CHECKLIST.md template" templates/SECURITY_CHECKLIST.md
-  append "Appendix F — STATE.md template" templates/STATE.md
-  append "Appendix G — REVIEW.md template" templates/REVIEW.md
-  append "Appendix H — README.md template (slim pointer)" templates/README_POINTER.md
-  append "Appendix I — AUDIT_CONTRACT.md template" templates/AUDIT_CONTRACT.md
-  append "Appendix J — AUDIT_FINDING.md template" templates/AUDIT_FINDING.md
-  append "Appendix K — CODE_QUALITY.md template" templates/CODE_QUALITY.md
-  append "Appendix L — CODE_AUDIT_CONTRACT.md template" templates/CODE_AUDIT_CONTRACT.md
-  append "Appendix M — CODE_AUDIT_FINDING.md template" templates/CODE_AUDIT_FINDING.md
+  append "Appendix A — Agent process (embedded in AGENTS.md)" skills/harness-onboard/templates/AGENT_PROCESS.md
+  append "Appendix B — AGENTS.md template" skills/harness-onboard/templates/AGENTS.md
+  append "Appendix C — FEATURES.json template" skills/harness-onboard/templates/FEATURES.json
+  append "Appendix D — SPRINT_CONTRACT.md template" skills/sprint-contract/templates/SPRINT_CONTRACT.md
+  append "Appendix E — SECURITY_CHECKLIST.md template" skills/security-checklist/templates/SECURITY_CHECKLIST.md
+  append "Appendix F — STATE.md template" skills/harness-onboard/templates/STATE.md
+  append "Appendix G — REVIEW.md template" skills/harness-review/templates/REVIEW.md
+  append "Appendix H — README.md template (slim pointer)" skills/harness-onboard/templates/README_POINTER.md
+  append "Appendix I — AUDIT_CONTRACT.md template" skills/solidity-audit/templates/AUDIT_CONTRACT.md
+  append "Appendix J — AUDIT_FINDING.md template" skills/solidity-audit/templates/AUDIT_FINDING.md
+  append "Appendix K — CODE_QUALITY.md template" skills/code-quality-gate/templates/CODE_QUALITY.md
+  append "Appendix L — CODE_AUDIT_CONTRACT.md template" skills/code-audit/templates/CODE_AUDIT_CONTRACT.md
+  append "Appendix M — CODE_AUDIT_FINDING.md template" skills/code-audit/templates/CODE_AUDIT_FINDING.md
 
   cat <<'FOOTER'
 

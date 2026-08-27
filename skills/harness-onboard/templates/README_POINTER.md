@@ -10,6 +10,6 @@
 | **`<PROJECT_SETUP>.md`** | Humans | Optional — local dev, env, deploy (name is project-specific) |
 
 **Work-type profiles:** `service` · `http-api` · `solidity-build` · `solidity-audit` · `ops-docs`  
-**Audit:** `skills/.harness/templates/AUDIT_CONTRACT.md` + `AUDIT_FINDING.md`
+**Audit:** the `solidity-audit` skill + `AUDIT_FINDING.md`
 
 **Humans →** setup doc (if present). **Agents →** `AGENTS.md` only.

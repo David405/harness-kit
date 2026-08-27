@@ -71,7 +71,7 @@ Use the project rubric if `AGENTS.md` defines one; otherwise:
 - [ ] Invariant: `<command or N/A>`
 - [ ] Fork (if in scope): `<command or N/A>`
 - [ ] Static analysis (if used): `<e.g. slither . — or N/A>`
-- [ ] Manual checklist: `skills/.harness/templates/SECURITY_CHECKLIST.md` Solidity section
+- [ ] Manual checklist: the `security-checklist` skill Solidity section
 
 ---
 

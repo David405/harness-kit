@@ -117,7 +117,7 @@ Do not lock product decisions here. Do not write production code.
 #### 3. CONTRACT
 
 Before any test or production code: produce a **Sprint Contract** using
-`skills/.harness/templates/SPRINT_CONTRACT.md` (or **Audit Contract** using
+the `sprint-contract` skill (or **Audit Contract** using
 `AUDIT_CONTRACT.md` for `solidity-audit`). Save under the contracts path declared in
 `AGENTS.md` (default `skills/.harness/contracts/<feature-id>.md`).
 
@@ -173,10 +173,10 @@ Prompt discipline:
 
 Run every command in the contract's verify section and the feature's `FEATURES.json` `verify`
 field. For high-stakes changes (money, auth, user data, external input, Solidity value flow),
-run `skills/.harness/templates/SECURITY_CHECKLIST.md` against the diff before asking to merge.
+run the `security-checklist` skill against the diff before asking to merge.
 
 For `service`, `http-api`, and `solidity-build` work, also run
-`skills/.harness/templates/CODE_QUALITY.md` against the diff. It is **deterministic-first**: the
+the `code-quality-gate` skill against the diff. It is **deterministic-first**: the
 lint/static-analysis command declared in `AGENTS.md` is run and its result recorded — model
 judgement is the documented fallback, not the default. A `violation` (hard limit breached with no
 documented exception) blocks `PENDING_REVIEW`; `warn` and pre-existing debt never block. The gate
@@ -188,7 +188,7 @@ If verify fails: stay `FAIL`, fix or revise the contract.
 
 #### 8. REVIEW → PENDING_REVIEW → HUMAN PASS
 
-Human or independent reviewer runs `skills/.harness/templates/REVIEW.md` (starts with **§0
+Human or independent reviewer runs the `harness-review` skill (starts with **§0
 contract compliance**). Executor sets the feature to `PENDING_REVIEW` when VERIFY is green.
 Human sets `PASS` only after review has no blocking findings. Commit/merge as the human asks.
 Pick the next highest-priority `FAIL`.
@@ -197,7 +197,7 @@ Pick the next highest-priority `FAIL`.
 
 Mandatory self-check before merge for any feature touching money, authentication, user data,
 external input, or Solidity funds/authz/upgrades: run
-`skills/.harness/templates/SECURITY_CHECKLIST.md`. Skip only for provably low-stakes doc-only
+the `security-checklist` skill. Skip only for provably low-stakes doc-only
 changes.
 
 Policy highlights (full checklist in template):
