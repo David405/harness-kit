@@ -28,6 +28,7 @@ Before deep code review, locate and read the relevant contract:
 6. **Success criteria** — walk each falsifiable criterion; mark **Pass / Fail / Untested**. Quote the
    observable (command output, status + body, revert, log field, finding ID, etc.).
 7. **Quality gates** — trust-boundary, partial/optional, http-api schema/envelope, solidity-build,
+   code-quality gate (`CODE_QUALITY.md`: lint command recorded, violations = 0 or documented),
    solidity-audit PoCs. Mark each **Pass / Fail / N/A**.
 8. **VERIFY commands** — run or confirm the contract's verify block passed; note any skipped or failing commands.
 
@@ -46,6 +47,11 @@ explicitly re-contracted and approved.
 | `solidity-build` | Authz, upgrade/pause, economic / value-flow safety |
 | `solidity-audit` | Severity calibration, false-positive risk, missing bug classes, PoC quality |
 | `ops-docs` | No silent behaviour change; observability fields stable |
+
+Code quality is graded by the gate, not by taste: confirm `CODE_QUALITY.md` was run for
+`service` / `http-api` / `solidity-build`, that the declared lint command is recorded rather than
+asserted, and that any hard-limit exception names its rule, measured value, and reason. `warn`
+and pre-existing findings are not grounds to request changes.
 
 Architecture packs (e.g. hexagonal) are graded only when `AGENTS.md` / the contract opts in.
 
@@ -192,15 +198,14 @@ Would you be comfortable deploying this at 2am?
 
 ## 11. Maintainability
 
-Assess:
+Complexity, length, coupling, duplication, magic values and naming limits are graded by the
+**code-quality gate** (`CODE_QUALITY.md`) — do not restate or re-litigate its thresholds here.
+This section covers what the gate cannot measure:
 
-- readability
-- future extensibility
-- code duplication
-- naming
-- documentation
-- comments
-- complexity
+- conceptual clarity — does the design explain itself?
+- future extensibility, and whether the seams are in the right places
+- documentation and comments: present where intent is non-obvious, absent where the code is clear
+- consistency with how the rest of this repo solves the same problem
 
 Will another engineer understand this six months from now?
 

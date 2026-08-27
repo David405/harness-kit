@@ -163,6 +163,15 @@ Run every command in the contract's verify section and the feature's `FEATURES.j
 field. For high-stakes changes (money, auth, user data, external input, Solidity value flow),
 run `skills/.harness/templates/SECURITY_CHECKLIST.md` against the diff before asking to merge.
 
+For `service`, `http-api`, and `solidity-build` work, also run
+`skills/.harness/templates/CODE_QUALITY.md` against the diff. It is **deterministic-first**: the
+lint/static-analysis command declared in `AGENTS.md` is run and its result recorded — model
+judgement is the documented fallback, not the default. A `violation` (hard limit breached with no
+documented exception) blocks `PENDING_REVIEW`; `warn` and pre-existing debt never block. The gate
+is **N/A** for `ops-docs`, and for `solidity-audit`, which judges the target's code as findings
+rather than its own diff. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
+raise them there and do not double-report.
+
 If verify fails: stay `FAIL`, fix or revise the contract.
 
 #### 8. REVIEW → PENDING_REVIEW → HUMAN PASS
@@ -202,6 +211,11 @@ may supply stack craft: Research/Plan grilling, TDD routers, hexagonal layouts, 
 recipes, ponytail simplicity. They **must not** replace `FEATURES.json`, sprint/audit
 contracts, VERIFY, or human PASS. If a pack assumes Vitest, Express, or a fixed folder layout,
 it applies only when this repo opts in via `AGENTS.md`.
+
+**Gate vs craft.** The kit ships the *gate*: `CODE_QUALITY.md`, a deterministic checklist with a
+blocking verdict and no thresholds of its own. A pack may ship the *craft* — thresholds, fix
+recipes, language-specific rules — and may tighten what the gate measures. A pack may never
+replace the gate, waive a violation, or set `PASS`.
 
 ### The control audit (2×2)
 
