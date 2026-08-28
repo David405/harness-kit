@@ -3,7 +3,7 @@
 A reusable, **tool-agnostic** framework for AI-assisted engineering — contract-first, TDD when
 behaviour changes, multi-language (TypeScript, Rust, Go, Solidity build + audit).
 
-**Kit v2.2** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
+**Kit v2.3** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
 here, so an upgrade is a pointer bump, not a per-repo edit.
 
 ## Adopt
@@ -23,6 +23,20 @@ Setup creates **symlinks only** — no copies, so nothing drifts. Then open an a
 git submodule update --remote harness-kit
 ./harness-kit/scripts/setup-harness-kit.sh
 ```
+
+## Gates
+
+```sh
+./scripts/verify-harness.sh          # exits non-zero on any violation
+./scripts/verify-harness.sh --strict # skips become failures
+```
+
+Rules and skills are instructions to a model that can misread them under load. A gate is a fact.
+It checks ledger integrity, that every `PENDING_REVIEW` has a contract, that skills and rules will
+load, that every `[GROUNDED]` path exists, that the diff is contained by the impact map, and that RED
+was recorded and failed on an assertion. **CI runs it again** — a local green is not evidence.
+
+> Gate it if a command can enforce it, skill it if it is procedural, rule it only if it holds everywhere.
 
 ## Rules
 

@@ -31,6 +31,11 @@ Before deep code review, locate and read the relevant contract:
    code-quality gate (`CODE_QUALITY.md`: lint command recorded, violations = 0 or documented),
    solidity-audit PoCs. Mark each **Pass / Fail / N/A**.
 8. **VERIFY commands** — run or confirm the contract's verify block passed; note any skipped or failing commands.
+9. **Gate artifacts** — confirm the contract carries a recorded **RED** (real command, non-zero exit,
+   assertion-shaped failure), a **BASELINE**, and a **GREEN** whose counts match the baseline. A
+   predicted RED, or one that failed on an import error, is a finding. `N/A` is only valid when the
+   sprint changed no behaviour.
+10. **Gate ran** — confirm `verify-harness.sh` exited 0 **in CI**, not only locally.
 
 If no contract exists (hotfix, drive-by), state that explicitly and review on production-readiness only.
 Retroactive contract may be required before PASS.

@@ -11,6 +11,9 @@
 > `CODE_AUDIT_CONTRACT.md` asks "where should we invest refactoring effort?" on a cadence, over a
 > declared subsystem. Do not substitute one for the other.
 
+> Process discipline — ledger, contract, scope containment, RED artifact — is checked by
+> `verify-harness.sh`, not here. This gate judges the code; that one judges the contract.
+
 ## 0. Sensor
 
 - [ ] Repo's declared lint / static-analysis command from `AGENTS.md` was **run** on the diff

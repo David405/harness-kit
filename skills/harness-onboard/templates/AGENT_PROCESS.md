@@ -229,6 +229,20 @@ is **N/A** for `ops-docs`, `code-audit` and `product-erd`, and for `solidity-aud
 ship code of their own. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
 raise them there and do not double-report.
 
+Then run the gate:
+
+```sh
+./scripts/verify-harness.sh          # or the path this repo declares
+```
+
+It checks the discipline rather than the code: ledger integrity, that every `PENDING_REVIEW` has a
+contract, that skills and rules will actually load, that every `[GROUNDED]` path in the contract
+**exists**, that the diff is **contained by the impact map**, and that RED was recorded and failed on
+an assertion. **The executor may set `PENDING_REVIEW` only when this exits 0.**
+
+Rules and skills are instructions to a model that can misread them under load. This is a fact — and
+**CI runs it again**, so a claim that it passed locally is not evidence.
+
 If verify fails: stay `FAIL`, fix or revise the contract.
 
 #### 9. REVIEW → PENDING_REVIEW → HUMAN PASS
