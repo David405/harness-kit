@@ -18,16 +18,16 @@
       "name": "product-erd profile + erd-authoring skill: five human-gated stages producing erd.md + architecture.md and a FEATURES seed",
       "priority": 1,
       "verify": "test -f skills/erd-authoring/SKILL.md && test -f skills/erd-authoring/templates/ERD.md && test -f skills/erd-authoring/templates/ARCHITECTURE.md && test -f skills/erd-authoring/templates/ERD_CONTRACT.md && grep -q product-erd skills/harness-onboard/templates/AGENT_PROCESS.md && grep -q '2.1.0' BOOTSTRAP.md && ./scripts/build-bootstrap.sh >/dev/null && python3 -m json.tool FEATURES.json >/dev/null",
-      "status": "PENDING_REVIEW",
-      "notes": "Contract: skills/.harness/contracts/KIT-ERD-001.md; profile: ops-docs; EXECUTE+VERIFY green 2026-08-27 on feat/kit-erd-001-erd-authoring (stacked on KIT-SKILLS-001); awaiting human PASS"
+      "status": "PASS",
+      "notes": "Merged via PR #18 (ef393c3). PASS set by David 2026-08-27; criteria re-checked against master."
     },
     {
       "id": "KIT-SKILLS-001",
       "name": "Templates become skills; adoption moves from single-file BOOTSTRAP to git submodule",
       "priority": 1,
       "verify": "test -f skills/code-quality-gate/SKILL.md && test -f skills/code-audit/SKILL.md && test -x scripts/setup-harness-kit.sh && grep -q '2.0.0' README.md && python3 -m json.tool FEATURES.json >/dev/null",
-      "status": "PENDING_REVIEW",
-      "notes": "Contract: skills/.harness/contracts/KIT-SKILLS-001.md; profile: ops-docs; BREAKING; EXECUTE+VERIFY green 2026-08-27 on feat/kit-skills-001-templates-to-skills (d503ac1 rename + 008248d); awaiting human PASS; blocks KIT-ERD-001"
+      "status": "PASS",
+      "notes": "Merged via PR #17 (8d44fbf). PASS set by David 2026-08-27; criteria re-checked against master."
     },
     {
       "id": "KIT-AUDIT-001",
