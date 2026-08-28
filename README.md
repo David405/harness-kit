@@ -3,7 +3,7 @@
 A reusable, **tool-agnostic** framework for AI-assisted engineering — contract-first, TDD when
 behaviour changes, multi-language (TypeScript, Rust, Go, Solidity build + audit).
 
-**Kit v2.0** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
+**Kit v2.1** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
 here, so an upgrade is a pointer bump, not a per-repo edit.
 
 ## Adopt
@@ -28,6 +28,7 @@ git submodule update --remote harness-kit
 
 | Skill | Use when |
 |-------|----------|
+| `erd-authoring` | Defining a new product or feature **before** contracts exist — five gated stages |
 | `harness-onboard` | Adopting the kit into a repo; scaffolding `AGENTS.md` / `FEATURES.json` / `STATE.md` |
 | `sprint-contract` | Starting any non-trivial change — contract before code |
 | `code-quality-gate` | At VERIFY, on the diff, for `service` / `http-api` / `solidity-build` |
@@ -43,7 +44,7 @@ Each skill bundles its forms in `skills/<name>/templates/`.
 - **`AGENTS.md`** (in the consumer repo) — the single agent entrypoint; tool-agnostic, read natively.
 - **`FEATURES.json`** — the ledger. `FAIL` → `PENDING_REVIEW` → `PASS`; every `verify` is a runnable command.
 - **`skills/.harness/`** — working state: contracts and `STATE.md`. Gitignored, local to the repo.
-- **Work-type profiles** — `service` · `http-api` · `solidity-build` · `solidity-audit` · `ops-docs` · `code-audit`.
+- **Work-type profiles** — `service` · `http-api` · `solidity-build` · `solidity-audit` · `ops-docs` · `code-audit` · `product-erd`.
   The profile decides which quality gates are in force and which are N/A.
 
 The kit ships **no thresholds and no tool mandates**. Verify commands, linters and architecture

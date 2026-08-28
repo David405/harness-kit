@@ -1,9 +1,9 @@
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **DEPRECATED — kit 2.0.0 adopts via git submodule; see README.md. This file is retained for
+> **DEPRECATED — kit 2.1.0 adopts via git submodule; see README.md. This file is retained for
 > repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
 >
-> **Kit version 2.0.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 2.1.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
@@ -103,10 +103,10 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 | # | Output | Source | Preserve if exists? |
 |---|--------|--------|---------------------|
-| 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–M | N/A — canonical in the submodule |
+| 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–P | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=2.0.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.1.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -124,7 +124,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `2.0.0`
+- `skills/.harness/` tree exists with VERSION `2.1.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
@@ -271,6 +271,7 @@ correct code.
 | `solidity-audit` | Contract security review (findings + PoCs) |
 | `ops-docs` | Observability, deploy docs, process-only changes |
 | `code-audit` | **Periodic** whole-subsystem code-quality audit — produces findings, changes no code |
+| `product-erd` | Define a new product, service or substantial feature — produces an ERD, ships no code |
 
 Profile drives which quality gates are in force vs **N/A**. HTTP/OpenAPI gates apply only to
 `http-api`. Solidity sections apply to `solidity-build` / `solidity-audit`. Architecture skills
@@ -286,6 +287,15 @@ not kit law.
 | Large (new domain, unclear design) | Optional distill of ticket/ERD → open questions | Full + Decisions + grill gaps | Yes Plan→Exec→Review |
 | Audit | Scope/assets/priors research | `AUDIT_CONTRACT` | Yes Exec→Review |
 | Code audit | Declared scope + ref + prior findings | `CODE_AUDIT_CONTRACT` | Yes Audit→Review |
+| New product / domain | Brief or PRD → the ERD stage | `ERD_CONTRACT` | Yes per stage gate |
+
+**`product-erd` runs before contracts exist.** It is the counterpart to optional RESEARCH, not a
+duplicate of it: RESEARCH distills open questions for **one** contract; the ERD stage produces a
+durable design document feeding **many**. Never dual-run them. Use it for a new product or service,
+a new domain, or a contract crossing teams or repos — a feature inside an already-documented
+service goes straight to a sprint contract. Its EXECUTE is five human-gated stages (S0 frame,
+S1 decisions, S2 design, S3 contracts, S4 slices); the agent stops at every gate, slices are
+written last, and S4 emits a `FEATURES.json` seed that a human accepts.
 
 **`code-audit` is periodic, never per-sprint.** It is the counterpart to the `CODE_QUALITY.md` gate:
 the gate asks "can this diff ship?" on every contract; the audit asks "where should we invest
@@ -395,8 +405,8 @@ the `code-quality-gate` skill against the diff. It is **deterministic-first**: t
 lint/static-analysis command declared in `AGENTS.md` is run and its result recorded — model
 judgement is the documented fallback, not the default. A `violation` (hard limit breached with no
 documented exception) blocks `PENDING_REVIEW`; `warn` and pre-existing debt never block. The gate
-is **N/A** for `ops-docs` and `code-audit`, and for `solidity-audit` — the last two judge a target's
-code as findings rather than their own diff. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
+is **N/A** for `ops-docs`, `code-audit` and `product-erd`, and for `solidity-audit` — none of these
+ship code of their own. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
 raise them there and do not double-report.
 
 If verify fails: stay `FAIL`, fix or revise the contract.
@@ -531,7 +541,9 @@ src/           # <or crates/, contracts/, …>
 - **Commits:** <convention, e.g. conventional commits>
 - **Sprint contracts:** `skills/.harness/contracts/<feature-id>.md` (or `.harness/contracts/` if this repo already uses it)
 - **Audit contracts:** the `solidity-audit` skill → contracts path
-- **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit`
+- **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit` | `product-erd`
+- **ERD stage (before contracts exist):** the `erd-authoring` skill — five human-gated stages producing
+  `erd.md` + `architecture.md` and a `FEATURES.json` seed
 - **Code audit (periodic):** the `code-audit` skill — whole-subsystem quality
   audit; produces findings only; behaviour preservation is its absolute constraint
 - **Skills:** kit skills are symlinked into this repo (see `.agents/skills/`); forms live inside each skill
@@ -723,6 +735,7 @@ Pick **one**:
 - [ ] `solidity-audit` — use audit contract / sections
 - [ ] `ops-docs` — observability, docs, process-only
 - [ ] `code-audit` — periodic whole-subsystem quality audit (use `CODE_AUDIT_CONTRACT.md`)
+- [ ] `product-erd` — define a new product or feature (use the `erd-authoring` skill)
 
 **Languages / toolchain:** <e.g. TypeScript+Bun, Rust+Cargo, Go 1.22, Solidity+Foundry — cite AGENTS.md>
 
@@ -818,6 +831,8 @@ Each criterion must be **falsifiable** (command output, status+body, revert, log
 - [ ] **http-api only:** request **and** response schema/docs updated; error envelope regression in VERIFY — or **N/A**
 - [ ] **solidity-build only:** invariant / access-control / value-flow risks named; declared forge (or equivalent) tests in VERIFY — or **N/A**
 - [ ] **solidity-audit only:** `AUDIT_CONTRACT` sections completed; High/Critical have PoC commands — or **N/A**
+- [ ] **`product-erd` only:** non-goals explicit; every decision locked or owned with a needed-by;
+      slices ticket-ready with functional tests; `FEATURES.json` seed emitted — or **N/A**
 - [ ] **behaviour-preserving refactor only:** characterization tests captured and passing **before**
       the change; the same tests pass unchanged after; declared frozen contracts untouched — or **N/A**
 - [ ] **`service` / `http-api` / `solidity-build` only:** code-quality gate run
@@ -1040,6 +1055,7 @@ explicitly re-contracted and approved.
 | `solidity-audit` | Severity calibration, false-positive risk, missing bug classes, PoC quality |
 | `ops-docs` | No silent behaviour change; observability fields stable |
 | `code-audit` | Evidence quality, false-positive rate, confidence and regression-risk calibration, behavioural safety of every recommendation |
+| `product-erd` | Scope honesty (are the non-goals real?), decision completeness, falsifiable acceptance criteria, slice ticketability, no silent standards divergence |
 
 Code quality is graded by the gate, not by taste: confirm `CODE_QUALITY.md` was run for
 `service` / `http-api` / `solidity-build`, that the declared lint command is recorded rather than
@@ -1940,6 +1956,345 @@ serialization / framework registration checked before filing>
 | **Proposed FEATURES id** | `<AREA-NNN>` |
 | **Accepted by** | `<human — the agent never accepts its own finding>` |
 | **Sprint contract** | `<path once created>` |
+
+---
+
+## Appendix N — ERD_CONTRACT.md template
+
+# ERD CONTRACT — <ERD-NNN>: <product or feature>
+
+> Written by the **agent**. Approved by the **human** before S0 begins.
+> Work-type profile: **`product-erd`**. Produces documents; ships no code.
+
+## Sources (required)
+
+- **Brief / PRD:** `<link or path>`
+- **Designs, tickets, prior art:** `<list>`
+- **Related repos / code to reuse:** `<list>`
+- **Standards pack declared in `AGENTS.md`:** `<name, or "none">`
+
+## Target
+
+- **Deliverables:** `<path>/erd.md` + `<path>/architecture.md`
+- **Consuming repo(s):** `<where the sprint contracts will run>`
+- **Deployable shape:** `<service | library | contract | docs>` — decides whether slice 1 is scaffolding
+
+---
+
+## Stage gate log
+
+The agent stops at every gate. Record who approved and when; an unsigned gate blocks the next stage.
+
+| Stage | Output | Approved by | Date |
+|-------|--------|-------------|------|
+| S0 Frame — summary, goals, **non-goals** | | | |
+| S1 Decisions — locked or deferred with owner | | | |
+| S2 Design — `architecture.md` | | | |
+| S3 Contracts — API/data/error/acceptance/risks | | | |
+| S4 Slices — slice table + `FEATURES.json` seed | | | |
+
+---
+
+## S1 decision register
+
+Every decision the ERD must lock. Deferred rows move to the ERD's Open Questions **with an owner and
+a needed-by** — never left implicit.
+
+| Topic | Options | Recommendation | Status | Owner | Needed by |
+|-------|---------|----------------|--------|-------|-----------|
+|  |  |  | Locked / Open |  |  |
+
+## Non-goals (from S0 — restate, do not summarise)
+
+- <what this explicitly does not cover, and where that work goes instead>
+
+---
+
+## Success criteria
+
+1. Every required ERD section present; no `TODO`/`TBD` placeholders remain.
+2. Non-goals explicit (at least one).
+3. Every decision either **Locked**, or Open with an owner and a needed-by.
+4. Acceptance criteria falsifiable — each names its verification method.
+5. Slices are ticket-ready, dependency-ordered; each has a concrete working behaviour and a functional test.
+6. Slice 1 is scaffolding **or** explicitly N/A for a non-deployable target.
+7. `FEATURES.json` seed emitted, one entry per slice, each `verify` a runnable command from `AGENTS.md`.
+8. Risks carry an early signal and a mitigation.
+9. Declared standards pack applied, or divergence recorded in Design Decisions with rationale.
+10. `erd.md` and `architecture.md` link to each other.
+
+## Quality gates (tick or N/A)
+
+- [ ] Falsifiable success criteria (always required)
+- [ ] Non-goals explicit
+- [ ] Decisions locked or owned
+- [ ] Slices ticket-ready with functional tests
+- [ ] `FEATURES.json` seed emitted
+- [ ] Standards divergence recorded — or **N/A**
+- [ ] Code-quality gate — **N/A** (`product-erd` ships no code)
+- [ ] TDD / behaviour-preserving refactor — **N/A**
+
+## VERIFY
+
+```bash
+# structure
+grep -q '## Goals and Non-Goals'                 <erd path>
+grep -q '## Implementation plan: Feature slices' <erd path>
+grep -q '## Design Decisions'                    <erd path>
+
+# no unresolved placeholders
+! grep -Eqi 'TODO|TBD|<fill' <erd path> <architecture path>
+
+# every open question has an owner (no empty owner cells)
+# every slice row has a functional test (no empty test cells)
+
+# both documents cross-link
+grep -q architecture <erd path> && grep -q erd <architecture path>
+
+# the seed parses
+python3 -m json.tool <seed file> >/dev/null
+```
+
+## Blocking questions
+
+<Anything that must be answered before S0. If none, write "None.">
+
+## Human approval gate
+
+- **Scope approved:** <pending / yes + date>
+- **Seed accepted into `FEATURES.json`:** <human-signed — the agent never accepts its own seed>
+
+---
+
+## Appendix O — ERD.md template
+
+# <Product or Feature> — Engineering Requirements Document
+
+> Companion: [`architecture.md`](./architecture.md) — owns system shape, diagrams, boundaries and
+> control flows. This document owns goals, decisions, contracts, acceptance criteria, risks, open
+> questions and slices. Keep the split; do not duplicate across the pair.
+>
+> Apply the standards pack declared in this repo's `AGENTS.md`. Record any divergence in
+> **Design Decisions** with rationale — never diverge silently.
+
+## Executive Summary
+
+- **Product / feature:**
+- **Source brief / PRD:**
+- **Customer promise:** <what a caller can do once this ships>
+- **Approach:**
+- **MVP delivery shape:**
+
+## Goals and Non-Goals
+
+### Goals
+
+-
+
+### Non-Goals
+
+> Required — at least one. Say where excluded work goes instead. Non-goals written here at S0 are
+> what stop scope creep during execution; discovered later, they are already expensive.
+
+-
+
+## Engineering Standards / Goals
+
+- **Standards pack applied:** <from `AGENTS.md`, or "none">
+- **Performance bar:**
+- **Reliability / availability:**
+- **Security / privacy:**
+- **Testing strategy:**
+- **Observability:**
+- **Deployable shape:** <service | library | contract | docs>
+
+| Signal | Threshold | Action |
+| --- | --- | --- |
+|  |  |  |
+
+## Implementation Overview
+
+- **Mental model:**
+- **Primary control flow:**
+- **Data ownership:**
+
+Diagrams and boundaries live in [`architecture.md`](./architecture.md).
+
+## Design Decisions
+
+### Decisions
+
+| Decision | Rationale | Alternatives considered |
+| --- | --- | --- |
+|  |  |  |
+
+### Acceptance Criteria / Done Signals
+
+Each criterion must be falsifiable — name how it is verified, not "works correctly".
+
+| Criterion / signal | Source | Verification method | Owner |
+| --- | --- | --- | --- |
+|  |  |  |  |
+
+## API / Data Contracts
+
+- **Naming and formats:**
+- **Endpoint / event / message contracts:**
+- **Error model:**
+- **Wire encoding:** <exact representation of amounts, ids, timestamps — ambiguity here is expensive later>
+- **Compatibility / migration rules:**
+
+## Risks, Security Concerns, and Pre-Mortem
+
+| Risk / likely failure | Impact | Early signal | Mitigation | Owner | Test / validation |
+| --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |
+
+## Open Questions
+
+Every row needs an owner and a needed-by. An unowned question is not tracked.
+
+| Question | Owner | Needed by | Status |
+| --- | --- | --- | --- |
+|  |  |  | Open / Locked |
+
+## Implementation plan: Feature slices
+
+> Write this **last**, after the sections above are stable. Slice 1 is scaffolding when the target is
+> a deployable service; **N/A** otherwise. Each row is a concrete working behaviour end to end —
+> never a layer cake ("schema", then "API", then "UI"). Prefer more small slices over few vague ones.
+
+| Slice | Working behavior | Functional test | Notes |
+| --- | --- | --- | --- |
+| 1 |  |  |  |
+| 2 |  |  |  |
+
+### FEATURES.json seed
+
+One entry per slice. `verify` is a runnable command from this repo's `AGENTS.md`. The agent
+**proposes**; a human accepts into the ledger.
+
+```json
+[
+  {
+    "id": "<AREA-001>",
+    "name": "<slice 1 working behaviour>",
+    "priority": 1,
+    "verify": "<runnable command from AGENTS.md>",
+    "status": "FAIL",
+    "notes": "From <ERD-NNN> slice 1"
+  }
+]
+```
+
+## Appendices
+
+### Data Dictionary
+
+| Field | Type | Required | Description | Source / owner |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
+
+### Glossary
+
+| Term | Meaning |
+| --- | --- |
+|  |  |
+
+### References
+
+-
+
+---
+
+## Appendix P — ARCHITECTURE.md template
+
+# <Product or Feature> — Architecture
+
+> Companion to [`erd.md`](./erd.md), which owns goals, decisions, contracts, acceptance criteria,
+> risks, open questions and slices. This document owns **system shape**. Do not duplicate the pair.
+>
+> Apply the architecture pattern declared in this repo's `AGENTS.md`. If none is declared, describe
+> the structure plainly — the kit mandates no pattern.
+
+## Scope
+
+<What this system does and does not own. One paragraph. No narrative.>
+
+## Mental model
+
+<2–4 sentences: what it is, how work flows through it, the constraint that shapes it.>
+
+## System diagram
+
+```mermaid
+flowchart LR
+  caller[Caller] --> entry[Entry point]
+  entry --> core[Core logic]
+  core --> store[(Store)]
+  core --> ext[External system]
+```
+
+Label external systems, data stores, trust boundaries and async paths. One useful diagram beats
+several decorative ones — keep it reviewable in a browser.
+
+## Components and boundaries
+
+| Component | Owns | Does not own |
+| --- | --- | --- |
+|  |  |  |
+
+## Interfaces
+
+<The seams this system exposes and depends on, in whatever form the declared pattern uses —
+ports and adapters, modules, packages, contracts. Name the role, not the vendor.>
+
+| Kind | Interface | Role |
+| --- | --- | --- |
+|  |  |  |
+
+## Primary control flows
+
+### <Flow name>
+
+1.
+2.
+3.
+
+<One numbered flow per significant path. Include the failure path where it is not obvious.>
+
+## Data ownership
+
+- **Owns / writes:**
+- **Reads only:**
+- **Never shares:** <credentials, stores, or state that must not be reached around this system>
+
+## State model
+
+```mermaid
+flowchart LR
+  Start((Start)) --> Active[Active]
+  Active --> Done[Done]
+  Active --> Failed[Failed]
+```
+
+| State | Meaning | Who sets it |
+| --- | --- | --- |
+|  |  |  |
+
+## Deployable boundaries
+
+| Deployable | Responsibility | Talks to |
+| --- | --- | --- |
+|  |  |  |
+
+## Related systems
+
+-
+
+## References
+
+- Requirements: [`erd.md`](./erd.md)
 
 ---
 

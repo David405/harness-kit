@@ -56,6 +56,7 @@ correct code.
 | `solidity-audit` | Contract security review (findings + PoCs) |
 | `ops-docs` | Observability, deploy docs, process-only changes |
 | `code-audit` | **Periodic** whole-subsystem code-quality audit — produces findings, changes no code |
+| `product-erd` | Define a new product, service or substantial feature — produces an ERD, ships no code |
 
 Profile drives which quality gates are in force vs **N/A**. HTTP/OpenAPI gates apply only to
 `http-api`. Solidity sections apply to `solidity-build` / `solidity-audit`. Architecture skills
@@ -71,6 +72,15 @@ not kit law.
 | Large (new domain, unclear design) | Optional distill of ticket/ERD → open questions | Full + Decisions + grill gaps | Yes Plan→Exec→Review |
 | Audit | Scope/assets/priors research | `AUDIT_CONTRACT` | Yes Exec→Review |
 | Code audit | Declared scope + ref + prior findings | `CODE_AUDIT_CONTRACT` | Yes Audit→Review |
+| New product / domain | Brief or PRD → the ERD stage | `ERD_CONTRACT` | Yes per stage gate |
+
+**`product-erd` runs before contracts exist.** It is the counterpart to optional RESEARCH, not a
+duplicate of it: RESEARCH distills open questions for **one** contract; the ERD stage produces a
+durable design document feeding **many**. Never dual-run them. Use it for a new product or service,
+a new domain, or a contract crossing teams or repos — a feature inside an already-documented
+service goes straight to a sprint contract. Its EXECUTE is five human-gated stages (S0 frame,
+S1 decisions, S2 design, S3 contracts, S4 slices); the agent stops at every gate, slices are
+written last, and S4 emits a `FEATURES.json` seed that a human accepts.
 
 **`code-audit` is periodic, never per-sprint.** It is the counterpart to the `CODE_QUALITY.md` gate:
 the gate asks "can this diff ship?" on every contract; the audit asks "where should we invest
@@ -180,8 +190,8 @@ the `code-quality-gate` skill against the diff. It is **deterministic-first**: t
 lint/static-analysis command declared in `AGENTS.md` is run and its result recorded — model
 judgement is the documented fallback, not the default. A `violation` (hard limit breached with no
 documented exception) blocks `PENDING_REVIEW`; `warn` and pre-existing debt never block. The gate
-is **N/A** for `ops-docs` and `code-audit`, and for `solidity-audit` — the last two judge a target's
-code as findings rather than their own diff. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
+is **N/A** for `ops-docs`, `code-audit` and `product-erd`, and for `solidity-audit` — none of these
+ship code of their own. Credential findings belong to `SECURITY_CHECKLIST.md`, not this gate —
 raise them there and do not double-report.
 
 If verify fails: stay `FAIL`, fix or revise the contract.
