@@ -1,0 +1,19 @@
+---
+description: Start every feature or fix on a dedicated branch and confirm the name with the human before checkout
+alwaysApply: true
+globs: ""
+---
+
+# New work goes on a new branch
+
+Never implement on the default branch.
+
+1. **Check** the current branch and whether this work belongs there.
+2. **Propose** a branch name and base.
+3. **Stop and ask**: "Confirm feature branch `<name>` (yes, or give another name)." Do not create or
+   switch branches until the human answers.
+4. **Do not** pile unrelated work onto an in-flight branch.
+5. After approval, create the branch. **Do not commit until the human asks.**
+6. Tell the human which branch is active when execution starts.
+
+Name from the contract or ticket id when one exists; otherwise short kebab-case scope.

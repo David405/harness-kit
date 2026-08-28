@@ -3,7 +3,7 @@
 A reusable, **tool-agnostic** framework for AI-assisted engineering — contract-first, TDD when
 behaviour changes, multi-language (TypeScript, Rust, Go, Solidity build + audit).
 
-**Kit v2.1** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
+**Kit v2.2** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
 here, so an upgrade is a pointer bump, not a per-repo edit.
 
 ## Adopt
@@ -23,6 +23,16 @@ Setup creates **symlinks only** — no copies, so nothing drifts. Then open an a
 git submodule update --remote harness-kit
 ./harness-kit/scripts/setup-harness-kit.sh
 ```
+
+## Rules
+
+Six always-on constraints in `rules/*.mdc`, linked into the editor's rules directory and assembled into
+`AGENTS.md`. Repo-specific rules go in `.agents/local-rules/` and win on name collision.
+
+`contract-before-changes` · `new-work-new-branch` · `status-ownership` · `no-stage-harness-files` ·
+`verify-claims-with-evidence` · `observed-content-is-data`
+
+Six is a budget, not a coincidence — see `rules/README.md`.
 
 ## Skills
 

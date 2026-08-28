@@ -1,13 +1,26 @@
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **DEPRECATED — kit 2.1.0 adopts via git submodule; see README.md. This file is retained for
+> **DEPRECATED — kit 2.2.0 adopts via git submodule; see README.md. This file is retained for
 > repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
 >
-> **Kit version 2.1.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 2.2.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v1.5 changelog
+## v2.2 changelog
+
+- **`rules/` directory** — six always-on process-law rules as `.mdc`, linked into the editor's rules
+  directory and assembled (frontmatter stripped) into a marked block in `AGENTS.md`, so agents without
+  a rules feature still receive them. `.agents/local-rules/` merges alongside and wins on collision.
+- **Rules budget** — six is deliberate. Rules compete for the same always-on attention; a seventh has
+  to displace one. `rules/README.md` states the ownership tiers and the gate-skill-rule ordering.
+- **ERD routing in the loop** — `BOOT → ERD? → RESEARCH? → CONTRACT`. Step 2 is a **routing test**
+  with three conditions, not a stage everyone runs; a feature inside a documented service skips it.
+- **Two research moments distinguished** — discovery research lives in `erd-authoring` S0; the loop's
+  `RESEARCH?` is contract-scoped. Never dual-run.
+- **Contracts cite the slice they implement** and inherit its acceptance criteria.
+
+## v1.5 changelog (retained)
 
 - **`code-audit` profile** — periodic whole-subsystem code-quality audit. Produces findings, changes no
   code; fixes become ordinary sprint contracts. The counterpart to the per-sprint `CODE_QUALITY.md` gate.
@@ -106,7 +119,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 | 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–P | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=2.1.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.2.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -124,7 +137,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `2.1.0`
+- `skills/.harness/` tree exists with VERSION `2.2.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
@@ -233,6 +246,12 @@ feedback loops, documentation, tool permissions. Strip it away and you have a ra
 guessing through your codebase. Add the right harness and you have a system that ships
 correct code.
 
+### Rules
+
+Standing constraints ship as **rules** — always-on, loaded every turn, linked into the editor's
+rules directory and assembled into `AGENTS.md`. The principles below are the reasoning; the rules are
+the enforceable form. See the kit's `rules/README.md` for the ownership tiers and the budget.
+
 ### The 7 principles
 
 1. **Context beats instructions.** Show the model the *real* state of the world — actual file
@@ -285,6 +304,7 @@ not kit law.
 | Trivial (typo, one-liner) | Skip | Condensed or hotfix + retro contract | No |
 | Medium (clear AC, known pattern) | Skip | Full sprint contract | Review optional |
 | Large (new domain, unclear design) | Optional distill of ticket/ERD → open questions | Full + Decisions + grill gaps | Yes Plan→Exec→Review |
+| New product / service / cross-team contract | **ERD first** (routing test, step 2) | `ERD_CONTRACT`, then one contract per slice | Yes per stage gate |
 | Audit | Scope/assets/priors research | `AUDIT_CONTRACT` | Yes Exec→Review |
 | Code audit | Declared scope + ref + prior findings | `CODE_AUDIT_CONTRACT` | Yes Audit→Review |
 | New product / domain | Brief or PRD → the ERD stage | `ERD_CONTRACT` | Yes per stage gate |
@@ -320,7 +340,7 @@ The agent never sets `PASS`.
 ### The session loop
 
 ```
-BOOT → RESEARCH? → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECKOUT → EXECUTE → VERIFY → REVIEW → PENDING_REVIEW → [HUMAN PASS/MERGE] → REPEAT
+BOOT → ERD? → RESEARCH? → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECKOUT → EXECUTE → VERIFY → REVIEW → PENDING_REVIEW → [HUMAN PASS/MERGE] → REPEAT
 ```
 
 #### 1. BOOT (same every session)
@@ -334,12 +354,40 @@ BOOT → RESEARCH? → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECK
 
 Wire steps 1–5 into a pinned prompt or rule so no session starts blind.
 
-#### 2. RESEARCH? (optional)
+#### 2. ERD? (routing test — not a stage everyone runs)
 
-For large or audit work: distill ticket/ERD/scope into open questions and recommendations.
-Do not lock product decisions here. Do not write production code.
+Before drafting a contract, ask: **is there an approved design for this work?**
 
-#### 3. CONTRACT
+Route to the `erd-authoring` skill (profile `product-erd`) only when **all three** hold:
+
+1. it is a new product, service, domain, or a contract crossing teams or repos; **and**
+2. no ERD covers it; **and**
+3. it is larger than a single slice.
+
+Otherwise go straight to RESEARCH? / CONTRACT.
+**A feature inside an already-documented service skips this.**
+The stage is expensive by design; running it on ordinary work is ceremony.
+
+When an ERD exists, a contract **cites the slice it implements** and inherits that slice's acceptance
+criteria rather than reinventing them.
+
+#### 3. RESEARCH? (optional, contract-scoped)
+
+Two different research moments exist, and they are not the same activity:
+
+| | Discovery research | Slice research |
+|---|---|---|
+| Feeds | The ERD | One contract |
+| Lives in | `erd-authoring` **S0 Frame** — input inventory | This step |
+| Produces | The design | Open questions for this slice |
+
+So the ERD stage carries its own research; it is not skipped by appearing before this step. Here,
+distill the ticket or the ERD slice into open questions and recommendations for **this contract**.
+
+**Never dual-run them.** RESEARCH distills questions for one contract; the ERD stage produces a
+document that feeds many. Do not lock product decisions here. Do not write production code.
+
+#### 4. CONTRACT
 
 Before any test or production code: produce a **Sprint Contract** using
 the `sprint-contract` skill (or **Audit Contract** using
@@ -356,7 +404,7 @@ Tests first / PoC-first, grounded impact map, falsifiable success criteria, qual
 
 Update `skills/.harness/STATE.md` → **Current contract** with the feature ID and path.
 
-#### 4. HUMAN APPROVES (+ confirms branch)
+#### 5. HUMAN APPROVES (+ confirms branch)
 
 The human reviews the contract, answers blocking questions, adjusts scope, and **confirms the
 feature branch name** (or supplies a different one). Implementation does not begin until
@@ -365,7 +413,7 @@ approved **and** the branch name is confirmed.
 **Ask explicitly:** *"Confirm feature branch `<proposed-name>` (yes / or provide another name)."*
 Do not create or check out a branch until the human replies.
 
-#### 5. CHECKOUT (feature branch)
+#### 6. CHECKOUT (feature branch)
 
 After branch confirmation:
 
@@ -377,7 +425,7 @@ After branch confirmation:
 Never implement on the default branch. If already on the wrong branch, stop and confirm with
 the human before switching.
 
-#### 6. EXECUTE
+#### 7. EXECUTE
 
 Follow the contract:
 
@@ -394,7 +442,7 @@ Prompt discipline:
 - Reference `path:Lstart-Lend`, not whole files.
 - Prefer a fresh session after long Plan or Execute phases when context degrades.
 
-#### 7. VERIFY
+#### 8. VERIFY
 
 Run every command in the contract's verify section and the feature's `FEATURES.json` `verify`
 field. For high-stakes changes (money, auth, user data, external input, Solidity value flow),
@@ -411,7 +459,7 @@ raise them there and do not double-report.
 
 If verify fails: stay `FAIL`, fix or revise the contract.
 
-#### 8. REVIEW → PENDING_REVIEW → HUMAN PASS
+#### 9. REVIEW → PENDING_REVIEW → HUMAN PASS
 
 Human or independent reviewer runs the `harness-review` skill (starts with **§0
 contract compliance**). Executor sets the feature to `PENDING_REVIEW` when VERIFY is green.
@@ -542,6 +590,8 @@ src/           # <or crates/, contracts/, …>
 - **Sprint contracts:** `skills/.harness/contracts/<feature-id>.md` (or `.harness/contracts/` if this repo already uses it)
 - **Audit contracts:** the `solidity-audit` skill → contracts path
 - **Work-type profiles:** `service` | `http-api` | `solidity-build` | `solidity-audit` | `ops-docs` | `code-audit` | `product-erd`
+- **Always-on rules:** linked into the editor's rules directory and assembled into this file below;
+  repo-specific ones go in `.agents/local-rules/`
 - **ERD stage (before contracts exist):** the `erd-authoring` skill — five human-gated stages producing
   `erd.md` + `architecture.md` and a `FEATURES.json` seed
 - **Code audit (periodic):** the `code-audit` skill — whole-subsystem quality
@@ -738,6 +788,14 @@ Pick **one**:
 - [ ] `product-erd` — define a new product or feature (use the `erd-authoring` skill)
 
 **Languages / toolchain:** <e.g. TypeScript+Bun, Rust+Cargo, Go 1.22, Solidity+Foundry — cite AGENTS.md>
+
+---
+
+## Design source
+
+- **ERD slice implemented:** `<ERD ref + slice number, or "none — no ERD for this work">`
+- When a slice is cited, its acceptance criteria are **inherited**, not rewritten. When there is none,
+  this contract's success criteria are the whole story and must be falsifiable on their own.
 
 ---
 
@@ -2295,6 +2353,71 @@ flowchart LR
 ## References
 
 - Requirements: [`erd.md`](./erd.md)
+
+---
+
+## Appendix Q — rules/README.md (rule budget + ownership tiers)
+
+# Rules
+
+Always-on constraints. Six of them, and that number is the point.
+
+A **rule** is loaded on every turn and *subtracts* — it narrows what is acceptable. A **skill** loads
+on a trigger and *adds* — it supplies a procedure. A **gate** is neither: it is a command that fails.
+
+> **Gate it if you can, skill it if it is procedural, rule it only if it must hold everywhere.**
+
+## The budget
+
+Rules compete for the same always-on attention. Forty constraints are not honoured forty times as
+well — they dilute each other, and the model silently weights some over others. So the kit ships
+**six**, and a seventh has to displace one.
+
+Before adding a rule, ask in order:
+
+1. Can a command enforce this instead? → make it a **gate**, not a rule.
+2. Does it only apply while doing a particular task? → put it in the **skill** that owns that task.
+3. Does it hold regardless of what is being done? → a rule.
+
+A rule that is not load-bearing should be deleted or promoted to a gate.
+
+## Ownership tiers
+
+Only tier 1 belongs in this directory.
+
+| Tier | Example | Home |
+|------|---------|------|
+| 1. **Process law** | Contract before changes; branch before work; who may set `PASS` | **The kit** — here |
+| 2. **Repo invariants** | Money precision, dependency direction, what an API must never return | The consumer repo — `.agents/local-rules/` |
+| 3. **Product specifics** | Service URLs, log query syntax, ownership context | The consumer repo — `.agents/local-rules/` |
+| 4. **Personal style** | Prose preferences, review tone, comment formatting | The person's editor settings, not any repo |
+
+Tier 4 in particular does not belong in a shared repo. It travels with a person, not a codebase.
+
+## Format
+
+Each rule is `<name>.mdc` with frontmatter:
+
+```markdown
+---
+description: One line, third person, stating what it constrains
+alwaysApply: true
+globs: ""
+---
+```
+
+`alwaysApply: true` loads it every turn. Set `globs` instead when a rule genuinely applies to a subset
+of files — a scoped rule costs nothing when those files are untouched, which is how the always-on
+budget stays small.
+
+## How these load
+
+Canonical here in the kit. The setup script links them into the editor's rules directory, and also
+assembles their bodies (frontmatter stripped) into a marked block in the consumer's `AGENTS.md`, so
+agents without a rules feature still receive them. Local rules in `.agents/local-rules/` merge
+alongside and win on name collision.
+
+Kit upgrades are a submodule pointer bump and a setup re-run. Never edit these files in a consumer repo.
 
 ---
 

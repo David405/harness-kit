@@ -1,0 +1,26 @@
+---
+description: The executor may set PENDING_REVIEW; only a human sets PASS, and side-effectful git operations are always human-gated
+alwaysApply: true
+globs: ""
+---
+
+# Status and side effects are human-gated
+
+## Feature status
+
+| Status | Who sets it |
+|--------|-------------|
+| `FAIL` | Human, or agent when starting or rejecting |
+| `PENDING_REVIEW` | **Executor**, once VERIFY is green |
+| `PASS` | **Human or independent reviewer only** |
+
+The agent never sets `PASS` — not for its own work, and not to tidy a ledger. Recording a human's
+decision is allowed when they have given it; say who authorised it.
+
+## Side effects
+
+Never push, merge, force-operate, rebase shared history, deploy, migrate a schema, or change
+permissions or credentials without being asked. Prepare the command and let the human run it.
+
+A ledger that disagrees with reality breaks work selection, so reconcile it deliberately rather than
+silently.
