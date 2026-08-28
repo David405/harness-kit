@@ -1,5 +1,5 @@
 #!/bin/sh
-# DEPRECATED as of kit 2.3.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
+# DEPRECATED as of kit 2.4.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
 # Retained so repos bootstrapped from BOOTSTRAP.md keep working. Removal: KIT-SKILLS-002.
 # Generates BOOTSTRAP.md from the forms now bundled inside skills/<name>/templates/.
 set -eu
@@ -17,14 +17,26 @@ append() {
   cat <<'HEADER'
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **DEPRECATED — kit 2.3.0 adopts via git submodule; see README.md. This file is retained for
+> **DEPRECATED — kit 2.4.0 adopts via git submodule; see README.md. This file is retained for
 > repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
 >
-> **Kit version 2.3.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 2.4.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v2.3 changelog
+## v2.4 changelog
+
+- **The gate reads structure, not prose.** Check 6 parses the Impact map section's table — first cell
+  of each marked row — instead of guessing which backticked token is a path. The v2.3 heuristic
+  accepted a token only if it had a slash or a known extension, which silently skipped real paths
+  (`Makefile`) and checked things that were not paths. A check that silently skips is worse than one
+  that fails loudly, so an unparseable marked row now fails.
+- **`[GROUNDED]` belongs to the impact map only** — stated in the contract form, which is what lets
+  the parser read position instead of inferring meaning.
+- **Check 10: `STATE.md` inbox drift.** The ledger check caught rot in `FEATURES.json` while the same
+  rot in `STATE.md` went unseen. An inbox entry naming a feature already `PASS` now fails.
+
+## v2.3 changelog (retained)
 
 - **`scripts/verify-harness.sh`** — the third layer. Rules and skills are instructions to a model that
   can misread them; this is a fact that exits non-zero. Nine checks: ledger integrity, every
@@ -151,7 +163,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 | 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–P | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=2.3.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.4.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -169,7 +181,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `2.3.0`
+- `skills/.harness/` tree exists with VERSION `2.4.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo

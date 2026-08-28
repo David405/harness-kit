@@ -132,24 +132,69 @@ elif [ -f "$STATE" ]; then
 fi
 
 # --- 6. grounded paths exist (catches invented files) ------------------------
+# Reads STRUCTURE, not prose: the Impact map section only, table rows only, first
+# cell only. Scanning for [GROUNDED] anywhere also picks up Context and Decisions
+# tables, and guessing which backticked token is a path misfires both ways.
 if [ -n "$contract_file" ] && [ -f "$contract_file" ]; then
-  # Only backticked tokens that look like paths: they contain a slash, or carry a
-  # known file extension. Branch names and commit SHAs are also backticked on
-  # [GROUNDED] lines and are not paths.
-  missing=""
-  for p in $(grep -o '`[^`]*`[^|]*\[GROUNDED\]' "$contract_file" | grep -o '`[^`]*`' | tr -d '`' | sort -u); do
-    case "$p" in
-      *" "*|"") continue ;;
-      */*) : ;;
-      *.md|*.sh|*.json|*.yml|*.yaml|*.mdc|*.ts|*.js|*.go|*.rs|*.sol|*.py) : ;;
-      *) continue ;;
-    esac
-    [ -e "$p" ] || missing="$missing $p"
-  done
-  if [ -z "$missing" ]; then pass "contract: every [GROUNDED] path exists"
-  else fail "contract cites paths that do not exist:$missing"; fi
+  result=$(python3 - "$contract_file" <<'PYEOF'
+import re, sys, glob, os
+
+text = open(sys.argv[1], encoding="utf-8").read().splitlines()
+
+# isolate the Impact map section
+start = None
+for n, line in enumerate(text):
+    if re.match(r"^##+\s+Impact map", line, re.I):
+        start = n + 1
+        break
+if start is None:
+    print("SKIP no Impact map section")
+    raise SystemExit
+
+section = []
+for line in text[start:]:
+    if re.match(r"^##+\s+", line):
+        break
+    section.append(line)
+
+rows = [l for l in section if l.lstrip().startswith("|") and "[GROUNDED]" in l]
+if not rows:
+    if any(l.lstrip().startswith("-") for l in section):
+        print("SKIP impact map not tabular")
+    else:
+        print("SKIP no [GROUNDED] rows")
+    raise SystemExit
+
+missing, malformed = [], []
+for row in rows:
+    cells = [c.strip() for c in row.strip().strip("|").split("|")]
+    if not cells:
+        malformed.append(row.strip()[:60]); continue
+    m = re.search(r"`([^`]+)`", cells[0])
+    if not m:
+        malformed.append(cells[0][:60]); continue
+    path = m.group(1).strip()
+    if "*" in path:
+        if not glob.glob(path):
+            missing.append(path)
+    elif not os.path.exists(path):
+        missing.append(path)
+
+if malformed:
+    print("FAIL unparseable [GROUNDED] rows: " + "; ".join(malformed))
+elif missing:
+    print("FAIL paths do not exist: " + " ".join(missing))
+else:
+    print("OK %d [GROUNDED] path(s) verified" % len(rows))
+PYEOF
+)
+  case "$result" in
+    OK*)   pass "contract impact map: ${result#OK }" ;;
+    SKIP*) skip "contract impact map (${result#SKIP })" ;;
+    *)     fail "contract impact map: ${result#FAIL }" ;;
+  esac
 else
-  skip "contract [GROUNDED] paths (no contract)"
+  skip "contract impact map (no contract)"
 fi
 
 # --- 7. diff is contained by the impact map ----------------------------------
@@ -185,6 +230,55 @@ if [ -n "$contract_file" ] && [ -f "$contract_file" ]; then
   fi
 else
   skip "RED artifact (no contract)"
+fi
+
+# --- 10. STATE inbox does not reference finished work ------------------------
+# FEATURES.json rot is checked above; STATE.md rots the same way and nothing saw it.
+if [ -f "$STATE" ] && [ -f FEATURES.json ]; then
+  result=$(python3 - "$STATE" <<'PYEOF'
+import json, re, sys
+
+text = open(sys.argv[1], encoding="utf-8").read().splitlines()
+start = None
+for n, line in enumerate(text):
+    if re.match(r"^##+\s+Human-attention inbox", line, re.I):
+        start = n + 1
+        break
+if start is None:
+    print("SKIP no inbox section"); raise SystemExit
+
+section = []
+for line in text[start:]:
+    if re.match(r"^##+\s+", line):
+        break
+    section.append(line)
+
+feats = {f["id"]: f.get("status") for f in json.load(open("FEATURES.json")).get("features", [])}
+
+# Only ids that exist in this ledger can be stale. An id absent from the ledger is
+# either planned work not yet created, or an id belonging to another repo, or part
+# of a filename — none of which is rot. Flagging them was noise, not signal.
+ids = set()
+for line in section:
+    stripped = re.sub(r"`[^`]*`", " ", line)          # drop backticked paths/filenames
+    stripped = re.sub(r"\S*/\S*", " ", stripped)      # drop anything path-shaped
+    for m in re.findall(r"\b[A-Z][A-Z0-9]+(?:-[A-Z0-9]+)*-\d{3}\b", stripped):
+        ids.add(m)
+
+done = sorted(i for i in ids if feats.get(i) == "PASS")
+if done:
+    print("FAIL inbox references work already PASS: " + " ".join(done))
+else:
+    print("OK inbox references only open work")
+PYEOF
+)
+  case "$result" in
+    OK*)   pass "STATE inbox: ${result#OK }" ;;
+    SKIP*) skip "STATE inbox (${result#SKIP })" ;;
+    *)     fail "STATE ${result#FAIL }" ;;
+  esac
+else
+  skip "STATE inbox (no STATE.md or FEATURES.json)"
 fi
 
 # --- 9. branch discipline -----------------------------------------------------

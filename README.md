@@ -3,7 +3,7 @@
 A reusable, **tool-agnostic** framework for AI-assisted engineering — contract-first, TDD when
 behaviour changes, multi-language (TypeScript, Rust, Go, Solidity build + audit).
 
-**Kit v2.3** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
+**Kit v2.4** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
 here, so an upgrade is a pointer bump, not a per-repo edit.
 
 ## Adopt

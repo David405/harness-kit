@@ -1,13 +1,25 @@
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **DEPRECATED — kit 2.3.0 adopts via git submodule; see README.md. This file is retained for
+> **DEPRECATED — kit 2.4.0 adopts via git submodule; see README.md. This file is retained for
 > repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
 >
-> **Kit version 2.3.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 2.4.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v2.3 changelog
+## v2.4 changelog
+
+- **The gate reads structure, not prose.** Check 6 parses the Impact map section's table — first cell
+  of each marked row — instead of guessing which backticked token is a path. The v2.3 heuristic
+  accepted a token only if it had a slash or a known extension, which silently skipped real paths
+  (`Makefile`) and checked things that were not paths. A check that silently skips is worse than one
+  that fails loudly, so an unparseable marked row now fails.
+- **`[GROUNDED]` belongs to the impact map only** — stated in the contract form, which is what lets
+  the parser read position instead of inferring meaning.
+- **Check 10: `STATE.md` inbox drift.** The ledger check caught rot in `FEATURES.json` while the same
+  rot in `STATE.md` went unseen. An inbox entry naming a feature already `PASS` now fails.
+
+## v2.3 changelog (retained)
 
 - **`scripts/verify-harness.sh`** — the third layer. Rules and skills are instructions to a model that
   can misread them; this is a fact that exits non-zero. Nine checks: ledger integrity, every
@@ -134,7 +146,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 | 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–P | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=2.3.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.4.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -152,7 +164,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `2.3.0`
+- `skills/.harness/` tree exists with VERSION `2.4.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
@@ -848,7 +860,7 @@ Pick **one**:
 > Implementation on the default branch is forbidden. The human must confirm the branch name
 > before the agent creates or checks out the branch.
 
-- **Default branch:** <e.g. main — detected via `git symbolic-ref` or AGENTS.md>
+- **Default branch:** <e.g. main — detected via `git symbolic-ref` or AGENTS.md; no marker here>
 - **Proposed feature branch:** `<e.g. feat/area-001-short-description>`
 - **Human confirmed:** <pending — agent asks before checkout / yes + date / alternate name supplied>
 
@@ -910,8 +922,13 @@ Green-after means nothing without green-before. A count that moved is a regressi
 
 ## Impact map
 
-> Mark each path **[GROUNDED]** (verified in repo) or **[EDUCATED]** (must re-verify before
-> implementing). Never present educated guesses as grounded.
+> Mark each path **[GROUNDED]** (verified in repo), **[EDUCATED]** (must re-verify before
+> implementing), or **[NEW]**. Never present educated guesses as grounded.
+>
+> **These markers belong to the impact map only**, and the impact map is a table whose **first cell is
+> the path in backticks**. The gate reads that structure: it parses this section's table rows rather
+> than guessing which backticked token elsewhere in the contract is a path. A marker used outside this
+> table, or a marked row whose first cell is not a backticked path, is a gate failure.
 
 - **Files to change:**
   - `<path>` — <what changes> — [GROUNDED|EDUCATED]
@@ -2618,24 +2635,69 @@ elif [ -f "$STATE" ]; then
 fi
 
 # --- 6. grounded paths exist (catches invented files) ------------------------
+# Reads STRUCTURE, not prose: the Impact map section only, table rows only, first
+# cell only. Scanning for [GROUNDED] anywhere also picks up Context and Decisions
+# tables, and guessing which backticked token is a path misfires both ways.
 if [ -n "$contract_file" ] && [ -f "$contract_file" ]; then
-  # Only backticked tokens that look like paths: they contain a slash, or carry a
-  # known file extension. Branch names and commit SHAs are also backticked on
-  # [GROUNDED] lines and are not paths.
-  missing=""
-  for p in $(grep -o '`[^`]*`[^|]*\[GROUNDED\]' "$contract_file" | grep -o '`[^`]*`' | tr -d '`' | sort -u); do
-    case "$p" in
-      *" "*|"") continue ;;
-      */*) : ;;
-      *.md|*.sh|*.json|*.yml|*.yaml|*.mdc|*.ts|*.js|*.go|*.rs|*.sol|*.py) : ;;
-      *) continue ;;
-    esac
-    [ -e "$p" ] || missing="$missing $p"
-  done
-  if [ -z "$missing" ]; then pass "contract: every [GROUNDED] path exists"
-  else fail "contract cites paths that do not exist:$missing"; fi
+  result=$(python3 - "$contract_file" <<'PYEOF'
+import re, sys, glob, os
+
+text = open(sys.argv[1], encoding="utf-8").read().splitlines()
+
+# isolate the Impact map section
+start = None
+for n, line in enumerate(text):
+    if re.match(r"^##+\s+Impact map", line, re.I):
+        start = n + 1
+        break
+if start is None:
+    print("SKIP no Impact map section")
+    raise SystemExit
+
+section = []
+for line in text[start:]:
+    if re.match(r"^##+\s+", line):
+        break
+    section.append(line)
+
+rows = [l for l in section if l.lstrip().startswith("|") and "[GROUNDED]" in l]
+if not rows:
+    if any(l.lstrip().startswith("-") for l in section):
+        print("SKIP impact map not tabular")
+    else:
+        print("SKIP no [GROUNDED] rows")
+    raise SystemExit
+
+missing, malformed = [], []
+for row in rows:
+    cells = [c.strip() for c in row.strip().strip("|").split("|")]
+    if not cells:
+        malformed.append(row.strip()[:60]); continue
+    m = re.search(r"`([^`]+)`", cells[0])
+    if not m:
+        malformed.append(cells[0][:60]); continue
+    path = m.group(1).strip()
+    if "*" in path:
+        if not glob.glob(path):
+            missing.append(path)
+    elif not os.path.exists(path):
+        missing.append(path)
+
+if malformed:
+    print("FAIL unparseable [GROUNDED] rows: " + "; ".join(malformed))
+elif missing:
+    print("FAIL paths do not exist: " + " ".join(missing))
+else:
+    print("OK %d [GROUNDED] path(s) verified" % len(rows))
+PYEOF
+)
+  case "$result" in
+    OK*)   pass "contract impact map: ${result#OK }" ;;
+    SKIP*) skip "contract impact map (${result#SKIP })" ;;
+    *)     fail "contract impact map: ${result#FAIL }" ;;
+  esac
 else
-  skip "contract [GROUNDED] paths (no contract)"
+  skip "contract impact map (no contract)"
 fi
 
 # --- 7. diff is contained by the impact map ----------------------------------
@@ -2671,6 +2733,55 @@ if [ -n "$contract_file" ] && [ -f "$contract_file" ]; then
   fi
 else
   skip "RED artifact (no contract)"
+fi
+
+# --- 10. STATE inbox does not reference finished work ------------------------
+# FEATURES.json rot is checked above; STATE.md rots the same way and nothing saw it.
+if [ -f "$STATE" ] && [ -f FEATURES.json ]; then
+  result=$(python3 - "$STATE" <<'PYEOF'
+import json, re, sys
+
+text = open(sys.argv[1], encoding="utf-8").read().splitlines()
+start = None
+for n, line in enumerate(text):
+    if re.match(r"^##+\s+Human-attention inbox", line, re.I):
+        start = n + 1
+        break
+if start is None:
+    print("SKIP no inbox section"); raise SystemExit
+
+section = []
+for line in text[start:]:
+    if re.match(r"^##+\s+", line):
+        break
+    section.append(line)
+
+feats = {f["id"]: f.get("status") for f in json.load(open("FEATURES.json")).get("features", [])}
+
+# Only ids that exist in this ledger can be stale. An id absent from the ledger is
+# either planned work not yet created, or an id belonging to another repo, or part
+# of a filename — none of which is rot. Flagging them was noise, not signal.
+ids = set()
+for line in section:
+    stripped = re.sub(r"`[^`]*`", " ", line)          # drop backticked paths/filenames
+    stripped = re.sub(r"\S*/\S*", " ", stripped)      # drop anything path-shaped
+    for m in re.findall(r"\b[A-Z][A-Z0-9]+(?:-[A-Z0-9]+)*-\d{3}\b", stripped):
+        ids.add(m)
+
+done = sorted(i for i in ids if feats.get(i) == "PASS")
+if done:
+    print("FAIL inbox references work already PASS: " + " ".join(done))
+else:
+    print("OK inbox references only open work")
+PYEOF
+)
+  case "$result" in
+    OK*)   pass "STATE inbox: ${result#OK }" ;;
+    SKIP*) skip "STATE inbox (${result#SKIP })" ;;
+    *)     fail "STATE ${result#FAIL }" ;;
+  esac
+else
+  skip "STATE inbox (no STATE.md or FEATURES.json)"
 fi
 
 # --- 9. branch discipline -----------------------------------------------------

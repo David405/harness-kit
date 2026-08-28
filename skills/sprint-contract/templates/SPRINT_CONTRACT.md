@@ -50,7 +50,7 @@ Pick **one**:
 > Implementation on the default branch is forbidden. The human must confirm the branch name
 > before the agent creates or checks out the branch.
 
-- **Default branch:** <e.g. main — detected via `git symbolic-ref` or AGENTS.md>
+- **Default branch:** <e.g. main — detected via `git symbolic-ref` or AGENTS.md; no marker here>
 - **Proposed feature branch:** `<e.g. feat/area-001-short-description>`
 - **Human confirmed:** <pending — agent asks before checkout / yes + date / alternate name supplied>
 
@@ -112,8 +112,13 @@ Green-after means nothing without green-before. A count that moved is a regressi
 
 ## Impact map
 
-> Mark each path **[GROUNDED]** (verified in repo) or **[EDUCATED]** (must re-verify before
-> implementing). Never present educated guesses as grounded.
+> Mark each path **[GROUNDED]** (verified in repo), **[EDUCATED]** (must re-verify before
+> implementing), or **[NEW]**. Never present educated guesses as grounded.
+>
+> **These markers belong to the impact map only**, and the impact map is a table whose **first cell is
+> the path in backticks**. The gate reads that structure: it parses this section's table rows rather
+> than guessing which backticked token elsewhere in the contract is a path. A marker used outside this
+> table, or a marked row whose first cell is not a backticked path, is a gate failure.
 
 - **Files to change:**
   - `<path>` — <what changes> — [GROUNDED|EDUCATED]
