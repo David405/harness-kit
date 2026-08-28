@@ -1,6 +1,6 @@
 {
   "project": "Harness Kit",
-  "updated": "2026-08-27",
+  "updated": "2026-08-28",
   "legend": {
     "status": [
       "FAIL",
@@ -13,6 +13,14 @@
     "verify": "runnable test command or command sequence — not prose"
   },
   "features": [
+    {
+      "id": "KIT-RULES-001",
+      "name": "rules/ directory as .mdc with AGENTS.md assembly, plus ERD routing before contract drafting",
+      "priority": 1,
+      "verify": "test $(ls rules/*.mdc | wc -l) -eq 6 && test -f rules/README.md && grep -q 'harness-kit:rules:start' scripts/setup-harness-kit.sh && grep -q 'BOOT → ERD?' skills/harness-onboard/templates/AGENT_PROCESS.md && grep -q '2.2.0' BOOTSTRAP.md && ./scripts/build-bootstrap.sh >/dev/null && python3 -m json.tool FEATURES.json >/dev/null",
+      "status": "PENDING_REVIEW",
+      "notes": "Contract: skills/.harness/contracts/KIT-RULES-001.md; profile: ops-docs; EXECUTE+VERIFY green 2026-08-28 on feat/kit-rules-001-rules-and-erd-routing; 4 declared deviations; awaiting human PASS"
+    },
     {
       "id": "KIT-ERD-001",
       "name": "product-erd profile + erd-authoring skill: five human-gated stages producing erd.md + architecture.md and a FEATURES seed",

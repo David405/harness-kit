@@ -1,0 +1,26 @@
+---
+description: Stage product changes after execute, never harness working files, and never commit unless asked
+alwaysApply: true
+globs: ""
+---
+
+# Staging policy
+
+## Never stage
+
+Harness working state: the contracts directory, local session state, the feature ledger when it is used
+as working memory, and local notes. Keep them local unless the human explicitly asks to commit a
+specific one.
+
+## Stage after execute
+
+When a contract reaches execute-complete with VERIFY green, stage the **product** files that contract
+touched: source, tests, specs, shipped documentation. Do not wait to be asked to stage.
+
+**Still do not commit** unless the human asks.
+
+## After staging
+
+Say briefly what was staged and what was left unstaged. Do not push or open a pull request unless asked.
+
+When staging a feature branch, exclude harness paths even when they appear beside real changes.

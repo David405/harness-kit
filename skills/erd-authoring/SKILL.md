@@ -20,6 +20,12 @@ Profile: **`product-erd`**. The step before contracts exist. Produces `erd.md` +
 
 A new product or service, a new domain, or a contract crossing teams or repos.
 
+## Where it sits in the loop
+
+`BOOT → **ERD?** → RESEARCH? → CONTRACT`. Step 2 is a routing test with three conditions (see the
+agent process). This skill carries its own discovery research in **S0**; the loop's `RESEARCH?` is
+contract-scoped and comes after. Never dual-run them.
+
 ## When not to use
 
 **A feature inside an already-documented service goes straight to `sprint-contract`.** This stage

@@ -1,5 +1,5 @@
 #!/bin/sh
-# DEPRECATED as of kit 2.1.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
+# DEPRECATED as of kit 2.2.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
 # Retained so repos bootstrapped from BOOTSTRAP.md keep working. Removal: KIT-SKILLS-002.
 # Generates BOOTSTRAP.md from the forms now bundled inside skills/<name>/templates/.
 set -eu
@@ -17,14 +17,27 @@ append() {
   cat <<'HEADER'
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **DEPRECATED — kit 2.1.0 adopts via git submodule; see README.md. This file is retained for
+> **DEPRECATED — kit 2.2.0 adopts via git submodule; see README.md. This file is retained for
 > repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
 >
-> **Kit version 2.1.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 2.2.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v1.5 changelog
+## v2.2 changelog
+
+- **`rules/` directory** — six always-on process-law rules as `.mdc`, linked into the editor's rules
+  directory and assembled (frontmatter stripped) into a marked block in `AGENTS.md`, so agents without
+  a rules feature still receive them. `.agents/local-rules/` merges alongside and wins on collision.
+- **Rules budget** — six is deliberate. Rules compete for the same always-on attention; a seventh has
+  to displace one. `rules/README.md` states the ownership tiers and the gate-skill-rule ordering.
+- **ERD routing in the loop** — `BOOT → ERD? → RESEARCH? → CONTRACT`. Step 2 is a **routing test**
+  with three conditions, not a stage everyone runs; a feature inside a documented service skips it.
+- **Two research moments distinguished** — discovery research lives in `erd-authoring` S0; the loop's
+  `RESEARCH?` is contract-scoped. Never dual-run.
+- **Contracts cite the slice they implement** and inherit its acceptance criteria.
+
+## v1.5 changelog (retained)
 
 - **`code-audit` profile** — periodic whole-subsystem code-quality audit. Produces findings, changes no
   code; fixes become ordinary sprint contracts. The counterpart to the per-sprint `CODE_QUALITY.md` gate.
@@ -123,7 +136,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 | 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–P | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=2.1.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.2.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -141,7 +154,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `2.1.0`
+- `skills/.harness/` tree exists with VERSION `2.2.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
@@ -243,6 +256,7 @@ HEADER
   append "Appendix N — ERD_CONTRACT.md template" skills/erd-authoring/templates/ERD_CONTRACT.md
   append "Appendix O — ERD.md template" skills/erd-authoring/templates/ERD.md
   append "Appendix P — ARCHITECTURE.md template" skills/erd-authoring/templates/ARCHITECTURE.md
+  append "Appendix Q — rules/README.md (rule budget + ownership tiers)" rules/README.md
 
   cat <<'FOOTER'
 

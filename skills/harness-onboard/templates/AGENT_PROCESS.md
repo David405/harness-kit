@@ -18,6 +18,12 @@ feedback loops, documentation, tool permissions. Strip it away and you have a ra
 guessing through your codebase. Add the right harness and you have a system that ships
 correct code.
 
+### Rules
+
+Standing constraints ship as **rules** — always-on, loaded every turn, linked into the editor's
+rules directory and assembled into `AGENTS.md`. The principles below are the reasoning; the rules are
+the enforceable form. See the kit's `rules/README.md` for the ownership tiers and the budget.
+
 ### The 7 principles
 
 1. **Context beats instructions.** Show the model the *real* state of the world — actual file
@@ -70,6 +76,7 @@ not kit law.
 | Trivial (typo, one-liner) | Skip | Condensed or hotfix + retro contract | No |
 | Medium (clear AC, known pattern) | Skip | Full sprint contract | Review optional |
 | Large (new domain, unclear design) | Optional distill of ticket/ERD → open questions | Full + Decisions + grill gaps | Yes Plan→Exec→Review |
+| New product / service / cross-team contract | **ERD first** (routing test, step 2) | `ERD_CONTRACT`, then one contract per slice | Yes per stage gate |
 | Audit | Scope/assets/priors research | `AUDIT_CONTRACT` | Yes Exec→Review |
 | Code audit | Declared scope + ref + prior findings | `CODE_AUDIT_CONTRACT` | Yes Audit→Review |
 | New product / domain | Brief or PRD → the ERD stage | `ERD_CONTRACT` | Yes per stage gate |
@@ -105,7 +112,7 @@ The agent never sets `PASS`.
 ### The session loop
 
 ```
-BOOT → RESEARCH? → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECKOUT → EXECUTE → VERIFY → REVIEW → PENDING_REVIEW → [HUMAN PASS/MERGE] → REPEAT
+BOOT → ERD? → RESEARCH? → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECKOUT → EXECUTE → VERIFY → REVIEW → PENDING_REVIEW → [HUMAN PASS/MERGE] → REPEAT
 ```
 
 #### 1. BOOT (same every session)
@@ -119,12 +126,40 @@ BOOT → RESEARCH? → CONTRACT → [HUMAN APPROVES + CONFIRMS BRANCH] → CHECK
 
 Wire steps 1–5 into a pinned prompt or rule so no session starts blind.
 
-#### 2. RESEARCH? (optional)
+#### 2. ERD? (routing test — not a stage everyone runs)
 
-For large or audit work: distill ticket/ERD/scope into open questions and recommendations.
-Do not lock product decisions here. Do not write production code.
+Before drafting a contract, ask: **is there an approved design for this work?**
 
-#### 3. CONTRACT
+Route to the `erd-authoring` skill (profile `product-erd`) only when **all three** hold:
+
+1. it is a new product, service, domain, or a contract crossing teams or repos; **and**
+2. no ERD covers it; **and**
+3. it is larger than a single slice.
+
+Otherwise go straight to RESEARCH? / CONTRACT.
+**A feature inside an already-documented service skips this.**
+The stage is expensive by design; running it on ordinary work is ceremony.
+
+When an ERD exists, a contract **cites the slice it implements** and inherits that slice's acceptance
+criteria rather than reinventing them.
+
+#### 3. RESEARCH? (optional, contract-scoped)
+
+Two different research moments exist, and they are not the same activity:
+
+| | Discovery research | Slice research |
+|---|---|---|
+| Feeds | The ERD | One contract |
+| Lives in | `erd-authoring` **S0 Frame** — input inventory | This step |
+| Produces | The design | Open questions for this slice |
+
+So the ERD stage carries its own research; it is not skipped by appearing before this step. Here,
+distill the ticket or the ERD slice into open questions and recommendations for **this contract**.
+
+**Never dual-run them.** RESEARCH distills questions for one contract; the ERD stage produces a
+document that feeds many. Do not lock product decisions here. Do not write production code.
+
+#### 4. CONTRACT
 
 Before any test or production code: produce a **Sprint Contract** using
 the `sprint-contract` skill (or **Audit Contract** using
@@ -141,7 +176,7 @@ Tests first / PoC-first, grounded impact map, falsifiable success criteria, qual
 
 Update `skills/.harness/STATE.md` → **Current contract** with the feature ID and path.
 
-#### 4. HUMAN APPROVES (+ confirms branch)
+#### 5. HUMAN APPROVES (+ confirms branch)
 
 The human reviews the contract, answers blocking questions, adjusts scope, and **confirms the
 feature branch name** (or supplies a different one). Implementation does not begin until
@@ -150,7 +185,7 @@ approved **and** the branch name is confirmed.
 **Ask explicitly:** *"Confirm feature branch `<proposed-name>` (yes / or provide another name)."*
 Do not create or check out a branch until the human replies.
 
-#### 5. CHECKOUT (feature branch)
+#### 6. CHECKOUT (feature branch)
 
 After branch confirmation:
 
@@ -162,7 +197,7 @@ After branch confirmation:
 Never implement on the default branch. If already on the wrong branch, stop and confirm with
 the human before switching.
 
-#### 6. EXECUTE
+#### 7. EXECUTE
 
 Follow the contract:
 
@@ -179,7 +214,7 @@ Prompt discipline:
 - Reference `path:Lstart-Lend`, not whole files.
 - Prefer a fresh session after long Plan or Execute phases when context degrades.
 
-#### 7. VERIFY
+#### 8. VERIFY
 
 Run every command in the contract's verify section and the feature's `FEATURES.json` `verify`
 field. For high-stakes changes (money, auth, user data, external input, Solidity value flow),
@@ -196,7 +231,7 @@ raise them there and do not double-report.
 
 If verify fails: stay `FAIL`, fix or revise the contract.
 
-#### 8. REVIEW → PENDING_REVIEW → HUMAN PASS
+#### 9. REVIEW → PENDING_REVIEW → HUMAN PASS
 
 Human or independent reviewer runs the `harness-review` skill (starts with **§0
 contract compliance**). Executor sets the feature to `PENDING_REVIEW` when VERIFY is green.

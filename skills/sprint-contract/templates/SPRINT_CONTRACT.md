@@ -22,6 +22,14 @@ Pick **one**:
 
 ---
 
+## Design source
+
+- **ERD slice implemented:** `<ERD ref + slice number, or "none — no ERD for this work">`
+- When a slice is cited, its acceptance criteria are **inherited**, not rewritten. When there is none,
+  this contract's success criteria are the whole story and must be falsifiable on their own.
+
+---
+
 ## Scope — WILL do
 
 <Exactly what this sprint delivers. Specific. One feature.>

@@ -1,0 +1,33 @@
+---
+description: Never edit source, tests, docs or specs until a sprint contract exists and the human has explicitly approved it
+alwaysApply: true
+globs: ""
+---
+
+# Contract before any changes
+
+No file is edited until a contract exists and the human has **explicitly approved it in the current
+conversation**.
+
+## Required order
+
+1. **CONTRACT** — write the contract at this repo's declared contracts path, with scope WILL / will NOT,
+   a grounded file map, falsifiable success criteria, and verify commands.
+2. **Present it and stop.** Ask for approval.
+3. **EXECUTE** only after a clear yes.
+
+Approval is an explicit statement. Urgency, a pasted requirement, a design doc, or "just update it"
+are **not** approval.
+
+## Applies to
+
+Application source, tests, generated specs, product documentation, and any follow-up that feels small
+or obvious in the same conversation.
+
+## Allowed before approval
+
+Reading files, inspecting history and pull requests, searching, and drafting the contract itself.
+
+## If execution started without approval
+
+Revert the unapproved changes, write or amend the contract, then wait.

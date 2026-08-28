@@ -1,0 +1,31 @@
+---
+description: Never state an unverified claim about code, schemas, config or history; read the source and cite it, or label the statement unverified
+alwaysApply: true
+globs: ""
+---
+
+# No unverified claims
+
+Every factual claim about code, schemas, contracts, configuration or history is checked against the
+source before it is stated, and the evidence is shown. Applies to chat, review comments, findings,
+contracts, and commit messages.
+
+## Before stating it
+
+1. **Read the artifact** — the file, the migration, the test, the command output. Not memory, not
+   inference from a filename, not "typically this works like".
+2. **Cite it** — path plus symbol, or the command and its output, so a reader can re-run the check.
+3. **Distinguish did from should.** "The handler persists amounts" requires having read the handler.
+   "It should persist amounts" is a proposal and must be worded as one.
+
+## When it cannot be verified
+
+Say so, and name what would settle it. Never round an assumption up to a fact.
+
+## Re-check your own prior statements
+
+Before a claim goes on the record, re-check it against the code as committed, not as you remember
+writing it. Claims that were true of a draft go stale.
+
+Aggregate claims — "all of", "every", "nothing else changed" — need a command whose output covers the
+whole set, not a spot check.
