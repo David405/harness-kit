@@ -3,7 +3,7 @@
 A reusable, **tool-agnostic** framework for AI-assisted engineering — contract-first, TDD when
 behaviour changes, multi-language (TypeScript, Rust, Go, Solidity build + audit).
 
-**Kit v2.4** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
+**Kit v2.5** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
 here, so an upgrade is a pointer bump, not a per-repo edit.
 
 ## Adopt
@@ -32,9 +32,14 @@ git submodule update --remote harness-kit
 ```
 
 Rules and skills are instructions to a model that can misread them under load. A gate is a fact.
-It checks ledger integrity, that every `PENDING_REVIEW` has a contract, that skills and rules will
-load, that every `[GROUNDED]` path exists, that the diff is contained by the impact map, and that RED
-was recorded and failed on an assertion. **CI runs it again** — a local green is not evidence.
+It checks ledger integrity, that skills and rules will load, that every `[GROUNDED]` path exists, that
+the diff is contained by the impact map, and that RED was recorded and failed on an assertion.
+**CI runs it again** — a local green is not evidence.
+
+Contracts are local (`skills/.harness/` is gitignored), so the checks that need one — impact-map
+containment, RED evidence, `STATE.md` agreement — **skip in CI with a stated reason** rather than
+passing silently. Those are the human reviewer's, reading the contract in the PR body. CI never
+executes anything it read from a PR.
 
 > Gate it if a command can enforce it, skill it if it is procedural, rule it only if it holds everywhere.
 

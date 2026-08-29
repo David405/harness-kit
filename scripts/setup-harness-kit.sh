@@ -116,6 +116,11 @@ fi
 
 # Assemble rule bodies (frontmatter stripped) into AGENTS.md so agents without a
 # rules feature still receive them. Only the marked block is regenerated.
+if [ ! -f AGENTS.md ] && [ -d "$kit/rules" ]; then
+  echo "warn: no AGENTS.md yet, so rules were NOT assembled into it." >&2
+  echo "      Agents without a rules feature will receive no rules." >&2
+  echo "      Fix: run the harness-onboard skill to create AGENTS.md, then re-run this script." >&2
+fi
 if [ -f AGENTS.md ] && [ -d "$kit/rules" ]; then
   START='<!-- harness-kit:rules:start — generated, do not hand-edit -->'
   END='<!-- harness-kit:rules:end -->'

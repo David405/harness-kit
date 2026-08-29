@@ -1,10 +1,9 @@
 name: harness
 
-# The unforgeable layer. Everything else in the kit is a instruction to a model
-# that can misread it; this re-runs the checks itself, so an agent's claim that
-# VERIFY passed stops mattering.
-#
-# It invokes scripts/verify-harness.sh — it never reimplements a check.
+# Deliberately narrow. CI checks what lives in the repo; it does not read anything
+# authored in a pull request body, and it does not execute a contract's VERIFY
+# block. Contracts are local working state, and the review gate is a person
+# reading the PR — not a machine reading the repo.
 
 on:
   pull_request:
@@ -23,16 +22,16 @@ jobs:
           test -x scripts/verify-harness.sh || chmod +x scripts/verify-harness.sh
           ./scripts/verify-harness.sh --base "origin/${{ github.base_ref }}"
 
-      - name: Contract VERIFY block
+      - name: What this run did not cover
+        if: always()
         run: |
-          # Re-run the contract's own verify commands. A local green is not evidence.
-          state=skills/.harness/STATE.md
-          [ -f "$state" ] || state=.harness/STATE.md
-          contract=$(grep -o '[A-Za-z0-9._/-]*contracts/[A-Za-z0-9._-]*\.md' "$state" 2>/dev/null | head -1)
-          if [ -z "$contract" ] || [ ! -f "$contract" ]; then
-            echo "no contract reachable — skipping contract VERIFY"; exit 0
-          fi
-          echo "running VERIFY from $contract"
-          awk '/^## VERIFY/{f=1} f&&/^```(bash|sh)$/{c=1;next} c&&/^```$/{c=0} c' "$contract" > /tmp/verify.sh
-          if [ ! -s /tmp/verify.sh ]; then echo "contract has no VERIFY block"; exit 1; fi
-          sh -e /tmp/verify.sh
+          cat <<'NOTE'
+          Not covered by CI, by design:
+            - contract impact map, scope containment, RED artifact
+              (the contract is local working state; the agent runs these before
+               pushing and pastes the output into the PR body)
+            - the contract's own VERIFY block
+
+          The reviewer confirms those from the PR body. A green run here is not
+          a statement that the contract was honoured.
+          NOTE

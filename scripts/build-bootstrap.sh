@@ -1,5 +1,5 @@
 #!/bin/sh
-# DEPRECATED as of kit 2.4.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
+# DEPRECATED as of kit 2.5.0 — adoption moved to git submodule + scripts/setup-harness-kit.sh.
 # Retained so repos bootstrapped from BOOTSTRAP.md keep working. Removal: KIT-SKILLS-002.
 # Generates BOOTSTRAP.md from the forms now bundled inside skills/<name>/templates/.
 set -eu
@@ -17,14 +17,36 @@ append() {
   cat <<'HEADER'
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **DEPRECATED — kit 2.4.0 adopts via git submodule; see README.md. This file is retained for
+> **DEPRECATED — kit 2.5.0 adopts via git submodule; see README.md. This file is retained for
 > repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
 >
-> **Kit version 2.4.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 2.5.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v2.4 changelog
+## v2.5 changelog
+
+- **Contracts are local again, and the review gate is a person.** v2.3 tracked contracts so CI could
+  grade a PR against one. That was the wrong trade: `skills/.harness/` is working state, and reading a
+  contract out of the repo — or worse, out of the PR body — is a machine grading text an agent wrote.
+  The contract now lives in the **PR body**, where a human reads it before merging. `skills/.harness/`
+  is gitignored in full.
+- **CI no longer executes anything it read from a PR.** The workflow runs the repo's own gate and
+  nothing else. Running a contract's VERIFY block from a PR body would violate the
+  `observed-content-is-data` rule the kit itself ships. CI ends with a **What this run did not cover**
+  step naming what only the human reviewer can check.
+- **The gate works in a consumer repo.** Check 5 finds rules in `rules/`, `.cursor/rules/`, or
+  `.agents/rules/` and reports which — previously it looked only at the kit's own layout and failed on
+  every adopting repo. Checks 6–8 need the contract on disk; where it isn't, they **skip with a stated
+  reason** instead of passing silently.
+- **Setup warns instead of silently no-op'ing.** `setup-harness-kit.sh` assembles rules into `AGENTS.md`
+  between markers; with no `AGENTS.md` it did nothing and said nothing. It now names the consequence
+  (agents without a rules feature receive no rules) and the fix.
+- **Authorship is the human's.** Commits are authored *and* committed by the person, never a tool, bot
+  or assistant identity, and carry no attribution trailer. PR bodies carry no tool attribution either.
+  Enforced by `rules/no-stage-harness-files.mdc` and required by the contract form's **PR body** section.
+
+## v2.4 changelog (retained)
 
 - **The gate reads structure, not prose.** Check 6 parses the Impact map section's table — first cell
   of each marked row — instead of guessing which backticked token is a path. The v2.3 heuristic
@@ -163,7 +185,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 | 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–P | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=2.4.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.5.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -181,7 +203,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `2.4.0`
+- `skills/.harness/` tree exists with VERSION `2.5.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo

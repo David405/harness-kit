@@ -19,6 +19,14 @@ touched: source, tests, specs, shipped documentation. Do not wait to be asked to
 
 **Still do not commit** unless the human asks.
 
+## Commit authorship
+
+When a commit is made, its **author and committer are the human**. Never a tool, assistant, editor or
+bot identity, and no attribution trailer in the body — no "generated with", no "made with" or "made
+by", no `Co-Authored-By` naming a tool.
+
+The commit records what changed and why. What typed it is not part of the record.
+
 ## After staging
 
 Say briefly what was staged and what was left unstaged. Do not push or open a pull request unless asked.
