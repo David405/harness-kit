@@ -38,6 +38,13 @@ A Solidity security review → `solidity-audit`. A periodic quality audit → `c
    Never "works correctly" or "clear error".
 8. **Blocking questions** with a recommendation each, so approval is one message.
 
+## Opening the PR
+
+The contract is not in git, so the **PR body carries it** between the contract markers, together with
+the verbatim local gate output. A reviewer grades the PR against that; CI covers only repo-owned checks.
+
+**No tool attribution** in the title, body or commit messages, and a commit's author is the human.
+
 ## Form
 
 `templates/SPRINT_CONTRACT.md`

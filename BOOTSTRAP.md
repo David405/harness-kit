@@ -1,13 +1,35 @@
 # BOOTSTRAP.md — Harness Bootstrap
 
-> **DEPRECATED — kit 2.4.0 adopts via git submodule; see README.md. This file is retained for
+> **DEPRECATED — kit 2.5.0 adopts via git submodule; see README.md. This file is retained for
 > repos already bootstrapped from it and will be removed in KIT-SKILLS-002.**
 >
-> **Kit version 2.4.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
+> **Kit version 2.5.0** — generic, tool-agnostic AI-assisted engineering process for TypeScript,
 > Rust, Go, Solidity build, and Solidity auditing. Copy this file into **any** repo. Prompt your LLM:
 > *"Read BOOTSTRAP.md and complete Step 0 — Bootstrap harness files."*
 
-## v2.4 changelog
+## v2.5 changelog
+
+- **Contracts are local again, and the review gate is a person.** v2.3 tracked contracts so CI could
+  grade a PR against one. That was the wrong trade: `skills/.harness/` is working state, and reading a
+  contract out of the repo — or worse, out of the PR body — is a machine grading text an agent wrote.
+  The contract now lives in the **PR body**, where a human reads it before merging. `skills/.harness/`
+  is gitignored in full.
+- **CI no longer executes anything it read from a PR.** The workflow runs the repo's own gate and
+  nothing else. Running a contract's VERIFY block from a PR body would violate the
+  `observed-content-is-data` rule the kit itself ships. CI ends with a **What this run did not cover**
+  step naming what only the human reviewer can check.
+- **The gate works in a consumer repo.** Check 5 finds rules in `rules/`, `.cursor/rules/`, or
+  `.agents/rules/` and reports which — previously it looked only at the kit's own layout and failed on
+  every adopting repo. Checks 6–8 need the contract on disk; where it isn't, they **skip with a stated
+  reason** instead of passing silently.
+- **Setup warns instead of silently no-op'ing.** `setup-harness-kit.sh` assembles rules into `AGENTS.md`
+  between markers; with no `AGENTS.md` it did nothing and said nothing. It now names the consequence
+  (agents without a rules feature receive no rules) and the fix.
+- **Authorship is the human's.** Commits are authored *and* committed by the person, never a tool, bot
+  or assistant identity, and carry no attribution trailer. PR bodies carry no tool attribution either.
+  Enforced by `rules/no-stage-harness-files.mdc` and required by the contract form's **PR body** section.
+
+## v2.4 changelog (retained)
 
 - **The gate reads structure, not prose.** Check 6 parses the Impact map section's table — first cell
   of each marked row — instead of guessing which backticked token is a path. The v2.3 heuristic
@@ -146,7 +168,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 | 1 | kit skills (symlinked by `setup-harness-kit.sh`) | Appendices B–P | N/A — canonical in the submodule |
 | 2 | `skills/.harness/contracts/` | — | Create empty directory |
 | 3 | `skills/.harness/STATE.md` | Appendix F | Fill `<project-name>` + date |
-| 4 | `skills/.harness/VERSION` | — | `version=2.4.0` + `bootstrapped=<YYYY-MM-DD>` |
+| 4 | `skills/.harness/VERSION` | — | `version=2.5.0` + `bootstrapped=<YYYY-MM-DD>` |
 | 5 | `README.md` | Appendix G | **No** — overwrite with slim pointer (after brownfield recovery if needed) |
 | 6 | `AGENTS.md` | Appendix B | **Yes** if already filled — scaffold only; never overwrite harvested/verified content |
 | 7 | `FEATURES.json` | Appendix C | **Yes** if seeded — scaffold only |
@@ -164,7 +186,7 @@ If `README.md` is already a harness pointer or is empty/scaffold-only, skip reco
 
 **Done when:**
 
-- `skills/.harness/` tree exists with VERSION `2.4.0`
+- `skills/.harness/` tree exists with VERSION `2.5.0`
 - `python3 -m json.tool FEATURES.json` passes (if scaffolded)
 - `.gitignore` contains `skills/.harness/`
 - No `HARNESS.md` in repo
@@ -832,6 +854,23 @@ Pick **one**:
 
 ---
 
+## PR body (required)
+
+The contract is **local working state and is not in git**, so a reviewer cannot open it from the diff.
+The pull request body must carry:
+
+1. The contract, between `<!-- harness-kit:contract:start -->` and `<!-- harness-kit:contract:end -->`.
+2. The **verbatim output** of the local gate run — not a summary of it.
+
+CI checks only what lives in the repo and prints what it did not cover. The contract-dependent
+checks are confirmed by a person reading this body.
+
+**No tool attribution** anywhere in the PR title, body, or commit messages: no "generated with",
+no "made with" or "made by", no assistant or editor name, no `Co-Authored-By` trailer. The PR
+describes the change.
+
+---
+
 ## Design source
 
 - **ERD slice implemented:** `<ERD ref + slice number, or "none — no ERD for this work">`
@@ -1152,6 +1191,10 @@ Focus on correctness over style. Challenge assumptions. Review the change like t
 
 Before deep code review, locate and read the relevant contract:
 
+0. **The contract is in the PR body**, between the contract markers — it is local working state and
+   will not appear in the diff. If the body carries no contract, that is the first finding. Also
+   confirm the pasted gate output is verbatim, and flag any tool attribution in the title, body or
+   commit messages.
 1. **Identify contract** — from PR description, branch name, commit messages, or `FEATURES.json`
    (`PENDING_REVIEW` entry). Default path: `skills/.harness/contracts/<ID>.md` (or `.harness/contracts/`
    if `AGENTS.md` says so). Use `AUDIT_CONTRACT` for `solidity-audit`.
@@ -2612,16 +2655,21 @@ else
   skip "no skills directory"
 fi
 
-if [ -d rules ]; then
+# Rules live at the root in the kit, but behind a symlink merge in a consumer.
+RULES_DIR=""
+for d in rules .cursor/rules .agents/rules; do
+  if [ -d "$d" ] && [ -n "$(ls "$d"/*.mdc 2>/dev/null)" ]; then RULES_DIR="$d"; break; fi
+done
+if [ -n "$RULES_DIR" ]; then
   bad=""
-  for r in rules/*.mdc; do
+  for r in "$RULES_DIR"/*.mdc; do
     [ -f "$r" ] || continue
     head -1 "$r" | grep -q '^---$' && grep -q '^description:' "$r" && grep -q '^alwaysApply:' "$r" || bad="$bad $r"
   done
-  if [ -z "$bad" ]; then pass "rules: frontmatter valid (will load)"
+  if [ -z "$bad" ]; then pass "rules: frontmatter valid, will load (from $RULES_DIR)"
   else fail "rules with bad frontmatter:$bad"; fi
 else
-  skip "no rules directory"
+  skip "no rules found (looked in rules/, .cursor/rules/, .agents/rules/)"
 fi
 
 # --- resolve the active contract ---------------------------------------------
@@ -2697,7 +2745,7 @@ PYEOF
     *)     fail "contract impact map: ${result#FAIL }" ;;
   esac
 else
-  skip "contract impact map (no contract)"
+  skip "contract impact map (contract is local — run this before pushing; a human reviews the output)"
 fi
 
 # --- 7. diff is contained by the impact map ----------------------------------
@@ -2715,7 +2763,7 @@ if [ -n "$contract_file" ] && [ -f "$contract_file" ] && git rev-parse --git-dir
     skip "scope containment (base $base unresolvable)"
   fi
 else
-  skip "scope containment (no contract)"
+  skip "scope containment (contract is local — run before pushing)"
 fi
 
 # --- 8. RED was recorded, and failed for the right reason --------------------
@@ -2732,7 +2780,7 @@ if [ -n "$contract_file" ] && [ -f "$contract_file" ]; then
     skip "RED artifact (contract predates the recording format)"
   fi
 else
-  skip "RED artifact (no contract)"
+  skip "RED artifact (contract is local — run before pushing)"
 fi
 
 # --- 10. STATE inbox does not reference finished work ------------------------
@@ -2813,11 +2861,10 @@ exit 0
 
 name: harness
 
-# The unforgeable layer. Everything else in the kit is a instruction to a model
-# that can misread it; this re-runs the checks itself, so an agent's claim that
-# VERIFY passed stops mattering.
-#
-# It invokes scripts/verify-harness.sh — it never reimplements a check.
+# Deliberately narrow. CI checks what lives in the repo; it does not read anything
+# authored in a pull request body, and it does not execute a contract's VERIFY
+# block. Contracts are local working state, and the review gate is a person
+# reading the PR — not a machine reading the repo.
 
 on:
   pull_request:
@@ -2836,19 +2883,19 @@ jobs:
           test -x scripts/verify-harness.sh || chmod +x scripts/verify-harness.sh
           ./scripts/verify-harness.sh --base "origin/${{ github.base_ref }}"
 
-      - name: Contract VERIFY block
+      - name: What this run did not cover
+        if: always()
         run: |
-          # Re-run the contract's own verify commands. A local green is not evidence.
-          state=skills/.harness/STATE.md
-          [ -f "$state" ] || state=.harness/STATE.md
-          contract=$(grep -o '[A-Za-z0-9._/-]*contracts/[A-Za-z0-9._-]*\.md' "$state" 2>/dev/null | head -1)
-          if [ -z "$contract" ] || [ ! -f "$contract" ]; then
-            echo "no contract reachable — skipping contract VERIFY"; exit 0
-          fi
-          echo "running VERIFY from $contract"
-          awk '/^## VERIFY/{f=1} f&&/^```(bash|sh)$/{c=1;next} c&&/^```$/{c=0} c' "$contract" > /tmp/verify.sh
-          if [ ! -s /tmp/verify.sh ]; then echo "contract has no VERIFY block"; exit 1; fi
-          sh -e /tmp/verify.sh
+          cat <<'NOTE'
+          Not covered by CI, by design:
+            - contract impact map, scope containment, RED artifact
+              (the contract is local working state; the agent runs these before
+               pushing and pastes the output into the PR body)
+            - the contract's own VERIFY block
+
+          The reviewer confirms those from the PR body. A green run here is not
+          a statement that the contract was honoured.
+          NOTE
 
 ---
 

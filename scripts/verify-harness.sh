@@ -109,16 +109,21 @@ else
   skip "no skills directory"
 fi
 
-if [ -d rules ]; then
+# Rules live at the root in the kit, but behind a symlink merge in a consumer.
+RULES_DIR=""
+for d in rules .cursor/rules .agents/rules; do
+  if [ -d "$d" ] && [ -n "$(ls "$d"/*.mdc 2>/dev/null)" ]; then RULES_DIR="$d"; break; fi
+done
+if [ -n "$RULES_DIR" ]; then
   bad=""
-  for r in rules/*.mdc; do
+  for r in "$RULES_DIR"/*.mdc; do
     [ -f "$r" ] || continue
     head -1 "$r" | grep -q '^---$' && grep -q '^description:' "$r" && grep -q '^alwaysApply:' "$r" || bad="$bad $r"
   done
-  if [ -z "$bad" ]; then pass "rules: frontmatter valid (will load)"
+  if [ -z "$bad" ]; then pass "rules: frontmatter valid, will load (from $RULES_DIR)"
   else fail "rules with bad frontmatter:$bad"; fi
 else
-  skip "no rules directory"
+  skip "no rules found (looked in rules/, .cursor/rules/, .agents/rules/)"
 fi
 
 # --- resolve the active contract ---------------------------------------------
@@ -194,7 +199,7 @@ PYEOF
     *)     fail "contract impact map: ${result#FAIL }" ;;
   esac
 else
-  skip "contract impact map (no contract)"
+  skip "contract impact map (contract is local — run this before pushing; a human reviews the output)"
 fi
 
 # --- 7. diff is contained by the impact map ----------------------------------
@@ -212,7 +217,7 @@ if [ -n "$contract_file" ] && [ -f "$contract_file" ] && git rev-parse --git-dir
     skip "scope containment (base $base unresolvable)"
   fi
 else
-  skip "scope containment (no contract)"
+  skip "scope containment (contract is local — run before pushing)"
 fi
 
 # --- 8. RED was recorded, and failed for the right reason --------------------
@@ -229,7 +234,7 @@ if [ -n "$contract_file" ] && [ -f "$contract_file" ]; then
     skip "RED artifact (contract predates the recording format)"
   fi
 else
-  skip "RED artifact (no contract)"
+  skip "RED artifact (contract is local — run before pushing)"
 fi
 
 # --- 10. STATE inbox does not reference finished work ------------------------

@@ -17,12 +17,10 @@ Thumbs.db
 # Anchored: unanchored '.harness/' also matched skills/.harness at any depth.
 /.harness/
 
-# Harness working directory. Contracts are TRACKED: the review process grades a PR
-# against its contract, and CI cannot check a file it cannot see. Session state,
-# drafts and PR bodies stay local.
-skills/.harness/*
-!skills/.harness/contracts
-!skills/.harness/contracts/**
+# Harness working directory — contracts, drafts, session state. All local.
+# Contracts are deliberately NOT tracked: they are working state, and the review
+# gate is a person reading the PR body, not a machine reading the repo.
+skills/.harness/
 
 # Project instances (this repo ships TEMPLATES, not filled-in copies)
 # Uncomment if you keep a live filled AGENTS.md / FEATURES.json elsewhere

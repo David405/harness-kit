@@ -17,6 +17,10 @@ Focus on correctness over style. Challenge assumptions. Review the change like t
 
 Before deep code review, locate and read the relevant contract:
 
+0. **The contract is in the PR body**, between the contract markers — it is local working state and
+   will not appear in the diff. If the body carries no contract, that is the first finding. Also
+   confirm the pasted gate output is verbatim, and flag any tool attribution in the title, body or
+   commit messages.
 1. **Identify contract** — from PR description, branch name, commit messages, or `FEATURES.json`
    (`PENDING_REVIEW` entry). Default path: `skills/.harness/contracts/<ID>.md` (or `.harness/contracts/`
    if `AGENTS.md` says so). Use `AUDIT_CONTRACT` for `solidity-audit`.
