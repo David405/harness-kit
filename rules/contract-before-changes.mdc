@@ -31,3 +31,14 @@ Reading files, inspecting history and pull requests, searching, and drafting the
 ## If execution started without approval
 
 Revert the unapproved changes, write or amend the contract, then wait.
+
+## Review after execute
+
+After VERIFY is green, run **`harness-review`** before staging or reporting done:
+
+1. Grade contract compliance (§0) against the actual diff
+2. Summarize findings and merge recommendation for the human **in chat**
+3. Then stage product files and set `FEATURES.json` to `PENDING_REVIEW`
+
+Do not skip review unless the human explicitly says so or `AGENTS.md` allows a trivial no-contract fix.
+See `harness-review` skill and `templates/REVIEW.md`.

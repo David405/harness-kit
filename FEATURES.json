@@ -14,6 +14,14 @@
   },
   "features": [
     {
+      "id": "KIT-WORKFLOW-002",
+      "name": "Publish gates, post-execute review, product-facing create-pull-request skill (v2.6)",
+      "priority": 1,
+      "verify": "[ \"$(ls rules/*.mdc | wc -l | tr -d ' ')\" = 9 ] && test -f rules/post-execute-review.mdc && test -f rules/pr-creation.mdc && test -f skills/create-pull-request/SKILL.md && grep -q 'create-pull-request' skills/sprint-contract/SKILL.md && grep -q 'pull_request_template' scripts/setup-harness-kit.sh && grep -q 'Kit v2.6' README.md && ./scripts/verify-harness.sh && python3 -m json.tool FEATURES.json >/dev/null",
+      "status": "PENDING_REVIEW",
+      "notes": "Nine rules; create-pull-request skill; sprint contract no longer requires contract paste in PR body; setup installs .github/pull_request_template.md when missing."
+    },
+    {
       "id": "KIT-ADOPT-001",
       "name": "Local contracts, consumer-aware gate, human-read PR review, human commit authorship",
       "priority": 1,

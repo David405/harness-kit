@@ -22,20 +22,16 @@ Pick **one**:
 
 ---
 
-## PR body (required)
+## Pull request (when human asks to publish)
 
-The contract is **local working state and is not in git**, so a reviewer cannot open it from the diff.
-The pull request body must carry:
+Contracts stay **local** — not in git. When opening a PR, use the **`create-pull-request`** skill.
+Write a detailed, product-facing description (Summary, Problem, Solution, behaviour table, files,
+risk, test plan).
 
-1. The contract, between `<!-- harness-kit:contract:start -->` and `<!-- harness-kit:contract:end -->`.
-2. The **verbatim output** of the local gate run — not a summary of it.
+Do **not** paste this contract, `FEATURES.json` IDs, harness-review output, or
+`<!-- harness-kit:contract:* -->` markers into GitHub.
 
-CI checks only what lives in the repo and prints what it did not cover. The contract-dependent
-checks are confirmed by a person reading this body.
-
-**No tool attribution** anywhere in the PR title, body, or commit messages: no "generated with",
-no "made with" or "made by", no assistant or editor name, no `Co-Authored-By` trailer. The PR
-describes the change.
+**No tool attribution** in the PR title, body, or commit messages.
 
 ---
 

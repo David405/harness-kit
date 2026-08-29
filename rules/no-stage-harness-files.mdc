@@ -1,5 +1,5 @@
 ---
-description: Stage product changes after execute, never harness working files, and never commit unless asked
+description: Stage product changes after execute; never commit, push, or open a PR without explicit human approval
 alwaysApply: true
 globs: ""
 ---
@@ -14,10 +14,21 @@ specific one.
 
 ## Stage after execute
 
-When a contract reaches execute-complete with VERIFY green, stage the **product** files that contract
-touched: source, tests, specs, shipped documentation. Do not wait to be asked to stage.
+When a contract reaches execute-complete with VERIFY green **and harness review is done**, stage the
+**product** files that contract touched: source, tests, specs, shipped documentation. Do not wait to
+be asked to stage.
 
-**Still do not commit** unless the human asks.
+**Still do not commit** unless the human explicitly asks (e.g. "commit", "commit and push").
+
+## Git publish gate (hard)
+
+Never **commit**, **push**, or **create/open a pull request** without explicit human approval for that
+action.
+
+- Contract approval, feature PASS, "approve", "proceed", or VERIFY green **do not** authorize commit,
+  push, or PR — ask first or wait for an explicit publish instruction.
+- After staging, stop and report what is ready. Offer commit/PR only as a question; do not run them.
+- `git status` / `git diff` for review prep are fine; publishing is not.
 
 ## Commit authorship
 
@@ -29,6 +40,7 @@ The commit records what changed and why. What typed it is not part of the record
 
 ## After staging
 
-Say briefly what was staged and what was left unstaged. Do not push or open a pull request unless asked.
+Say briefly what was staged and what was left unstaged. Do not commit, push, or open a pull request
+unless the human explicitly requests that step.
 
 When staging a feature branch, exclude harness paths even when they appear beside real changes.

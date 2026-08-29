@@ -17,13 +17,10 @@ Focus on correctness over style. Challenge assumptions. Review the change like t
 
 Before deep code review, locate and read the relevant contract:
 
-0. **The contract is in the PR body**, between the contract markers — it is local working state and
-   will not appear in the diff. If the body carries no contract, that is the first finding. Also
-   confirm the pasted gate output is verbatim, and flag any tool attribution in the title, body or
-   commit messages.
-1. **Identify contract** — from PR description, branch name, commit messages, or `FEATURES.json`
-   (`PENDING_REVIEW` entry). Default path: `skills/.harness/contracts/<ID>.md` (or `.harness/contracts/`
-   if `AGENTS.md` says so). Use `AUDIT_CONTRACT` for `solidity-audit`.
+0. **Locate the contract** — local path (`skills/.harness/contracts/<ID>.md` or as `AGENTS.md` declares).
+   It is **not** in the PR diff. Read it from disk; flag tool attribution in PR title, body, or commits.
+1. **Identify contract** — from branch name, commit messages, session context, or `FEATURES.json`
+   (`PENDING_REVIEW` entry). Use `AUDIT_CONTRACT` for `solidity-audit`.
 2. **Work-type profile** — note which profile was declared; apply only the gates that apply.
 3. **Scope WILL** — list each promised item; mark **Met / Partial / Missing** with evidence from the diff.
 4. **Scope will NOT** — confirm no out-of-scope work shipped; flag scope creep as a finding.

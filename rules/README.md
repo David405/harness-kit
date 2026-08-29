@@ -1,17 +1,18 @@
 # Rules
 
-Always-on constraints. Six of them, and that number is the point.
+Always-on constraints. The kit ships **nine** for v2.6 (workflow publish, post-execute review, and
+product-facing PR creation were promoted from ad-hoc practice).
 
 A **rule** is loaded on every turn and *subtracts* — it narrows what is acceptable. A **skill** loads
-on a trigger and *adds* — it supplies a procedure. A **gate** is neither: it is a command that fails.
+on a trigger and *adds* — it supplies a procedure. A **Gate** is neither: it is a command that fails.
 
 > **Gate it if you can, skill it if it is procedural, rule it only if it must hold everywhere.**
 
 ## The budget
 
-Rules compete for the same always-on attention. Forty constraints are not honoured forty times as
-well — they dilute each other, and the model silently weights some over others. So the kit ships
-**six**, and a seventh has to displace one.
+Rules compete for the same always-on attention. The kit started at six; v2.6 adds three workflow
+gates that proved load-bearing in production use: explicit publish approval, review-before-stage, and
+PR shape without harness leakage. A tenth rule should displace one or move to a skill.
 
 Before adding a rule, ask in order:
 

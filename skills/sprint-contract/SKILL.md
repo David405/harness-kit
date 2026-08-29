@@ -40,10 +40,13 @@ A Solidity security review → `solidity-audit`. A periodic quality audit → `c
 
 ## Opening the PR
 
-The contract is not in git, so the **PR body carries it** between the contract markers, together with
-the verbatim local gate output. A reviewer grades the PR against that; CI covers only repo-owned checks.
+Contracts stay **local** (`skills/.harness/` is gitignored). When the human asks to publish, use
+the **`create-pull-request`** skill — a detailed, product-facing PR body only.
 
-**No tool attribution** in the title, body or commit messages, and a commit's author is the human.
+Do **not** paste this contract, feature ledger IDs, harness-review output, or contract HTML markers
+into the GitHub PR title or body. Review runs in chat before the PR is opened.
+
+**No tool attribution** in the title, body, or commit messages, and a commit's author is the human.
 
 ## Form
 

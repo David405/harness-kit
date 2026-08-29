@@ -153,5 +153,15 @@ if [ -f .gitignore ] && ! grep -qx 'skills/.harness/' .gitignore; then
   printf '\n# harness working state — contracts, local templates, session state\nskills/.harness/\n' >> .gitignore
 fi
 
+# --- optional: GitHub PR template from create-pull-request skill ---------------
+pr_tpl="$kit/skills/create-pull-request/templates/pull_request_template.md"
+if [ -f "$pr_tpl" ]; then
+  mkdir -p .github
+  if [ ! -f .github/pull_request_template.md ]; then
+    cp "$pr_tpl" .github/pull_request_template.md
+    echo "harness-kit: installed .github/pull_request_template.md"
+  fi
+fi
+
 echo "harness-kit: linked $count skills into $MERGE_DIR"
 echo "  upgrade: git submodule update --remote $rel && ./$rel/scripts/setup-harness-kit.sh"
