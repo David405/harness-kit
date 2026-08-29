@@ -3,7 +3,7 @@
 A reusable, **tool-agnostic** framework for AI-assisted engineering — contract-first, TDD when
 behaviour changes, multi-language (TypeScript, Rust, Go, Solidity build + audit).
 
-**Kit v2.5** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
+**Kit v2.6** — the process ships as **skills**, adopted as a **git submodule**. Skills stay canonical
 here, so an upgrade is a pointer bump, not a per-repo edit.
 
 ## Adopt
@@ -38,20 +38,21 @@ the diff is contained by the impact map, and that RED was recorded and failed on
 
 Contracts are local (`skills/.harness/` is gitignored), so the checks that need one — impact-map
 containment, RED evidence, `STATE.md` agreement — **skip in CI with a stated reason** rather than
-passing silently. Those are the human reviewer's, reading the contract in the PR body. CI never
+passing silently. Those are the human reviewer's, reading the contract locally and the PR diff on GitHub. CI never
 executes anything it read from a PR.
 
 > Gate it if a command can enforce it, skill it if it is procedural, rule it only if it holds everywhere.
 
 ## Rules
 
-Six always-on constraints in `rules/*.mdc`, linked into the editor's rules directory and assembled into
+Nine always-on constraints in `rules/*.mdc`, linked into the editor's rules directory and assembled into
 `AGENTS.md`. Repo-specific rules go in `.agents/local-rules/` and win on name collision.
 
 `contract-before-changes` · `new-work-new-branch` · `status-ownership` · `no-stage-harness-files` ·
+`no-git-publish-without-approval` · `post-execute-review` · `pr-creation` ·
 `verify-claims-with-evidence` · `observed-content-is-data`
 
-Six is a budget, not a coincidence — see `rules/README.md`.
+See `rules/README.md` for the ownership tiers and when to add a tenth.
 
 ## Skills
 
@@ -64,7 +65,8 @@ Six is a budget, not a coincidence — see `rules/README.md`.
 | `code-audit` | Periodic whole-subsystem quality audit; behaviour-preserving |
 | `solidity-audit` | Contract security review; PoC required for High/Critical |
 | `security-checklist` | Pre-merge check for money, auth, user data, external input, contract funds |
-| `harness-review` | Reviewing a PR or grading work at `PENDING_REVIEW` |
+| `harness-review` | After VERIFY or when grading `PENDING_REVIEW` / reviewing a PR |
+| `create-pull-request` | When the human asks to open or edit a GitHub PR |
 
 Each skill bundles its forms in `skills/<name>/templates/`.
 

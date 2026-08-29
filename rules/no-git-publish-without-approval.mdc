@@ -1,0 +1,31 @@
+---
+description: Never commit, push, or open a PR without explicit human approval for that action
+alwaysApply: true
+globs: ""
+---
+
+# Git publish gate
+
+Never **commit**, **push**, or **create/open a pull request** without explicit human approval for that
+specific action.
+
+## Not sufficient on their own
+
+- Sprint contract approved
+- Feature marked PASS or PENDING_REVIEW
+- "approve", "proceed", "looks good", or VERIFY green
+- Staging product files after execute
+
+These authorize implementation and staging only. Publishing still requires an explicit ask.
+
+## Required before publishing
+
+The human must clearly request the action, e.g. "commit", "commit and push", "open a PR".
+
+When unsure, ask. After verify, **review**, and stage, report readiness and stop — do not publish.
+
+## Allowed without publish approval
+
+- `git status`, `git diff`, `git log` (review prep)
+- Local branch create/checkout when the human confirmed the branch name
+- Running tests and linters

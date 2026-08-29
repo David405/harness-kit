@@ -1,0 +1,34 @@
+---
+description: After VERIFY green, run harness-review in chat before staging or reporting done
+alwaysApply: true
+globs: ""
+---
+
+# Post-execute review
+
+After a sprint contract is **executed** and VERIFY is green, run a **harness review** before staging
+product files or telling the human the work is complete.
+
+## Required order
+
+```
+CONTRACT (approved) → EXECUTE → VERIFY → REVIEW → stage → stop
+```
+
+1. **VERIFY** — run the contract's verify commands; all must pass (or document skips with reason).
+2. **REVIEW** — read `harness-review` skill + `templates/REVIEW.md`; grade against the contract.
+3. **Report** — deliver the review summary to the human **in chat** (merge recommendation, findings).
+   Do not paste harness review or contract compliance into the GitHub PR body.
+4. **Stage** — stage product files; set `FEATURES.json` to `PENDING_REVIEW` if not already.
+5. **Stop** — do not commit, push, or open a PR unless explicitly asked.
+
+## Not a substitute for human PASS
+
+The executor runs review and sets `PENDING_REVIEW`. **`PASS` is human-only** after they approve merge.
+
+## When review can be skipped
+
+- Trivial one-line fixes with no contract (if `AGENTS.md` allows condensed work)
+- Human explicitly says "skip review" for this session
+
+Otherwise: **no staging, no "done" message without review.**

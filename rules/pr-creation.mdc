@@ -1,0 +1,20 @@
+---
+description: Open GitHub PRs with the create-pull-request skill — detailed product body, no harness IDs
+alwaysApply: true
+globs: ""
+---
+
+# Pull request creation
+
+When opening or editing a GitHub PR, read and follow the **`create-pull-request`** skill
+(`.agents/skills/create-pull-request/SKILL.md`).
+
+## Quick rules
+
+- **Title:** `type(scope): plain English` — no feature ledger IDs, audit codes, or contract paths.
+- **Body:** full template in the skill — Summary, Problem, Solution, Behaviour changes, Files changed,
+  Risk and rollout, Test plan. Enough detail for a reviewer who was not in the session.
+- **Keep local:** contracts, `FEATURES.json` IDs, harness-review output, `PENDING_REVIEW` — chat only.
+- **Never:** tool attribution (`Made with Cursor`, `Co-Authored-By` assistant) in title, body, or commits.
+
+Harness review runs before the PR; its output goes to the human in chat, not on GitHub.

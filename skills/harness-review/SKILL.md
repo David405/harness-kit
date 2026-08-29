@@ -16,7 +16,9 @@ Decide whether this change should ship. Correctness over style.
 
 ## When to use
 
-Reviewing a PR, or grading a feature sitting at `PENDING_REVIEW`.
+- **After every contract execution** — once VERIFY is green, before staging or reporting done
+- Reviewing a PR, or grading a feature sitting at `PENDING_REVIEW`
+- When the user asks whether a change should ship
 
 ## Order matters
 

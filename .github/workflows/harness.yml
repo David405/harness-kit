@@ -28,10 +28,10 @@ jobs:
           cat <<'NOTE'
           Not covered by CI, by design:
             - contract impact map, scope containment, RED artifact
-              (the contract is local working state; the agent runs these before
-               pushing and pastes the output into the PR body)
+              (contracts are local; the agent runs these before staging)
             - the contract's own VERIFY block
+            - harness-review output (reported in chat, not in the PR body)
 
-          The reviewer confirms those from the PR body. A green run here is not
+          The reviewer reads the contract locally and the PR diff on GitHub. A green run here is not
           a statement that the contract was honoured.
           NOTE
