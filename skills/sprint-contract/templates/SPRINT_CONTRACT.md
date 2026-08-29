@@ -50,7 +50,7 @@ Pick **one**:
 > Implementation on the default branch is forbidden. The human must confirm the branch name
 > before the agent creates or checks out the branch.
 
-- **Default branch:** <e.g. main — detected via `git symbolic-ref` or AGENTS.md>
+- **Default branch:** <e.g. main — detected via `git symbolic-ref` or AGENTS.md; no marker here>
 - **Proposed feature branch:** `<e.g. feat/area-001-short-description>`
 - **Human confirmed:** <pending — agent asks before checkout / yes + date / alternate name supplied>
 
@@ -72,10 +72,34 @@ Pick **one**:
 
 - **Test files to create or extend:**
   - `<path/to/test>` — <what it asserts>
-- **Expected RED output:** <command to run + what failure looks like>
-- **Verify commands (GREEN):**
-  - `<command from AGENTS.md>`
-  - `<lint / typecheck / forge test — as applicable>`
+> **A test that never failed proves nothing.** It may be vacuous, or already passing. Record the real
+> run — command, exit code, and the failure message — not a prediction of it. A RED that failed on an
+> import or path error proves the test file is wrong, not that the behaviour is absent.
+>
+> **No ERD? Same gate.** Without a design document the success criteria below are the whole story, and
+> each must be expressible as a **failing test before work starts**. If you cannot write a test that
+> fails today, you do not have a falsifiable criterion and this contract is not approvable.
+
+### RED (recorded before EXECUTE)
+
+- **Command:** `<exact command>`
+- **Exit code:** `<non-zero>`
+- **Failure reason:** `<the assertion message — not "module not found">`
+- **Captured:** `<ISO-8601>`
+
+**N/A** only when this sprint changes no behaviour (`ops-docs`, `code-audit`, `product-erd`).
+
+### BASELINE (recorded before EXECUTE — behaviour changes only)
+
+- **Command:** `<full suite from AGENTS.md>`
+- **Result:** `<pass/fail counts>`
+
+### GREEN (recorded after EXECUTE)
+
+- **Command:** `<same as RED>` → **exit 0**
+- **Command:** `<same as BASELINE>` → **`<counts, compared to baseline>`**
+
+Green-after means nothing without green-before. A count that moved is a regression until explained.
 
 ### Vertical slice (when non-trivial)
 
@@ -88,8 +112,13 @@ Pick **one**:
 
 ## Impact map
 
-> Mark each path **[GROUNDED]** (verified in repo) or **[EDUCATED]** (must re-verify before
-> implementing). Never present educated guesses as grounded.
+> Mark each path **[GROUNDED]** (verified in repo), **[EDUCATED]** (must re-verify before
+> implementing), or **[NEW]**. Never present educated guesses as grounded.
+>
+> **These markers belong to the impact map only**, and the impact map is a table whose **first cell is
+> the path in backticks**. The gate reads that structure: it parses this section's table rows rather
+> than guessing which backticked token elsewhere in the contract is a path. A marker used outside this
+> table, or a marked row whose first cell is not a backticked path, is a gate failure.
 
 - **Files to change:**
   - `<path>` — <what changes> — [GROUNDED|EDUCATED]

@@ -14,6 +14,22 @@
   },
   "features": [
     {
+      "id": "KIT-GATES-002",
+      "name": "Gate reads structure not prose: impact-map parse replaces the path heuristic; STATE inbox drift check",
+      "priority": 2,
+      "verify": "! grep -q '[*].md|[*].sh' scripts/verify-harness.sh && grep -qi inbox scripts/verify-harness.sh && ./scripts/verify-harness.sh && grep -q '2.4.0' BOOTSTRAP.md && python3 -m json.tool FEATURES.json >/dev/null",
+      "status": "PENDING_REVIEW",
+      "notes": "Contract: skills/.harness/contracts/KIT-GATES-002.md; profile: ops-docs; EXECUTE+VERIFY green 2026-08-28 on feat/kit-gates-002-tighten-gate; 4 declared deviations incl. Q2 corrected by the gate itself"
+    },
+    {
+      "id": "KIT-GATES-001",
+      "name": "Deterministic gates: RED/BASELINE/GREEN artifacts, verify-harness.sh, CI re-running VERIFY",
+      "priority": 1,
+      "verify": "test -x scripts/verify-harness.sh && ./scripts/verify-harness.sh && test -f .github/workflows/harness.yml && ! grep -q 'Expected RED output' skills/sprint-contract/templates/SPRINT_CONTRACT.md && grep -q '2.3.0' BOOTSTRAP.md && ./scripts/build-bootstrap.sh >/dev/null && python3 -m json.tool FEATURES.json >/dev/null",
+      "status": "PENDING_REVIEW",
+      "notes": "Contract: skills/.harness/contracts/KIT-GATES-001.md; profile: ops-docs; EXECUTE+VERIFY green 2026-08-28 on feat/kit-gates-001-deterministic-gates; contracts now tracked; awaiting human PASS"
+    },
+    {
       "id": "KIT-RULES-001",
       "name": "rules/ directory as .mdc with AGENTS.md assembly, plus ERD routing before contract drafting",
       "priority": 1,

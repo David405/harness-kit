@@ -1,0 +1,38 @@
+name: harness
+
+# The unforgeable layer. Everything else in the kit is a instruction to a model
+# that can misread it; this re-runs the checks itself, so an agent's claim that
+# VERIFY passed stops mattering.
+#
+# It invokes scripts/verify-harness.sh — it never reimplements a check.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # scope containment needs the merge base
+
+      - name: Harness discipline
+        run: |
+          test -x scripts/verify-harness.sh || chmod +x scripts/verify-harness.sh
+          ./scripts/verify-harness.sh --base "origin/${{ github.base_ref }}"
+
+      - name: Contract VERIFY block
+        run: |
+          # Re-run the contract's own verify commands. A local green is not evidence.
+          state=skills/.harness/STATE.md
+          [ -f "$state" ] || state=.harness/STATE.md
+          contract=$(grep -o '[A-Za-z0-9._/-]*contracts/[A-Za-z0-9._-]*\.md' "$state" 2>/dev/null | head -1)
+          if [ -z "$contract" ] || [ ! -f "$contract" ]; then
+            echo "no contract reachable — skipping contract VERIFY"; exit 0
+          fi
+          echo "running VERIFY from $contract"
+          awk '/^## VERIFY/{f=1} f&&/^```(bash|sh)$/{c=1;next} c&&/^```$/{c=0} c' "$contract" > /tmp/verify.sh
+          if [ ! -s /tmp/verify.sh ]; then echo "contract has no VERIFY block"; exit 1; fi
+          sh -e /tmp/verify.sh

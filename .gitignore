@@ -13,11 +13,16 @@ Thumbs.db
 .env
 .env.*
 
-# Ephemeral review packets — never committed (legacy path)
-.harness/
+# Ephemeral review packets — never committed (legacy root path only).
+# Anchored: unanchored '.harness/' also matched skills/.harness at any depth.
+/.harness/
 
-# Harness working directory — contracts, local templates, session state
-skills/.harness/
+# Harness working directory. Contracts are TRACKED: the review process grades a PR
+# against its contract, and CI cannot check a file it cannot see. Session state,
+# drafts and PR bodies stay local.
+skills/.harness/*
+!skills/.harness/contracts
+!skills/.harness/contracts/**
 
 # Project instances (this repo ships TEMPLATES, not filled-in copies)
 # Uncomment if you keep a live filled AGENTS.md / FEATURES.json elsewhere
